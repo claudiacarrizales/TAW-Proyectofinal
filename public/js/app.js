@@ -2122,108 +2122,194 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "User",
   data: function data() {
     return {
       editMode: false,
       users: {},
+      usuario_editar: {},
       form: new Form({
         id: '',
         name: '',
+        lastName: '',
         email: '',
         type: '',
-        bio: '',
-        password: '',
-        photo: ''
+        password: ''
       })
     };
   },
   methods: {
-    updateUser: function updateUser() {
+    //funcion para editar losd atos de un ususario
+    actualizarUsuario: function actualizarUsuario() {
       var _this = this;
 
-      this.form.put('api/user/' + this.form.id).then(function () {
-        Fire.$emit('Afteredited');
-        $('#addNew').modal('hide');
+      //Se obtienen los campos del formulario
+      var nombre = document.getElementById("name");
+      var apellido = document.getElementById("lastName");
+      var tipo = document.getElementById("type");
+      var correo = document.getElementById("email");
+      var contrasena = document.getElementById("password");
+      this.usuario_editar.name = nombre.value;
+      this.usuario_editar.last_name = apellido.value;
+      this.usuario_editar.tipo = tipo.value;
+      this.usuario_editar.email = correo.value; //Se hace una peticion para editar los datos, asi como se manda los datos a traves de un objeto de javascript
+
+      axios.post('api/actualizarUsuario', this.usuario_editar).then(function (response) {
+        //Si todo salio correctamente se despliega un peuqño mensaje
+        Fire.$emit('despuesActualizar');
+        $('#modalUsuario').modal('hide');
         toast.fire({
           type: 'success',
-          title: 'User Updated successfully'
+          title: 'Usuario actualizado correctamente'
         });
+        console.log(response);
       })["catch"](function () {
         _this.$Progress.fail();
       });
     },
-    editModal: function editModal(user) {
-      this.editMode = true;
-      this.form.reset();
-      $('#addNew').modal('show');
-      this.form.fill(user);
+    modal_editar_usuario: function modal_editar_usuario(id) {
+      this.editMode = true; //Obitene los datos del usuario a eliminar
+
+      for (var i = 0; i < this.users.length; i++) {
+        if (this.users[i].id == id) {
+          this.usuario_editar = this.users[i];
+        }
+      } //Se obtienen los campos del formulario
+
+
+      var nombre = document.getElementById("name");
+      var apellido = document.getElementById("lastName");
+      var tipo = document.getElementById("type");
+      var correo = document.getElementById("email");
+      var contrasena = document.getElementById("password"); //Limpia los campos del formulario
+
+      nombre.value = "";
+      apellido.value = "";
+      tipo.value = "1";
+      correo.value = "";
+      contrasena.value = ""; //Abre el modal para esta vez para editar los datos
+
+      $('#modalUsuario').modal('show'); //Llena los campos con los del usuario a editar
+
+      nombre.value = this.usuario_editar.name;
+      apellido.value = this.usuario_editar.last_name;
+      tipo.value = this.usuario_editar.tipo;
+      correo.value = this.usuario_editar.email;
+      delete this.usuario_editar.password; //contrasena.value = usuario_editar.password;
+      //this.form.fill(user);
     },
     newModal: function newModal() {
       this.editMode = false;
-      this.form.reset();
-      $('#addNew').modal('show');
+      var nombre = document.getElementById("name");
+      var apellido = document.getElementById("lastName");
+      var tipo = document.getElementById("type");
+      var correo = document.getElementById("email");
+      var contrasena = document.getElementById("password");
+      nombre.value = "";
+      apellido.value = "";
+      tipo.value = "1";
+      correo.value = "";
+      contrasena.value = "";
+      $('#modalUsuario').modal('show');
     },
-    deleteUser: function deleteUser(id) {
-      var _this2 = this;
-
+    eliminarUsuario: function eliminarUsuario(id) {
       swal.fire({
-        title: 'Are you sure?',
-        text: "You won't be able to revert this!",
+        title: 'Eliminar usuario',
+        text: "¿Estás seguro que quieres eliminar a este usuario?",
         type: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it!'
+        confirmButtonText: 'Si'
       }).then(function (result) {
         if (result.value) {
-          _this2.form["delete"]('api/user/' + id).then(function () {
-            swal.fire('Deleted!', 'Your file has been deleted.', 'success');
-            Fire.$emit('Afterdelete');
-          })["catch"](function () {});
+          axios["delete"]('api/eliminarUsuario/' + id).then(function (response) {
+            //Pequeña alerta que confirma la eliminacion del usuario
+            swal.fire('Usuario eliminado', 'El usuario ha sido eliminado', 'success');
+            Fire.$emit('despuesEliminar');
+          })["catch"](function (error) {
+            // Maneja el error si la peticion no se llevo a cabo correctamente
+            swal.fire('Error al eliminar', 'El usuario no se ha podido eliminar', 'error');
+          });
         }
       });
     },
-    loadUsers: function loadUsers() {
-      var _this3 = this;
+    //Metodo que permite obtener los datos de los usuarios registrados
+    cargarUsuarios: function cargarUsuarios() {
+      var _this2 = this;
 
-      axios.get('api/user').then(function (_ref) {
+      // Hace una peticion a los usuarios registrados en la bd
+      axios.get('api/usuarios').then(function (_ref) {
         var data = _ref.data;
-        return _this3.users = data.data;
+        return _this2.users = data.data;
       });
     },
-    createUser: function createUser() {
-      var _this4 = this;
+    crearUsuario: function crearUsuario() {
+      var _this3 = this;
 
-      this.$Progress.start();
-      this.form.post('api/user').then(function () {
-        Fire.$emit('AfterCreated');
-        $('#addNew').modal('hide');
+      //Realiza una peticion de tipo post a la ruta registrarUsuarios que se encarga de guardar los datos pasados por medio del formulario del modal
+      //Se obtienen los campos del formulario
+      var nombre = document.getElementById("name");
+      var apellido = document.getElementById("lastName");
+      var tipo = document.getElementById("type");
+      var correo = document.getElementById("email");
+      var contrasena = document.getElementById("password"); //Valida que el formulario tenga todos los datos
+
+      if (nombre.value == "" || apellido.value == "" || tipo.value == "" || correo.value == "" || contrasena.value == "") {
+        //Si no es asi aparece un pequeño mensaje de error
         toast.fire({
-          type: 'success',
-          title: 'User created successfully'
+          type: 'error',
+          title: 'Llene todos los datos'
         });
+      } else {
+        this.$Progress.start();
+        axios.post('api/registrarUsuario', {
+          name: nombre.value,
+          lastName: apellido.value,
+          type: tipo.value,
+          email: correo.value,
+          password: contrasena.value
+        }).then(function (response) {
+          //Si la respuesta responde todo bien
+          //Se ejecuta la animacion de la barrita
+          Fire.$emit('despuesCrear'); //Una pequeña alerta en la esquina
 
-        _this4.$Progress.finish();
-      })["catch"](function () {});
+          toast.fire({
+            type: 'success',
+            title: 'Usuario creado correctamente'
+          });
+
+          _this3.$Progress.finish(); //El modal que contiene el formulario desaparece
+
+
+          $('#modalUsuario').modal('hide');
+          nombre.value = "";
+          apellido.value = "";
+          tipo.value = "1";
+          correo.value = "";
+          contrasena.value = "";
+        })["catch"](function (error) {
+          // Maneja el error si la peticion no se llevo a cabo correctamente
+          this.$Progress.fail();
+          console.log(error);
+        });
+      }
     }
   },
   created: function created() {
-    var _this5 = this;
+    var _this4 = this;
 
-    this.loadUsers();
-    Fire.$on('AfterCreated', function () {
-      return _this5.loadUsers();
+    this.cargarUsuarios();
+    Fire.$on('despuesCrear', function () {
+      return _this4.cargarUsuarios();
     });
-    Fire.$on('Afterdelete', function () {
-      return _this5.loadUsers();
+    Fire.$on('despuesEliminar', function () {
+      return _this4.cargarUsuarios();
     });
-    Fire.$on('Afteredited', function () {
-      return _this5.loadUsers();
-    }); // setInterval( () => this.loadUsers(),3000);
+    Fire.$on('despuesActualizar', function () {
+      return _this4.cargarUsuarios();
+    });
   },
   filters: {
     capitalize: function capitalize(value) {
@@ -59294,11 +59380,11 @@ var render = function() {
     _c("div", { staticClass: "content" }, [
       _c("div", { staticClass: "container" }, [
         _c("div", { staticClass: "row justify-content-center" }, [
-          _c("div", { staticClass: "col-12 mt-5" }, [
+          _c("div", { staticClass: "col-12 " }, [
             _c("div", { staticClass: "card" }, [
               _c("div", { staticClass: "card-header" }, [
                 _c("h3", { staticClass: "card-title" }, [
-                  _vm._v("Responsive Hover Table")
+                  _vm._v("Lista usuarios")
                 ]),
                 _vm._v(" "),
                 _c("div", { staticClass: "card-tools" }, [
@@ -59308,7 +59394,10 @@ var render = function() {
                       staticClass: "btn btn-success",
                       on: { click: _vm.newModal }
                     },
-                    [_vm._v("Create New")]
+                    [
+                      _c("i", { staticClass: "fas fa-user-plus" }),
+                      _vm._v(" Crear nuevo usuario")
+                    ]
                   )
                 ])
               ]),
@@ -59325,17 +59414,13 @@ var render = function() {
                         _vm._v(" "),
                         _c("td", [_vm._v(_vm._s(user.name))]),
                         _vm._v(" "),
+                        _c("td", [_vm._v(_vm._s(user.last_name))]),
+                        _vm._v(" "),
                         _c("td", [_vm._v(_vm._s(user.email))]),
                         _vm._v(" "),
                         _c("td", [
                           _c("span", { staticClass: "tag tag-success" }, [
-                            _vm._v(_vm._s(_vm._f("capitalize")(user.type)))
-                          ])
-                        ]),
-                        _vm._v(" "),
-                        _c("td", [
-                          _c("span", { staticClass: "tag tag-success" }, [
-                            _vm._v(_vm._s(_vm._f("mydate")(user.created_at)))
+                            _vm._v(_vm._s(user.tipo))
                           ])
                         ]),
                         _vm._v(" "),
@@ -59343,27 +59428,27 @@ var render = function() {
                           _c(
                             "button",
                             {
-                              staticClass: "btn btn-success",
+                              staticClass: "btn btn-warning",
                               on: {
                                 click: function($event) {
-                                  return _vm.editModal(user)
+                                  return _vm.modal_editar_usuario(user.id)
                                 }
                               }
                             },
-                            [_vm._v("Edit")]
+                            [_c("i", { staticClass: "fas fa-pen" })]
                           ),
                           _vm._v(" "),
                           _c(
                             "button",
                             {
-                              staticClass: "btn btn-success",
+                              staticClass: "btn btn-danger",
                               on: {
                                 click: function($event) {
-                                  return _vm.deleteUser(user.id)
+                                  return _vm.eliminarUsuario(user.id)
                                 }
                               }
                             },
-                            [_vm._v("Delete")]
+                            [_c("i", { staticClass: "fas fa-trash" })]
                           )
                         ])
                       ])
@@ -59382,7 +59467,7 @@ var render = function() {
         {
           staticClass: "modal fade",
           attrs: {
-            id: "addNew",
+            id: "modalUsuario",
             tabindex: "-1",
             role: "dialog",
             "aria-labelledby": "exampleModalCenterTitle",
@@ -59413,7 +59498,7 @@ var render = function() {
                       staticClass: "modal-title",
                       attrs: { id: "exampleModalLongTitle" }
                     },
-                    [_vm._v("Add New")]
+                    [_vm._v("Agregar usuario")]
                   ),
                   _vm._v(" "),
                   _c(
@@ -59430,7 +59515,7 @@ var render = function() {
                       staticClass: "modal-title",
                       attrs: { id: "exampleModalLongTitle" }
                     },
-                    [_vm._v("Update User")]
+                    [_vm._v("Actualizar usuario")]
                   ),
                   _vm._v(" "),
                   _vm._m(2)
@@ -59442,235 +59527,14 @@ var render = function() {
                     on: {
                       submit: function($event) {
                         $event.preventDefault()
-                        _vm.editMode ? _vm.updateUser() : _vm.createUser()
+                        _vm.editMode
+                          ? _vm.actualizarUsuario()
+                          : _vm.crearUsuario()
                       }
                     }
                   },
                   [
-                    _c("div", { staticClass: "modal-body" }, [
-                      _c(
-                        "div",
-                        { staticClass: "form-group" },
-                        [
-                          _c("label", [_vm._v("Name")]),
-                          _vm._v(" "),
-                          _c("input", {
-                            directives: [
-                              {
-                                name: "model",
-                                rawName: "v-model",
-                                value: _vm.form.name,
-                                expression: "form.name"
-                              }
-                            ],
-                            staticClass: "form-control",
-                            class: {
-                              "is-invalid": _vm.form.errors.has("name")
-                            },
-                            attrs: { type: "text", name: "name" },
-                            domProps: { value: _vm.form.name },
-                            on: {
-                              input: function($event) {
-                                if ($event.target.composing) {
-                                  return
-                                }
-                                _vm.$set(_vm.form, "name", $event.target.value)
-                              }
-                            }
-                          }),
-                          _vm._v(" "),
-                          _c("has-error", {
-                            attrs: { form: _vm.form, field: "name" }
-                          })
-                        ],
-                        1
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "div",
-                        { staticClass: "form-group" },
-                        [
-                          _c("label", [_vm._v("Email")]),
-                          _vm._v(" "),
-                          _c("input", {
-                            directives: [
-                              {
-                                name: "model",
-                                rawName: "v-model",
-                                value: _vm.form.email,
-                                expression: "form.email"
-                              }
-                            ],
-                            staticClass: "form-control",
-                            class: {
-                              "is-invalid": _vm.form.errors.has("email")
-                            },
-                            attrs: { type: "text", name: "email" },
-                            domProps: { value: _vm.form.email },
-                            on: {
-                              input: function($event) {
-                                if ($event.target.composing) {
-                                  return
-                                }
-                                _vm.$set(_vm.form, "email", $event.target.value)
-                              }
-                            }
-                          }),
-                          _vm._v(" "),
-                          _c("has-error", {
-                            attrs: { form: _vm.form, field: "email" }
-                          })
-                        ],
-                        1
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "div",
-                        { staticClass: "form-group" },
-                        [
-                          _c("label", [_vm._v("Type")]),
-                          _vm._v(" "),
-                          _c(
-                            "select",
-                            {
-                              directives: [
-                                {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.form.type,
-                                  expression: "form.type"
-                                }
-                              ],
-                              staticClass: "form-control",
-                              class: {
-                                "is-invalid": _vm.form.errors.has("type")
-                              },
-                              attrs: { name: "type" },
-                              on: {
-                                change: function($event) {
-                                  var $$selectedVal = Array.prototype.filter
-                                    .call($event.target.options, function(o) {
-                                      return o.selected
-                                    })
-                                    .map(function(o) {
-                                      var val =
-                                        "_value" in o ? o._value : o.value
-                                      return val
-                                    })
-                                  _vm.$set(
-                                    _vm.form,
-                                    "type",
-                                    $event.target.multiple
-                                      ? $$selectedVal
-                                      : $$selectedVal[0]
-                                  )
-                                }
-                              }
-                            },
-                            [
-                              _c("option", { attrs: { value: "" } }, [
-                                _vm._v("select any")
-                              ]),
-                              _vm._v(" "),
-                              _c("option", { attrs: { value: "Admin" } }, [
-                                _vm._v("Admin")
-                              ]),
-                              _vm._v(" "),
-                              _c("option", { attrs: { value: "editor" } }, [
-                                _vm._v("Editor")
-                              ]),
-                              _vm._v(" "),
-                              _c("option", { attrs: { value: "modarator" } }, [
-                                _vm._v("Modarator")
-                              ])
-                            ]
-                          ),
-                          _vm._v(" "),
-                          _c("has-error", {
-                            attrs: { form: _vm.form, field: "type" }
-                          })
-                        ],
-                        1
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "div",
-                        { staticClass: "form-group" },
-                        [
-                          _c("label", [_vm._v("Bio")]),
-                          _vm._v(" "),
-                          _c("textarea", {
-                            directives: [
-                              {
-                                name: "model",
-                                rawName: "v-model",
-                                value: _vm.form.bio,
-                                expression: "form.bio"
-                              }
-                            ],
-                            staticClass: "form-control",
-                            class: { "is-invalid": _vm.form.errors.has("bio") },
-                            attrs: { type: "text", name: "bio" },
-                            domProps: { value: _vm.form.bio },
-                            on: {
-                              input: function($event) {
-                                if ($event.target.composing) {
-                                  return
-                                }
-                                _vm.$set(_vm.form, "bio", $event.target.value)
-                              }
-                            }
-                          }),
-                          _vm._v(" "),
-                          _c("has-error", {
-                            attrs: { form: _vm.form, field: "bio" }
-                          })
-                        ],
-                        1
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "div",
-                        { staticClass: "form-group" },
-                        [
-                          _c("label", [_vm._v("Password")]),
-                          _vm._v(" "),
-                          _c("input", {
-                            directives: [
-                              {
-                                name: "model",
-                                rawName: "v-model",
-                                value: _vm.form.password,
-                                expression: "form.password"
-                              }
-                            ],
-                            staticClass: "form-control",
-                            class: {
-                              "is-invalid": _vm.form.errors.has("password")
-                            },
-                            attrs: { type: "password", name: "password" },
-                            domProps: { value: _vm.form.password },
-                            on: {
-                              input: function($event) {
-                                if ($event.target.composing) {
-                                  return
-                                }
-                                _vm.$set(
-                                  _vm.form,
-                                  "password",
-                                  $event.target.value
-                                )
-                              }
-                            }
-                          }),
-                          _vm._v(" "),
-                          _c("has-error", {
-                            attrs: { form: _vm.form, field: "password" }
-                          })
-                        ],
-                        1
-                      )
-                    ]),
+                    _vm._m(3),
                     _vm._v(" "),
                     _c("div", { staticClass: "modal-footer" }, [
                       _c(
@@ -59679,7 +59543,7 @@ var render = function() {
                           staticClass: "btn btn-secondary",
                           attrs: { type: "button", "data-dismiss": "modal" }
                         },
-                        [_vm._v("Close")]
+                        [_vm._v("Cerrar")]
                       ),
                       _vm._v(" "),
                       _c(
@@ -59696,7 +59560,7 @@ var render = function() {
                           staticClass: "btn btn-success",
                           attrs: { type: "submit" }
                         },
-                        [_vm._v("Update")]
+                        [_vm._v("Actualizar")]
                       ),
                       _vm._v(" "),
                       _c(
@@ -59713,7 +59577,7 @@ var render = function() {
                           staticClass: "btn btn-primary",
                           attrs: { type: "submit" }
                         },
-                        [_vm._v("Create")]
+                        [_vm._v("Registrar")]
                       )
                     ])
                   ]
@@ -59761,15 +59625,15 @@ var staticRenderFns = [
       _c("tr", [
         _c("th", [_vm._v("ID")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Name")]),
+        _c("th", [_vm._v("Nombre")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Email")]),
+        _c("th", [_vm._v("Apellido")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Type")]),
+        _c("th", [_vm._v("Correo")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Created At")]),
+        _c("th", [_vm._v("Tipo")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Action")])
+        _c("th", [_vm._v("Administración")])
       ])
     ])
   },
@@ -59789,6 +59653,68 @@ var staticRenderFns = [
       },
       [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
     )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-body" }, [
+      _c("div", { staticClass: "form-group" }, [
+        _c("label", [_vm._v("Nombre:")]),
+        _vm._v(" "),
+        _c("input", {
+          staticClass: "form-control",
+          attrs: { type: "text", name: "name", id: "name" }
+        })
+      ]),
+      _vm._v(" "),
+      _c("div", { staticClass: "form-group" }, [
+        _c("label", [_vm._v("Apellido:")]),
+        _vm._v(" "),
+        _c("input", {
+          staticClass: "form-control",
+          attrs: { id: "lastName", type: "text", name: "lastName" }
+        })
+      ]),
+      _vm._v(" "),
+      _c("div", { staticClass: "form-group" }, [
+        _c("label", [_vm._v("Correo:")]),
+        _vm._v(" "),
+        _c("input", {
+          staticClass: "form-control",
+          attrs: { type: "text", id: "email", name: "email" }
+        })
+      ]),
+      _vm._v(" "),
+      _c("div", { staticClass: "form-group" }, [
+        _c("label", [_vm._v("Tipo de usuario:")]),
+        _vm._v(" "),
+        _c(
+          "select",
+          { staticClass: "form-control", attrs: { name: "type", id: "type" } },
+          [
+            _c("option", { attrs: { value: "1" } }, [_vm._v("Administrador")]),
+            _vm._v(" "),
+            _c("option", { attrs: { value: "2" } }, [_vm._v("Medico")]),
+            _vm._v(" "),
+            _c("option", { attrs: { value: "3" } }, [
+              _vm._v("Medico asociado")
+            ]),
+            _vm._v(" "),
+            _c("option", { attrs: { value: "4" } }, [_vm._v("Secretaria")])
+          ]
+        )
+      ]),
+      _vm._v(" "),
+      _c("div", { staticClass: "form-group" }, [
+        _c("label", [_vm._v("Contraseña: ")]),
+        _vm._v(" "),
+        _c("input", {
+          staticClass: "form-control",
+          attrs: { type: "password", name: "password", id: "password" }
+        })
+      ])
+    ])
   }
 ]
 render._withStripped = true
@@ -74893,7 +74819,7 @@ var routes = [{
   path: '/profile',
   component: __webpack_require__(/*! ./components/Profile */ "./resources/js/components/Profile.vue")["default"]
 }, {
-  path: '/user',
+  path: '/users',
   component: __webpack_require__(/*! ./components/User */ "./resources/js/components/User.vue")["default"]
 }];
 Vue.component('example-component', __webpack_require__(/*! ./components/ExampleComponent.vue */ "./resources/js/components/ExampleComponent.vue")["default"]);

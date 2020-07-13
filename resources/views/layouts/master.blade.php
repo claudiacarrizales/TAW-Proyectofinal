@@ -27,7 +27,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
     
 
-    <nav class="main-header navbar navbar-light nav-flat" >
+    <nav class="main-header navbar navbar-light nav-flat" style="background: linear-gradient(to right, #6190e8, #a7bfe8);">
         
         <ul class="navbar-nav">
             <li class="nav-item">
@@ -40,7 +40,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
         <div class="btn-group">
 
-         <h4> Bienvenida al sistema: <b> {{Auth::user()->name}} </b> </h4>
+         <h4> Bienvenid@: <b> {{Auth::user()->name}} </b> </h4>
 
 
 
@@ -84,7 +84,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <router-link to="/user" class="nav-link ">
+                                <router-link to="/users" class="nav-link ">
                                     <i class="fas fa-clipboard-list nav-icon"></i>
 
                                    

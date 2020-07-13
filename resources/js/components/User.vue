@@ -21,39 +21,41 @@
         <div class="content">
             <div class="container">
                 <div class="row justify-content-center">
-                    <div class="col-12 mt-5">
+                    <div class="col-12 ">
+                        <!-- Tarjeta del modal -->
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">Responsive Hover Table</h3>
+                                <h3 class="card-title">Lista usuarios</h3>
 
                                 <div class="card-tools">
-                                    <button class="btn btn-success" @click="newModal">Create New</button>
+                                    <button class="btn btn-success" @click="newModal"> <i class="fas fa-user-plus"></i> Crear nuevo usuario</button>
 
                                 </div>
                             </div>
-                            <!-- /.card-header -->
+                            <!-- /.Cuerpo de la tarjeta -->
                             <div class="card-body table-responsive p-0">
+                                <!-- Tabla que despliega la informaci+on de los usuarios registrados -->
                                 <table class="table table-hover">
                                     <thead>
                                     <tr>
                                         <th>ID</th>
-                                        <th>Name</th>
-                                        <th>Email</th>
-                                        <th>Type</th>
-                                        <th>Created At</th>
-                                        <th>Action</th>
+                                        <th>Nombre</th>
+                                        <th>Apellido</th>
+                                        <th>Correo</th>
+                                        <th>Tipo</th>
+                                        <th>Administración</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     <tr v-for="user in users" :key="user.id">
                                         <td>{{user.id}}</td>
                                         <td>{{user.name}}</td>
+                                        <td>{{user.last_name}}</td>
                                         <td>{{user.email}}</td>
-                                        <td><span class="tag tag-success">{{user.type | capitalize}}</span></td>
-                                        <td><span class="tag tag-success">{{user.created_at | mydate}}</span></td>
+                                        <td><span class="tag tag-success">{{user.tipo}}</span></td>
                                         <td>
-                                        <button @click="editModal(user)" class="btn btn-success">Edit</button>
-                                        <button @click="deleteUser(user.id)" class="btn btn-success">Delete</button>
+                                        <button @click="modal_editar_usuario(user.id)" class="btn btn-warning"> <i class="fas fa-pen"></i> </button>
+                                        <button @click="eliminarUsuario(user.id)" class="btn btn-danger"> <i class="fas fa-trash"></i> </button>
                                         </td>
                                     </tr>
                                     </tbody>
@@ -66,58 +68,54 @@
                 </div>
             </div>
             <!-- Modal -->
-        <div class="modal fade" id="addNew" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal fade" id="modalUsuario" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 v-show="!editMode" class="modal-title" id="exampleModalLongTitle">Add New</h5>
-                        <h5 v-show="editMode" class="modal-title" id="exampleModalLongTitle">Update User</h5>
+                        <h5 v-show="!editMode" class="modal-title" id="exampleModalLongTitle">Agregar usuario</h5>
+                        <h5 v-show="editMode" class="modal-title" id="exampleModalLongTitle">Actualizar usuario</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <form @submit.prevent="editMode ? updateUser() : createUser()" >
+                    <form @submit.prevent="editMode ? actualizarUsuario() : crearUsuario()" >
                     <div class="modal-body">
                         <div class="form-group">
-                            <label>Name</label>
-                            <input v-model="form.name" type="text" name="name"
-                                   class="form-control" :class="{ 'is-invalid': form.errors.has('name') }">
-                            <has-error :form="form" field="name"></has-error>
-                        </div>
-                        <div class="form-group">
-                            <label>Email</label>
-                            <input v-model="form.email" type="text" name="email"
-                                   class="form-control" :class="{ 'is-invalid': form.errors.has('email') }">
-                            <has-error :form="form" field="email"></has-error>
-                        </div>
-                        <div class="form-group">
-                            <label>Type</label>
-                            <select class="form-control" name="type" v-model="form.type" :class="{ 'is-invalid': form.errors.has('type') }">
-                                <option value="">select any</option>
-                                <option value="Admin">Admin</option>
-                                <option value="editor">Editor</option>
-                                <option value="modarator">Modarator</option>
-                            </select>
-                            <has-error :form="form" field="type"></has-error>
-                        </div>
-                        <div class="form-group">
-                            <label>Bio</label>
-                            <textarea v-model="form.bio" type="text" name="bio"
-                                      class="form-control" :class="{ 'is-invalid': form.errors.has('bio') }"></textarea>
-                            <has-error :form="form" field="bio"></has-error>
+                            <label>Nombre:</label>
+                            <input type="text" name="name" id="name" class="form-control" >
                         </div>
 
                         <div class="form-group">
-                            <label>Password</label>
-                            <input v-model="form.password" type="password" name="password"
-                                   class="form-control" :class="{ 'is-invalid': form.errors.has('password') }">
-                            <has-error :form="form" field="password"></has-error>
+                            <label>Apellido:</label>
+                            <input id="lastName" type="text" name="lastName" class="form-control" >
                         </div>
+
+
+                        <div class="form-group">
+                            <label>Correo:</label>
+                            <input type="text" id="email" name="email" class="form-control">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Tipo de usuario:</label>
+                            <select class="form-control" name="type" id="type">
+                                <option value="1">Administrador</option>
+                                <option value="2">Medico</option>
+                                <option value="3">Medico asociado</option>
+                                <option value="4">Secretaria</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Contraseña: </label>
+                            <input type="password" name="password" id="password" class="form-control" >
+                        </div>
+
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button v-show="editMode" type="submit" class="btn btn-success">Update</button>
-                        <button v-show="!editMode" type="submit" class="btn btn-primary">Create</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        <button v-show="editMode" type="submit" class="btn btn-success">Actualizar</button>
+                        <button v-show="!editMode" type="submit" class="btn btn-primary">Registrar</button>
                     </div>
                     </form>
                 </div>
@@ -135,107 +133,214 @@
             return{
                 editMode : false,
                 users : {},
+                usuario_editar: {},
                 form : new Form({
                     id : '',
                     name : '',
+                    lastName : '',
                     email : '',
                     type : '',
-                    bio : '',
-                    password : '',
-                    photo : '',
+                    password : ''
                 })
             }
         },
         methods:{
 
-            updateUser(){
-                this.form.put('api/user/'+this.form.id)
-                    .then(() => {
-                        Fire.$emit('Afteredited');
-                        $('#addNew').modal('hide');
-                        toast.fire({
-                            type: 'success',
-                            title: 'User Updated successfully'
-                        });
-                    })
-                    .catch(() => {
-                        this.$Progress.fail();
+            //funcion para editar losd atos de un ususario
+            actualizarUsuario(){
+                //Se obtienen los campos del formulario
+                var nombre = document.getElementById("name");
+                var apellido = document.getElementById("lastName");
+                var tipo = document.getElementById("type");
+                var correo = document.getElementById("email");
+                var contrasena = document.getElementById("password");
+
+                this.usuario_editar.name = nombre.value;
+                this.usuario_editar.last_name = apellido.value;
+                this.usuario_editar.tipo = tipo.value;
+                this.usuario_editar.email = correo.value;
+                
+
+                //Se hace una peticion para editar los datos, asi como se manda los datos a traves de un objeto de javascript
+                axios.post('api/actualizarUsuario', this.usuario_editar )
+                .then((response)=>{
+                    //Si todo salio correctamente se despliega un peuqño mensaje
+                    Fire.$emit('despuesActualizar');
+                    $('#modalUsuario').modal('hide');
+                    toast.fire({
+                        type: 'success',
+                        title: 'Usuario actualizado correctamente'
                     });
+
+                    console.log(response);
+                })
+                .catch(() => {
+                    this.$Progress.fail();
+                });
+
+
             },
 
-            editModal(user){
+            modal_editar_usuario(id){
                 this.editMode = true;
-                this.form.reset();
-                $('#addNew').modal('show');
-                this.form.fill(user);
+
+                //Obitene los datos del usuario a eliminar
+                for(var i=0; i < this.users.length; i++){
+                    if( this.users[i].id == id){
+                        this.usuario_editar = this.users[i];
+                    }
+                }
+                
+                //Se obtienen los campos del formulario
+                var nombre = document.getElementById("name");
+                var apellido = document.getElementById("lastName");
+                var tipo = document.getElementById("type");
+                var correo = document.getElementById("email");
+                var contrasena = document.getElementById("password");
+
+                //Limpia los campos del formulario
+                nombre.value = "";
+                apellido.value = "";
+                tipo.value = "1";
+                correo.value = "";
+                contrasena.value = "";
+
+                //Abre el modal para esta vez para editar los datos
+                $('#modalUsuario').modal('show');
+
+                //Llena los campos con los del usuario a editar
+                nombre.value = this.usuario_editar.name;
+                apellido.value = this.usuario_editar.last_name;
+                tipo.value = this.usuario_editar.tipo;
+                correo.value = this.usuario_editar.email;
+                
+                
+                delete this.usuario_editar.password;
+                //contrasena.value = usuario_editar.password;
+
+                //this.form.fill(user);
             },
             newModal(){
                 this.editMode = false;
-                this.form.reset();
-                $('#addNew').modal('show');
+                var nombre = document.getElementById("name");
+                var apellido = document.getElementById("lastName");
+                var tipo = document.getElementById("type");
+                var correo = document.getElementById("email");
+                var contrasena = document.getElementById("password");
+
+                nombre.value = "";
+                apellido.value = "";
+                tipo.value = "1";
+                correo.value = "";
+                contrasena.value = "";
+
+                $('#modalUsuario').modal('show');
             },
 
-            deleteUser(id){
+            eliminarUsuario(id){
                 swal.fire({
-                    title: 'Are you sure?',
-                    text: "You won't be able to revert this!",
+                    title: 'Eliminar usuario',
+                    text: "¿Estás seguro que quieres eliminar a este usuario?",
                     type: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
                     cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, delete it!'
+                    confirmButtonText: 'Si'
                 }).then((result) => {
                     if (result.value) {
-                    this.form.delete('api/user/'+id)
-                        .then(() => {
 
-                                swal.fire(
-                                    'Deleted!',
-                                    'Your file has been deleted.',
-                                    'success'
-                                )
+                        axios.delete('api/eliminarUsuario/'+id).then((response)=>{
+                            
+                            //Pequeña alerta que confirma la eliminacion del usuario
+                            swal.fire(
+                                'Usuario eliminado',
+                                'El usuario ha sido eliminado',
+                                'success'
+                            )
 
-                            Fire.$emit('Afterdelete');
-                        })
-                        .catch(() => {
+                            Fire.$emit('despuesEliminar');
 
+                        }).catch(function (error) {
+                            // Maneja el error si la peticion no se llevo a cabo correctamente
+                            swal.fire(
+                                'Error al eliminar',
+                                'El usuario no se ha podido eliminar',
+                                'error'
+                            )
                         })
                     }
                 })
             },
 
+            //Metodo que permite obtener los datos de los usuarios registrados
+            cargarUsuarios(){
+                // Hace una peticion a los usuarios registrados en la bd
+                axios.get('api/usuarios').then(({data}) => (this.users = data.data))
 
-            loadUsers(){
-                axios.get('api/user')
-                    .then(({data}) => (this.users = data.data))
             },
 
-            createUser(){
-                this.$Progress.start();
-                this.form.post('api/user')
-                    .then(() => {
-                        Fire.$emit('AfterCreated');
-                        $('#addNew').modal('hide');
+            crearUsuario(){
+                
+
+                //Realiza una peticion de tipo post a la ruta registrarUsuarios que se encarga de guardar los datos pasados por medio del formulario del modal
+
+                //Se obtienen los campos del formulario
+                var nombre = document.getElementById("name");
+                var apellido = document.getElementById("lastName");
+                var tipo = document.getElementById("type");
+                var correo = document.getElementById("email");
+                var contrasena = document.getElementById("password");
+
+                //Valida que el formulario tenga todos los datos
+                if( nombre.value == "" || apellido.value == "" || tipo.value == "" || correo.value == "" || contrasena.value == "" ){
+                    //Si no es asi aparece un pequeño mensaje de error
+                    toast.fire({
+                            type: 'error',
+                            title: 'Llene todos los datos'
+                        });
+                }else{
+                    this.$Progress.start();
+                    axios.post('api/registrarUsuario', {name: nombre.value, lastName: apellido.value, type: tipo.value , email: correo.value, password: contrasena.value })
+                    .then((response)=>{
+                        
+                        //Si la respuesta responde todo bien
+                        //Se ejecuta la animacion de la barrita
+                        Fire.$emit('despuesCrear');
+
+                        //Una pequeña alerta en la esquina
                         toast.fire({
                             type: 'success',
-                            title: 'User created successfully'
+                            title: 'Usuario creado correctamente'
                         });
-
                         this.$Progress.finish();
-                    })
-                    .catch(() => {
 
-                    });
+                        //El modal que contiene el formulario desaparece
+                        $('#modalUsuario').modal('hide');
+
+                        nombre.value = "";
+                        apellido.value = "";
+                        tipo.value = "1";
+                        correo.value = "";
+                        contrasena.value = "";
+
+                    }).catch(function (error) {
+                        // Maneja el error si la peticion no se llevo a cabo correctamente
+                        this.$Progress.fail();
+                        console.log(error);
+                    })
+
+                }
 
             }
         },
 
         created(){
-            this.loadUsers();
-            Fire.$on('AfterCreated',() => this.loadUsers());
-            Fire.$on('Afterdelete',() => this.loadUsers());
-            Fire.$on('Afteredited',() => this.loadUsers());
-            // setInterval( () => this.loadUsers(),3000);
+            this.cargarUsuarios();
+            Fire.$on('despuesCrear',() => this.cargarUsuarios());
+            Fire.$on('despuesEliminar',() => this.cargarUsuarios());
+            Fire.$on('despuesActualizar',() => this.cargarUsuarios());
+
+            
         },
 
         filters: {

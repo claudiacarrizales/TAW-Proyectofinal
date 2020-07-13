@@ -44,7 +44,7 @@ window.Fire = new Vue();
 let routes = [
     { path: '/dashboard', component: require('./components/Dashboard').default },
     { path: '/profile', component: require('./components/Profile').default },
-    { path: '/user', component: require('./components/User').default }
+    { path: '/users', component: require('./components/User').default }
 ];
 
 

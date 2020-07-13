@@ -11,14 +11,23 @@
 |
 */
 
-Route::get('/', function () {
+/*Route::get('/', function () {
     return view('auth.login');
-});
+});*/
 
 Auth::routes();
 
+Route::get('/', 'HomeController@index')->name('home');
 Route::get('/home', 'HomeController@index')->name('home');
 
 
 //Route::get('{path}','HomeController@index')->where('path','([A-z\d-\/_.]+)?');
+
 Route::get('/{any}', 'HomeController@index')->where('any', '.*');
+
+
+Route::group(['middleware'=>['access:1']], function(){
+
+
+});
+
