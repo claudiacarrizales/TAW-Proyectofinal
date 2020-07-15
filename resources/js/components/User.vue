@@ -52,7 +52,22 @@
                                         <td>{{user.name}}</td>
                                         <td>{{user.last_name}}</td>
                                         <td>{{user.email}}</td>
-                                        <td><span class="tag tag-success">{{user.tipo}}</span></td>
+                                        
+                                        <td>
+                                            <span v-if="user.tipo == '1'" class="tag tag-success">
+                                                Administrador
+                                            </span>
+                                            <span v-else-if="user.tipo == '2'" class="tag tag-success"> 
+                                                Medico
+                                            </span>
+                                            <span v-else-if="user.tipo == '3'" class="tag tag-success"> 
+                                                Medico asociado
+                                            </span>
+                                            <span v-else-if="user.tipo == '4'" class="tag tag-success"> 
+                                                Secretaria
+                                            </span>
+                                        </td>
+                                        
                                         <td>
                                         <button @click="modal_editar_usuario(user.id)" class="btn btn-warning"> <i class="fas fa-pen"></i> </button>
                                         <button @click="eliminarUsuario(user.id)" class="btn btn-danger"> <i class="fas fa-trash"></i> </button>
@@ -68,59 +83,59 @@
                 </div>
             </div>
             <!-- Modal -->
-        <div class="modal fade" id="modalUsuario" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 v-show="!editMode" class="modal-title" id="exampleModalLongTitle">Agregar usuario</h5>
-                        <h5 v-show="editMode" class="modal-title" id="exampleModalLongTitle">Actualizar usuario</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+            <div class="modal fade" id="modalUsuario" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 v-show="!editMode" class="modal-title" id="exampleModalLongTitle">Agregar usuario</h5>
+                            <h5 v-show="editMode" class="modal-title" id="exampleModalLongTitle">Actualizar usuario</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form @submit.prevent="editMode ? actualizarUsuario() : crearUsuario()" >
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>Nombre:</label>
+                                <input type="text" name="name" id="name" class="form-control" >
+                            </div>
+
+                            <div class="form-group">
+                                <label>Apellido:</label>
+                                <input id="lastName" type="text" name="lastName" class="form-control" >
+                            </div>
+
+
+                            <div class="form-group">
+                                <label>Correo:</label>
+                                <input type="text" id="email" name="email" class="form-control">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Tipo de usuario:</label>
+                                <select class="form-control" name="type" id="type">
+                                    <option value="1">Administrador</option>
+                                    <option value="2">Medico</option>
+                                    <option value="3">Medico asociado</option>
+                                    <option value="4">Secretaria</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label v-show="!editMode">Contraseña: </label>
+                                <input v-show="!editMode" type="password" name="password" id="password" class="form-control" >
+                            </div>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                            <button v-show="editMode" type="submit" class="btn btn-success">Actualizar</button>
+                            <button v-show="!editMode" type="submit" class="btn btn-primary">Registrar</button>
+                        </div>
+                        </form>
                     </div>
-                    <form @submit.prevent="editMode ? actualizarUsuario() : crearUsuario()" >
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label>Nombre:</label>
-                            <input type="text" name="name" id="name" class="form-control" >
-                        </div>
-
-                        <div class="form-group">
-                            <label>Apellido:</label>
-                            <input id="lastName" type="text" name="lastName" class="form-control" >
-                        </div>
-
-
-                        <div class="form-group">
-                            <label>Correo:</label>
-                            <input type="text" id="email" name="email" class="form-control">
-                        </div>
-
-                        <div class="form-group">
-                            <label>Tipo de usuario:</label>
-                            <select class="form-control" name="type" id="type">
-                                <option value="1">Administrador</option>
-                                <option value="2">Medico</option>
-                                <option value="3">Medico asociado</option>
-                                <option value="4">Secretaria</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Contraseña: </label>
-                            <input type="password" name="password" id="password" class="form-control" >
-                        </div>
-
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                        <button v-show="editMode" type="submit" class="btn btn-success">Actualizar</button>
-                        <button v-show="!editMode" type="submit" class="btn btn-primary">Registrar</button>
-                    </div>
-                    </form>
                 </div>
             </div>
-        </div>
         </div>
     </div>
 </template>
@@ -134,14 +149,7 @@
                 editMode : false,
                 users : {},
                 usuario_editar: {},
-                form : new Form({
-                    id : '',
-                    name : '',
-                    lastName : '',
-                    email : '',
-                    type : '',
-                    password : ''
-                })
+
             }
         },
         methods:{
@@ -220,6 +228,7 @@
 
                 //this.form.fill(user);
             },
+
             newModal(){
                 this.editMode = false;
                 var nombre = document.getElementById("name");

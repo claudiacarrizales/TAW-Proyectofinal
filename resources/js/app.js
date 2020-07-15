@@ -16,7 +16,9 @@ Vue.component(AlertError.name, AlertError);
 //moment js
 import moment from "moment";
 
+import VueFilterDateFormat from '@vuejs-community/vue-filter-date-format';
 
+Vue.use(VueFilterDateFormat);
 
 
 import VueProgressBar from 'vue-progressbar'
@@ -40,11 +42,14 @@ window.toast = toast;
 
 window.Fire = new Vue();
 
-
+//Rutas para los componentes de vue js
 let routes = [
+    { path: '/', component: require('./components/Dashboard').default },
     { path: '/dashboard', component: require('./components/Dashboard').default },
     { path: '/profile', component: require('./components/Profile').default },
-    { path: '/users', component: require('./components/User').default }
+    { path: '/users', component: require('./components/User').default },
+    { path: '/enfermedades', component: require('./components/Enfermedades').default },
+    { path: '/pacientes', component: require('./components/Pacientes').default}
 ];
 
 
@@ -53,11 +58,11 @@ Vue.component('example-component', require('./components/ExampleComponent.vue').
 
 const router = new VueRouter({
     mode :'history',
-    routes // short for `routes: routes`
+    routes 
 });
 
 
-Vue.filter('mydate',function (created) {
+Vue.filter('fecha_espaniol',function (created) {
    return moment(created).format('MMM Do YY');
 });
 

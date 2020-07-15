@@ -27,6 +27,7 @@
         "@fortawesome/fontawesome-svg-core": "^1.2.29",
         "@fortawesome/free-solid-svg-icons": "^5.13.1",
         "@fortawesome/vue-fontawesome": "^0.1.10",
+        "@vuejs-community/vue-filter-date-format": "^1.4.0",
         "admin-lte": "^3.0.0-alpha.2",
         "moment": "^2.24.0",
         "sweetalert2": "^8.18.6",

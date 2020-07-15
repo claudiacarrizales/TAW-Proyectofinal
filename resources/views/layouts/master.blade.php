@@ -10,7 +10,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
 
-    <title>Clinica </title>
+    <title> Clinica </title>
 
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="{{asset('css/app.css')}}">
@@ -70,10 +70,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
                             <i class="nav-icon fas fa-tachometer-alt"></i>
                             <p>
                                 Panel de control
-
                             </p>
                         </router-link>
                     </li>
+
                     <li class="nav-item has-treeview ">
                         <a href="#" class="nav-link ">
                             <i class="nav-icon fas fa-users"></i>
@@ -86,23 +86,63 @@ scratch. This page gets rid of all links and provides the needed markup only.
                             <li class="nav-item">
                                 <router-link to="/users" class="nav-link ">
                                     <i class="fas fa-clipboard-list nav-icon"></i>
-
-                                   
                                     <p>Lista de usuarios</p>
                                 </router-link>
                             </li>
                         </ul>
                     </li>
-                    <li class="nav-item">
+
+
+                    <li class="nav-item has-treeview ">
+                        <a href="#" class="nav-link ">
+                            <i class="fas fa-bacterium"></i>
+                            <p>
+                                Enfermedades
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <router-link to="/enfermedades" class="nav-link ">
+                                    <i class="fas fa-bacterium"></i>                                 
+                                    <p>Lista de enfermedades</p>
+                                </router-link>
+                            </li>
+                        </ul>
+                    </li>
+
+
+                    <li class="nav-item has-treeview ">
+                        <a href="#" class="nav-link ">
+                        <i class="fas fa-hospital-user"></i>
+                            <p>
+                                Pacientes
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <router-link to="/pacientes" class="nav-link ">
+                                    <i class="fas fa-clipboard-list"></i>                                 
+                                    <p>Lista de pacientes</p>
+                                </router-link>
+                            </li>
+                        </ul>
+                    </li>
+
+
+                    <!-- <li class="nav-item">
                         <router-link to="/profile" class="nav-link">
-                            
                         <i class="nav-icon fas fa-user-cog"></i>
                             
                             <p>
                                 Editar perfil
                             </p>
                         </router-link>
-                    </li>
+                    </li> -->
+
+
+
                     <li class="nav-item">
                         <a  class="nav-link" href="{{ route('logout') }}"
                             onclick="event.preventDefault();
