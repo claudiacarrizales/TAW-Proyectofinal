@@ -32,6 +32,11 @@ Vue.use(VueProgressBar, {
 import swal from 'sweetalert2';
 window.swal = swal;
 
+import FullCalendar from '@fullcalendar/vue'
+import dayGridPlugin from '@fullcalendar/daygrid'
+
+
+
 const toast = swal.mixin({
     toast: true,
     position: 'top-end',
@@ -49,7 +54,9 @@ let routes = [
     { path: '/profile', component: require('./components/Profile').default },
     { path: '/users', component: require('./components/User').default },
     { path: '/enfermedades', component: require('./components/Enfermedades').default },
-    { path: '/pacientes', component: require('./components/Pacientes').default}
+    { path: '/pacientes', component: require('./components/Pacientes').default},
+    { path: '/agendarcita', component: require('./components/AgendarCita').default },
+    { path: '/citas', component: require('./components/Citas').default }
 ];
 
 

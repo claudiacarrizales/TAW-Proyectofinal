@@ -18,8 +18,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
     <script src="https://kit.fontawesome.com/4e3c5501e7.js" crossorigin="anonymous"></script>
 
+    <script src="https://code.iconify.design/1/1.0.7/iconify.min.js"></script>
+
     <!-- Google Font: Source Sans Pro -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.css">
 
 </head>
 <body class="hold-transition sidebar-mini">
@@ -41,11 +45,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <div class="btn-group">
 
          <h4> Bienvenid@: <b> {{Auth::user()->name}} </b> </h4>
-
-
-
-        
-        
     </nav>
 
     <!-- Main Sidebar Container -->
@@ -95,7 +94,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
                     <li class="nav-item has-treeview ">
                         <a href="#" class="nav-link ">
-                            <i class="fas fa-bacterium"></i>
+                            <i class="fas fa-bacterium nav-icon"></i>
                             <p>
                                 Enfermedades
                                 <i class="right fas fa-angle-left"></i>
@@ -104,7 +103,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
                                 <router-link to="/enfermedades" class="nav-link ">
-                                    <i class="fas fa-bacterium"></i>                                 
+                                    <i class="fas fa-bacterium nav-icon"></i>                                 
                                     <p>Lista de enfermedades</p>
                                 </router-link>
                             </li>
@@ -114,7 +113,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
                     <li class="nav-item has-treeview ">
                         <a href="#" class="nav-link ">
-                        <i class="fas fa-hospital-user"></i>
+                        <i class="fas fa-hospital-user nav-icon"></i>
                             <p>
                                 Pacientes
                                 <i class="right fas fa-angle-left"></i>
@@ -123,13 +122,42 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
                                 <router-link to="/pacientes" class="nav-link ">
-                                    <i class="fas fa-clipboard-list"></i>                                 
+                                    <i class="fas fa-clipboard-list nav-icon"></i>                                 
                                     <p>Lista de pacientes</p>
                                 </router-link>
                             </li>
                         </ul>
                     </li>
 
+                    <li class="nav-item has-treeview ">
+                        <a href="#" class="nav-link ">
+                            <i class="fas fa-calendar-alt nav-icon"></i>
+                            <p>
+                                Citas
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <router-link to="/agendarcita" class="nav-link ">
+                                    <i class="fas fa-calendar-plus nav-icon"></i>
+                                    <p>Agendar cita</p>
+                                </router-link>
+                            </li>
+                        </ul>
+
+                        <!--<ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <router-link to="/citas" class="nav-link ">
+                                    <i class="fas fa-clipboard-list nav-icon"></i>                                 
+                                    <p>Listado de citas</p>
+                                </router-link>
+                            </li>
+                        </ul>-->
+                    </li>
+
+                    
 
                     <!-- <li class="nav-item">
                         <router-link to="/profile" class="nav-link">

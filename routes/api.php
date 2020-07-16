@@ -24,6 +24,7 @@ Route::get('/usuarios', 'UserController@index')->name('usuarios.index');
 Route::post('/registrarUsuario', 'UserController@store')->name('usuarios.store');
 Route::delete('/eliminarUsuario/{id}', 'UserController@destroy')->name('usuarios.destroy');
 Route::post('/actualizarUsuario', 'UserController@update')->name('usuarios.update');
+Route::get('/obtenerDoctores', 'UserController@doctores')->name('usuarios.doctores');
 
 //Rutas qeu controlan las enfermedades
 Route::get('/obtenerEnfermedades', 'EnfermedadesController@index')->name('enfermedades.index');
@@ -33,3 +34,9 @@ Route::get('/obtenerPacientes', 'PacientesController@index')->name('pacientes.in
 Route::post('/registrarPaciente', 'PacientesController@store')->name('pacientes.store');
 Route::post('/actualizarPaciente', 'PacientesController@update')->name('pacientes.update');
 Route::delete('/eliminarPaciente/{id}', 'PacientesController@destroy')->name('pacientes.delete');
+
+//Rutas que controlan la informacion de las citas
+//Route::apiResource('/cita', 'CitasController');
+Route::get('/cita', 'CitasController@index')->name('pacientes.index');
+Route::post('/agendarcita', 'CitasController@store')->name('pacientes.index');
+Route::delete('/eliminarcita/{id}', 'CitasController@destroy')->name('pacientes.destroy');

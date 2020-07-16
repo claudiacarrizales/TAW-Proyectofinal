@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
+use App\Cita;
+use App\Http\Resources\CalendarResource;
+use Symfony\Component\HttpFoundation\Response;
 
-
-class UserController extends Controller
+class CitasController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,8 +16,8 @@ class UserController extends Controller
      */
     public function index()
     {
-        return User::latest()->paginate(10);
-        //return 'Prueba de funcionamiento';
+        //
+        return CalendarResource::collection(Cita::all());
     }
 
     /**
@@ -39,19 +38,14 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
- 
-         return User::create([
-             'name' => $request['name'],
-             'last_name' => $request['lastName'],
-             'email' => $request['email'],
-             'tipo' => $request['type'],
-             'password' => Hash::make($request['password']),
-         ]);
+        //
+        $new_calendar = Cita::create($request->all());
 
-
-        return "correcto";
-
-
+        return response()->json([
+            'data' => new CalendarResource($new_calendar),
+            'message' => 'Successfully added new event!',
+            'status' => Response::HTTP_CREATED
+        ]);
     }
 
     /**
@@ -60,9 +54,10 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Cita $cita)
     {
         //
+        return response($cita, Response::HTTP_OK);
     }
 
     /**
@@ -76,14 +71,23 @@ class UserController extends Controller
         //
     }
 
-
-    public function update(Request $request)
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, Cita $cita)
     {
-        $user = User::findOrFail( $request->id );
-        $user->update($request->all());
-        return ['message' => 'updated'];
-
-        //return $request;
+        //
+        $cita->update($request->all());
+        
+        return response()->json([
+            'data' => new CalendarResource($calendar),
+            'message' => 'Successfully updated event!',
+            'status' => Response::HTTP_ACCEPTED
+        ]);
     }
 
     /**
@@ -94,13 +98,8 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        $user = User::findOrFail($id);
-        $user->delete();
+        $cita = Cita::findOrFail($id);
+        $cita->delete();
         return ['message' => 'data deleted'];
-    }
-
-    public function doctores()
-    {
-        return User::all()->where('tipo', '=', '2');
     }
 }

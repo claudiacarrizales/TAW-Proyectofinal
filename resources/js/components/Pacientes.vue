@@ -22,6 +22,7 @@
             <div class="container">
                 <div class="row justify-content-center">
                     <div class="col-12 ">
+                    
                         <!-- Tarjeta del modal -->
                         <div class="card">
                             <div class="card-header">
@@ -35,7 +36,7 @@
                             <!-- /.Cuerpo de la tarjeta -->
                             <div class="card-body table-responsive p-0">
                                 <!-- Tabla que despliega la informaci+on de los usuarios registrados -->
-                                <table class="table table-hover">
+                                <table class="table table-hover" id="datatable">
                                     <thead>
                                     <tr>
                                         <th>ID</th>
@@ -385,16 +386,6 @@
             Fire.$on('despuesCrear',() => this.cargarPacientes());
             Fire.$on('despuesEliminar',() => this.cargarPacientes());
             Fire.$on('despuesActualizar',() => this.cargarPacientes());
-
-            
-        },
-
-        filters: {
-            capitalize: function (value) {
-                if (!value) return ''
-                value = value.toString()
-                return value.charAt(0).toUpperCase() + value.slice(1)
-            },
         }
     }
 </script>
@@ -402,3 +393,4 @@
 <style scoped>
 
 </style>
+

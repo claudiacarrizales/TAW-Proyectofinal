@@ -29,7 +29,6 @@
 
                                 <div class="card-tools">
                                     <button class="btn btn-success" @click="newModal"> <i class="fas fa-user-plus"></i> Crear nuevo usuario</button>
-
                                 </div>
                             </div>
                             <!-- /.Cuerpo de la tarjeta -->
