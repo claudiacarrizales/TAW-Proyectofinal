@@ -35,8 +35,6 @@ window.swal = swal;
 import FullCalendar from '@fullcalendar/vue'
 import dayGridPlugin from '@fullcalendar/daygrid'
 
-
-
 const toast = swal.mixin({
     toast: true,
     position: 'top-end',
@@ -56,7 +54,9 @@ let routes = [
     { path: '/enfermedades', component: require('./components/Enfermedades').default },
     { path: '/pacientes', component: require('./components/Pacientes').default},
     { path: '/agendarcita', component: require('./components/AgendarCita').default },
-    { path: '/citas', component: require('./components/Citas').default }
+    { path: '/citas', component: require('./components/Citas').default },
+    { path: '/medicamentos', component: require('./components/Medicamentos').default },
+    { path: '/alergias', component: require('./components/Alergias').default }
 ];
 
 

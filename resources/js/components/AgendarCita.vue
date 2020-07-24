@@ -52,12 +52,12 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 v-show="!editMode" class="modal-title" id="exampleModalLongTitle">Registrar cita</h5>
-                            <h5 v-show="editMode" class="modal-title" id="exampleModalLongTitle">Actualizar paciente</h5>
+                            <h5 v-show="editMode" class="modal-title" id="exampleModalLongTitle">Actualizar cita</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                        <form @submit.prevent="editMode ? actualizarUsuario() : agregarCita()" >
+                        <form @submit.prevent="editMode ? actualizarCita() : agregarCita()" >
                         <div class="modal-body">
 
                             <div class="form-group">
@@ -120,6 +120,8 @@
                             </button>
                         </div>
                         <div class="modal-body">
+
+                            
                             <label> <b> Detalles: </b> </label>
                             <span id="spanDetalles"> </span>
 
@@ -144,8 +146,8 @@
 
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">  Cerrar</button>
-                            <!--<button  type="submit" class="btn btn-warning">  Editar </button>-->
-                            <button @click="borrarCita" class="btn btn-danger">  Eliminar </button>
+                            <button  @click="editarCita" class="btn btn-warning"> <i class="fas fa-edit"></i>  Editar </button>
+                            <button @click="borrarCita" class="btn btn-danger"> <i class="fas fa-trash"></i> Eliminar </button>
                         </div>
 
                     </div>
@@ -175,16 +177,9 @@ export default {
         return {
             calendarPlugins: [dayGridPlugin, interactionPlugin],
             events: [],
-            citas: "", //Las citas son traidas de la base de datos en la tabla Citas
+            z: "", //Las citas son traidas de la base de datos en la tabla Citas
             pacientes : {},
             doctores : {},
-
-            newEvent: {
-                event_name: "",
-                start_date: "",
-                end_date: ""
-            },
-
             newCita:{
                 id: "",
                 fecha: "",
@@ -196,25 +191,26 @@ export default {
                 pago: "",
                 observaciones: ""
             },
-            addingMode: true,
             editMode: false,
             idCitaEliminar: 0,
-            indexToUpdate: ""
         };
     },
+
     //Metodo que se ejecuta al inicializar el compoenente
     created() {
         this.getEvents();
         this.cargarPacientes();
-        Fire.$on('despuesEliminar',() => this.getEvents() );
     },
+
     methods: {
 
         //Obtiene todas las citas registradas en la base de datos
         getEvents() {
             axios.get("/api/cita")
             .then(resp => {
+                //Se obtienen los registros de la tabla citas
                 this.citas = resp.data.data;
+                
                 for( var i=0; i < this.citas.length; i++ ){
                     var evento = new Object();
                     evento.id = this.citas[i].id;
@@ -258,7 +254,7 @@ export default {
                 paciente_id: paciente.value
             }
             
-            //Aqui se valida para que no se registre una cita con la misma hora y dia que otro ya registrada previamnete
+            //Aqui se valida para que no se registre una cita con la misma hora y dia que otra ya registrada previamnete
             for( var i=0; i < this.citas.length; i++ )
             {
                 if( this.citas[i].fecha == fecha.value && hora.value.split(':')[0] == this.citas[i].hora.split(':')[0])
@@ -304,9 +300,86 @@ export default {
             
         },
 
+        actualizarCita(){
+
+            var fecha = document.getElementById("fecha");
+            var hora = document.getElementById("hora");
+            var detalles = document.getElementById("detalles");
+            var doctor = document.getElementById("doctor");
+            var paciente = document.getElementById("paciente");
+            var error = false;
+
+            var cita_data = {
+                id: this.idCitaEliminar,
+                fecha: fecha.value,
+                hora: hora.value,
+                detalles: detalles.value,
+                doctor_id: doctor.value,
+                paciente_id: paciente.value
+            }
+
+            //Aqui se valida para que no se registre una cita con la misma hora y dia que otra ya registrada previamnete
+            for( var i=0; i < this.citas.length; i++ )
+            {
+                if( this.citas[i].id != this.idCitaEliminar && this.citas[i].fecha == fecha.value && hora.value.split(':')[0] == this.citas[i].hora.split(':')[0])
+                {
+                    error = true;
+                }
+            }
+
+            
+            if(error){
+                swal.fire(
+                    'Error al crear cita',
+                    'Ya existe una cita en esta hora',
+                    'error'
+                )
+
+            }else{
+
+                axios.post("/api/actualizarcita", {
+                    ...cita_data
+                })
+                .then(data => {
+                    this.events = [];
+                    this.getEvents();
+                    $('#modalCita').modal('hide');
+
+                    swal.fire(
+                        'Cita acualizada',
+                        'La cita se ha actualizado con exito',
+                        'success'
+                    )
+
+                    fecha.value = "";
+                    hora.value = "";
+                    detalles.value = "";
+                })
+                .catch(err =>
+                    console.log("No se pudo guardar la cita", err.response.data)
+                );
+
+            }
+
+
+
+        },
+
         //Abre el modal que contiene el formulario que tiene los campos para crear una cita nueva
         nuevaCitaModal() {
+            this.editMode = false;
             $('#modalCita').modal('show');
+
+            var fecha = document.getElementById("fecha");
+            var hora = document.getElementById("hora");
+            var detalles = document.getElementById("detalles");
+            var doctor = document.getElementById("doctor");
+            var paciente = document.getElementById("paciente");
+
+            fecha.value = "";
+            hora.value = "";
+            detalles.value = "";
+
         },
 
         //Muestra los datos de una cita en el modal, ahi mismo se encuentran varios opciones de amdinistracion
@@ -345,6 +418,35 @@ export default {
 
             }
             this.idCitaEliminar = arg.event.id;
+        },
+
+        editarCita(){
+            this.editMode = true;
+            $('#modalCitaChecar').modal('hide');
+            $('#modalCita').modal('show');
+            
+            var fecha = document.getElementById("fecha");
+            var hora = document.getElementById("hora");
+            var detalles = document.getElementById("detalles");
+            var doctor = document.getElementById("doctor");
+            var paciente = document.getElementById("paciente");
+
+            for(var i = 0; i < this.citas.length; i++){
+                if( this.idCitaEliminar == this.citas[i].id ){
+
+                    fecha.value = this.citas[i].fecha;
+                    hora.value = this.citas[i].hora;
+                    detalles.value = this.citas[i].detalles;
+                    doctor.value = this.citas[i].doctor_id;
+                    paciente.value = this.citas[i].paciente_id;
+                    break;
+                }
+
+            }
+
+            console.log(this.citas);
+
+
         },
 
         //Metodo que se encarga de borrar una cita seleccionada en el calendario
@@ -393,11 +495,6 @@ export default {
             
             
 
-        }
-    },
-    watch: {
-        indexToUpdate() {
-            return this.indexToUpdate;
         }
     }
 };

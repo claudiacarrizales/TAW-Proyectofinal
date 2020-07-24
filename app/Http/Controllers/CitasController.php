@@ -78,16 +78,12 @@ class CitasController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Cita $cita)
+    public function update(Request $request)
     {
         //
+        $cita = Cita::findOrFail( $request->id );
         $cita->update($request->all());
-        
-        return response()->json([
-            'data' => new CalendarResource($calendar),
-            'message' => 'Successfully updated event!',
-            'status' => Response::HTTP_ACCEPTED
-        ]);
+        return ['mensaje' => 'cita actualizada correctamente'];
     }
 
     /**

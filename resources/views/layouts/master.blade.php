@@ -157,6 +157,44 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         </ul>-->
                     </li>
 
+
+                    <li class="nav-item has-treeview ">
+                        <a href="#" class="nav-link ">
+                            <i class="fas fa-pills nav-icon"></i>
+                            <p>
+                                Medicamentos
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <router-link to="/medicamentos" class="nav-link ">
+                                    <i class="fas fa-clipboard-list nav-icon"></i>                                 
+                                    <p>Lista de medicamentos</p>
+                                </router-link>
+                            </li>
+                        </ul>
+                    </li>
+
+
+                    <li class="nav-item has-treeview ">
+                        <a href="#" class="nav-link ">
+                            <i class="fas fa-allergies nav-icon"></i>
+                            <p>
+                                Alergias
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <router-link to="/alergias" class="nav-link ">
+                                    <i class="fas fa-clipboard-list nav-icon"></i>                                 
+                                    <p>Lista de alergias</p>
+                                </router-link>
+                            </li>
+                        </ul>
+                    </li>
+
                     
 
                     <!-- <li class="nav-item">

@@ -15249,6 +15249,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
 //Se importan los modulos necesarios para full calendar, el calendario que se renderiza en el componente
 
 
@@ -15264,14 +15265,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     return {
       calendarPlugins: [_fullcalendar_daygrid__WEBPACK_IMPORTED_MODULE_1__["default"], _fullcalendar_interaction__WEBPACK_IMPORTED_MODULE_2__["default"]],
       events: [],
-      citas: "",
+      z: "",
+      //Las citas son traidas de la base de datos en la tabla Citas
       pacientes: {},
       doctores: {},
-      newEvent: {
-        event_name: "",
-        start_date: "",
-        end_date: ""
-      },
       newCita: {
         id: "",
         fecha: "",
@@ -15283,39 +15280,33 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         pago: "",
         observaciones: ""
       },
-      addingMode: true,
       editMode: false,
-      idCitaEliminar: 0,
-      indexToUpdate: ""
+      idCitaEliminar: 0
     };
   },
-  //Metodo que se ejecuta al inciciar el compoenente
+  //Metodo que se ejecuta al inicializar el compoenente
   created: function created() {
-    var _this = this;
-
     this.getEvents();
     this.cargarPacientes();
-    Fire.$on('despuesEliminar', function () {
-      return _this.getEvents();
-    });
   },
   methods: {
     //Obtiene todas las citas registradas en la base de datos
     getEvents: function getEvents() {
-      var _this2 = this;
+      var _this = this;
 
       axios__WEBPACK_IMPORTED_MODULE_3___default.a.get("/api/cita").then(function (resp) {
-        _this2.citas = resp.data.data;
+        //Se obtienen los registros de la tabla citas
+        _this.citas = resp.data.data;
 
-        for (var i = 0; i < _this2.citas.length; i++) {
+        for (var i = 0; i < _this.citas.length; i++) {
           var evento = new Object();
-          evento.id = _this2.citas[i].id;
-          evento.title = _this2.citas[i].detalles;
-          evento.start = _this2.citas[i].fecha;
+          evento.id = _this.citas[i].id;
+          evento.title = _this.citas[i].detalles;
+          evento.start = _this.citas[i].fecha;
 
-          _this2.events.push(evento);
+          _this.events.push(evento);
 
-          console.log(_this2.events);
+          console.log(_this.events);
         }
       })["catch"](function (err) {
         return console.log(err.response.data);
@@ -15323,22 +15314,22 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     },
     //Carga los datos de los pacientes para que sean mostrados en el select de pacientes al momento de realizar una cita nueva, ah y tambien los doctores, es decir los usuarios que ene el campo tipo tengan un 2
     cargarPacientes: function cargarPacientes() {
-      var _this3 = this;
+      var _this2 = this;
 
       axios__WEBPACK_IMPORTED_MODULE_3___default.a.get('api/obtenerPacientes').then(function (_ref) {
         var data = _ref.data;
-        _this3.pacientes = data;
+        _this2.pacientes = data;
         console.log(data);
       });
       axios__WEBPACK_IMPORTED_MODULE_3___default.a.get('api/obtenerDoctores').then(function (_ref2) {
         var data = _ref2.data;
-        _this3.doctores = data;
+        _this2.doctores = data;
         console.log(data);
       });
     },
     //Almacena los datos de la cita obteniendo los datos del formulario del modal
     agregarCita: function agregarCita() {
-      var _this4 = this;
+      var _this3 = this;
 
       var fecha = document.getElementById("fecha");
       var hora = document.getElementById("hora");
@@ -15352,7 +15343,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         detalles: detalles.value,
         doctor_id: doctor.value,
         paciente_id: paciente.value
-      }; //Aqui se valida para que no se registre una cita con la misma hora y dia que otro ya registrada previamnete
+      }; //Aqui se valida para que no se registre una cita con la misma hora y dia que otra ya registrada previamnete
 
       for (var i = 0; i < this.citas.length; i++) {
         if (this.citas[i].fecha == fecha.value && hora.value.split(':')[0] == this.citas[i].hora.split(':')[0]) {
@@ -15364,9 +15355,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         swal.fire('Error al crear cita', 'Ya existe una cita en esta hora', 'error');
       } else {
         axios__WEBPACK_IMPORTED_MODULE_3___default.a.post("/api/agendarcita", _objectSpread({}, cita_data)).then(function (data) {
-          _this4.events = [];
+          _this3.events = [];
 
-          _this4.getEvents();
+          _this3.getEvents();
 
           $('#modalCita').modal('hide');
           swal.fire('Cita guardada', 'La cita se ha guardado con exito', 'success');
@@ -15378,9 +15369,60 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         });
       }
     },
+    actualizarCita: function actualizarCita() {
+      var _this4 = this;
+
+      var fecha = document.getElementById("fecha");
+      var hora = document.getElementById("hora");
+      var detalles = document.getElementById("detalles");
+      var doctor = document.getElementById("doctor");
+      var paciente = document.getElementById("paciente");
+      var error = false;
+      var cita_data = {
+        id: this.idCitaEliminar,
+        fecha: fecha.value,
+        hora: hora.value,
+        detalles: detalles.value,
+        doctor_id: doctor.value,
+        paciente_id: paciente.value
+      }; //Aqui se valida para que no se registre una cita con la misma hora y dia que otra ya registrada previamnete
+
+      for (var i = 0; i < this.citas.length; i++) {
+        if (this.citas[i].id != this.idCitaEliminar && this.citas[i].fecha == fecha.value && hora.value.split(':')[0] == this.citas[i].hora.split(':')[0]) {
+          error = true;
+        }
+      }
+
+      if (error) {
+        swal.fire('Error al crear cita', 'Ya existe una cita en esta hora', 'error');
+      } else {
+        axios__WEBPACK_IMPORTED_MODULE_3___default.a.post("/api/actualizarcita", _objectSpread({}, cita_data)).then(function (data) {
+          _this4.events = [];
+
+          _this4.getEvents();
+
+          $('#modalCita').modal('hide');
+          swal.fire('Cita acualizada', 'La cita se ha actualizado con exito', 'success');
+          fecha.value = "";
+          hora.value = "";
+          detalles.value = "";
+        })["catch"](function (err) {
+          return console.log("No se pudo guardar la cita", err.response.data);
+        });
+      }
+    },
     //Abre el modal que contiene el formulario que tiene los campos para crear una cita nueva
     nuevaCitaModal: function nuevaCitaModal() {
+      this.editMode = false;
       $('#modalCita').modal('show');
+      var fecha = document.getElementById("fecha");
+      var hora = document.getElementById("hora");
+      var detalles = document.getElementById("detalles");
+      var doctor = document.getElementById("doctor");
+      var paciente = document.getElementById("paciente");
+      fecha.value = "";
+      hora.value = "";
+      detalles.value = "";
     },
     //Muestra los datos de una cita en el modal, ahi mismo se encuentran varios opciones de amdinistracion
     mostrarCita: function mostrarCita(arg) {
@@ -15414,6 +15456,29 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       this.idCitaEliminar = arg.event.id;
     },
+    editarCita: function editarCita() {
+      this.editMode = true;
+      $('#modalCitaChecar').modal('hide');
+      $('#modalCita').modal('show');
+      var fecha = document.getElementById("fecha");
+      var hora = document.getElementById("hora");
+      var detalles = document.getElementById("detalles");
+      var doctor = document.getElementById("doctor");
+      var paciente = document.getElementById("paciente");
+
+      for (var i = 0; i < this.citas.length; i++) {
+        if (this.idCitaEliminar == this.citas[i].id) {
+          fecha.value = this.citas[i].fecha;
+          hora.value = this.citas[i].hora;
+          detalles.value = this.citas[i].detalles;
+          doctor.value = this.citas[i].doctor_id;
+          paciente.value = this.citas[i].paciente_id;
+          break;
+        }
+      }
+
+      console.log(this.citas);
+    },
     //Metodo que se encarga de borrar una cita seleccionada en el calendario
     borrarCita: function borrarCita() {
       var _this5 = this;
@@ -15444,11 +15509,266 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         }
       });
     }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Alergias.vue?vue&type=script&lang=js&":
+/*!*******************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Alergias.vue?vue&type=script&lang=js& ***!
+  \*******************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: "alergias",
+  data: function data() {
+    return _defineProperty({
+      modoedicion: false,
+      alergias: {},
+      alergias_editar: {}
+    }, "alergias_editar", {
+      id: '',
+      nombre: '',
+      tipo: ''
+    });
   },
-  watch: {
-    indexToUpdate: function indexToUpdate() {
-      return this.indexToUpdate;
+  methods: {
+    //Metodo que permite obtener los datos de las alergias registradas
+    cargaralergias: function cargaralergias() {
+      var _this = this;
+
+      // Hace una peticion a la tabla diseases en la base de datos a traves de la ruta
+      axios.get('api/obteneralergias').then(function (_ref2) {
+        var data = _ref2.data;
+        _this.alergias = data;
+      });
+    },
+    nuevaAlergiaModal: function nuevaAlergiaModal() {
+      this.modoedicion = false;
+      var nombre = document.getElementById("nombre");
+      var tipo = document.getElementById("tipo");
+      nombre.value = "";
+      tipo.value = "";
+      $('#modalAlergia').modal('show');
+    },
+    crearAlergia: function crearAlergia() {
+      var _this2 = this;
+
+      var nombre = document.getElementById("nombre");
+      var tipo = document.getElementById("tipo");
+
+      if (nombre.value == "" || tipo.value == "") {
+        toast.fire({
+          type: 'error',
+          title: 'Llene todos los campos del formulario'
+        });
+      } else {
+        axios.post('api/registrarAlergia', {
+          nombre: nombre.value,
+          tipo: tipo.value
+        }).then(function (response) {
+          //Si la respuesta responde todo bien
+          //Se ejecuta la animacion de la barrita
+          _this2.cargaralergias(); //Una pequeña alerta en la esquina
+
+
+          toast.fire({
+            type: 'success',
+            title: 'Alergia creada correctamente'
+          });
+
+          _this2.$Progress.finish(); //El modal que contiene el formulario desaparece
+
+
+          $('#modalAlergia').modal('hide');
+          nombre.value = "";
+          tipo.value = "";
+        })["catch"](function (error) {
+          // Maneja el error si la peticion no se llevo a cabo correctamente
+          this.$Progress.fail();
+          console.log(error);
+        });
+      }
+    },
+    modalEditarAlergia: function modalEditarAlergia(id) {
+      this.modoedicion = true;
+      var nombre = document.getElementById("nombre");
+      var tipo = document.getElementById("tipo"); //Obitene los datos del usuario a eliminar
+
+      for (var i = 0; i < this.alergias.length; i++) {
+        if (this.alergias[i].id == id) {
+          this.alergias_editar = this.alergias[i];
+        }
+      }
+
+      nombre.value = this.alergias_editar.nombre;
+      tipo.value = this.alergias_editar.tipo;
+      $('#modalAlergia').modal('show');
+    },
+    actualizarAlergia: function actualizarAlergia() {
+      var _this3 = this;
+
+      var nombre = document.getElementById("nombre");
+      var tipo = document.getElementById("tipo");
+      this.alergias_editar.nombre = nombre.value;
+      this.alergias_editar.tipo = tipo.value;
+      axios.post('api/actualizarAlergia', this.alergias_editar).then(function (response) {
+        _this3.cargaralergias();
+
+        $('#modalAlergia').modal('hide');
+        toast.fire({
+          type: 'success',
+          title: 'Alergia actualizada correctamente'
+        });
+      })["catch"](function () {
+        toast.fire({
+          type: 'success',
+          title: 'Error al actualizar la alergia'
+        });
+      });
+    },
+    eliminarAlergia: function eliminarAlergia(id) {
+      var _this4 = this;
+
+      swal.fire({
+        title: '¿Eliminar alergia?',
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Si',
+        cancelButtonText: 'Cacelar'
+      }).then(function (result) {
+        if (result.value) {
+          axios["delete"]('api/eliminarAlergia/' + id).then(function (response) {
+            //Pequeña alerta que confirma la eliminacion del usuario
+            swal.fire('Registro de alergia eliminado', 'El registro ha sido eliminado', 'success');
+
+            _this4.cargaralergias();
+          })["catch"](function (error) {
+            // Maneja el error si la peticion no se llevo a cabo correctamente
+            swal.fire('Error al eliminar', 'El registro no se ha podido eliminar', 'error');
+          });
+        }
+      });
     }
+  },
+  created: function created() {
+    this.cargaralergias();
   }
 });
 
@@ -15611,7 +15931,36 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
-  name: "Dashboard"
+  name: "Dashboard",
+  data: function data() {
+    return {
+      totalUsuarios: 0,
+      totalcitas: 0,
+      totalenfermedades: 0,
+      totalpacientes: 0
+    };
+  },
+  created: function created() {
+    this.obtenerDatos();
+  },
+  methods: {
+    obtenerDatos: function obtenerDatos() {
+      var _this = this;
+
+      axios.get("/api/totalusuarios").then(function (resp) {
+        _this.totalUsuarios = resp.data;
+      });
+      axios.get("/api/totalcitas").then(function (resp) {
+        _this.totalcitas = resp.data;
+      });
+      axios.get("/api/totalenfermedades").then(function (resp) {
+        _this.totalenfermedades = resp.data;
+      });
+      axios.get("/api/totalpacientes").then(function (resp) {
+        _this.totalpacientes = resp.data;
+      });
+    }
+  }
 });
 
 /***/ }),
@@ -15625,19 +15974,8 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 //
 //
 //
@@ -15759,11 +16097,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "Enfermedades",
   data: function data() {
-    return {
+    return _defineProperty({
       editMode: false,
       enfermedades: {},
       enfermedad_editar: {}
-    };
+    }, "enfermedad_editar", {
+      id: '',
+      nombre: '',
+      tipo: '',
+      causa: ''
+    });
   },
   methods: {
     //Metodo que permite obtener los datos de las enfermedades registradas
@@ -15771,30 +16114,129 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       // Hace una peticion a la tabla diseases en la base de datos a traves de la ruta
-      axios.get('api/obtenerEnfermedades').then(function (_ref) {
-        var data = _ref.data;
-        _this.enfermedades = data.data;
+      axios.get('api/obtenerEnfermedades').then(function (_ref2) {
+        var data = _ref2.data;
+        _this.enfermedades = data;
         console.log(data);
       });
-      /*.then(function (response) {
-          // handle success
-          console.log(response);
-          this.enfermedades = response.data;
-      })*/
     },
     newModal: function newModal() {
       this.editMode = false;
-      var nombre = document.getElementById("name");
-      var apellido = document.getElementById("lastName");
-      var tipo = document.getElementById("type");
-      var correo = document.getElementById("email");
-      var contrasena = document.getElementById("password");
+      var nombre = document.getElementById("nombre");
+      var tipo = document.getElementById("tipo");
+      var causa = document.getElementById("causa");
       nombre.value = "";
-      apellido.value = "";
-      tipo.value = "1";
-      correo.value = "";
-      contrasena.value = "";
+      tipo.value = "";
+      causa.value = "";
       $('#modalUsuario').modal('show');
+    },
+    crearEnfermedad: function crearEnfermedad() {
+      var _this2 = this;
+
+      var nombre = document.getElementById("nombre");
+      var tipo = document.getElementById("tipo");
+      var causa = document.getElementById("causa");
+
+      if (nombre.value == "" || tipo.value == "" || causa.value == "") {
+        toast.fire({
+          type: 'error',
+          title: 'Llene todos los campos del formulario'
+        });
+      } else {
+        axios.post('api/registrarenfermedad', {
+          nombre: nombre.value,
+          tipo: tipo.value,
+          causa: causa.value
+        }).then(function (response) {
+          //Si la respuesta responde todo bien
+          //Se ejecuta la animacion de la barrita
+          _this2.cargarEnfermedaes(); //Una pequeña alerta en la esquina
+
+
+          toast.fire({
+            type: 'success',
+            title: 'Enfermedad creada correctamente'
+          });
+
+          _this2.$Progress.finish(); //El modal que contiene el formulario desaparece
+
+
+          $('#modalUsuario').modal('hide');
+          nombre.value = "";
+          tipo.value = "";
+          causa.value = "";
+        })["catch"](function (error) {
+          // Maneja el error si la peticion no se llevo a cabo correctamente
+          this.$Progress.fail();
+          console.log(error);
+        });
+      }
+    },
+    modal_editar_enfermedad: function modal_editar_enfermedad(id) {
+      this.editMode = true;
+      var nombre = document.getElementById("nombre");
+      var tipo = document.getElementById("tipo");
+      var causa = document.getElementById("causa"); //Obitene los datos del usuario a eliminar
+
+      for (var i = 0; i < this.enfermedades.length; i++) {
+        if (this.enfermedades[i].id == id) {
+          this.enfermedad_editar = this.enfermedades[i];
+        }
+      }
+
+      nombre.value = this.enfermedad_editar.nombre;
+      tipo.value = this.enfermedad_editar.tipo;
+      causa.value = this.enfermedad_editar.causa;
+      $('#modalUsuario').modal('show');
+    },
+    actualizarEnfermedad: function actualizarEnfermedad() {
+      var _this3 = this;
+
+      var nombre = document.getElementById("nombre");
+      var tipo = document.getElementById("tipo");
+      var causa = document.getElementById("causa");
+      this.enfermedad_editar.nombre = nombre.value;
+      this.enfermedad_editar.tipo = tipo.value;
+      this.enfermedad_editar.causa = causa.value;
+      axios.post('api/actualizarenfermedad', this.enfermedad_editar).then(function (response) {
+        _this3.cargarEnfermedaes();
+
+        $('#modalUsuario').modal('hide');
+        toast.fire({
+          type: 'success',
+          title: 'Registro actualizado correctamente'
+        });
+      })["catch"](function () {
+        toast.fire({
+          type: 'success',
+          title: 'Error al actualizar'
+        });
+      });
+    },
+    eliminarEnfermedad: function eliminarEnfermedad(id) {
+      var _this4 = this;
+
+      swal.fire({
+        title: '¿Eliminar registro de enfermedad?',
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Si',
+        cancelButtonText: 'Cacelar'
+      }).then(function (result) {
+        if (result.value) {
+          axios["delete"]('api/eliminarenfermedad/' + id).then(function (response) {
+            //Pequeña alerta que confirma la eliminacion del usuario
+            swal.fire('Registro de enfermedad eliminado', 'El registro ha sido eliminado', 'success');
+
+            _this4.cargarEnfermedaes();
+          })["catch"](function (error) {
+            // Maneja el error si la peticion no se llevo a cabo correctamente
+            swal.fire('Error al eliminar', 'El registro no se ha podido eliminar', 'error');
+          });
+        }
+      });
     }
   },
   created: function created() {
@@ -15832,6 +16274,286 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   mounted: function mounted() {
     console.log('Component mounted.');
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Medicamentos.vue?vue&type=script&lang=js&":
+/*!***********************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Medicamentos.vue?vue&type=script&lang=js& ***!
+  \***********************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: "Medicamentos",
+  data: function data() {
+    return _defineProperty({
+      modoedicion: false,
+      medicamentos: {},
+      medicamento_editar: {}
+    }, "medicamento_editar", {
+      id: '',
+      nombre: '',
+      presentacion: '',
+      detalles: ''
+    });
+  },
+  methods: {
+    //Metodo que permite obtener los datos de las medicamentos registradas
+    cargarMedicamentos: function cargarMedicamentos() {
+      var _this = this;
+
+      // Hace una peticion a la tabla diseases en la base de datos a traves de la ruta
+      axios.get('api/obtenermedicamentos').then(function (_ref2) {
+        var data = _ref2.data;
+        _this.medicamentos = data;
+      });
+    },
+    nuevoMedicamentoModal: function nuevoMedicamentoModal() {
+      this.modoedicion = false;
+      var nombre = document.getElementById("nombre");
+      var presentacion = document.getElementById("presentacion");
+      var detalles = document.getElementById("detalles");
+      nombre.value = "";
+      presentacion.value = "";
+      detalles.value = "";
+      $('#modalMedicamento').modal('show');
+    },
+    crearMedicamento: function crearMedicamento() {
+      var _this2 = this;
+
+      var nombre = document.getElementById("nombre");
+      var presentacion = document.getElementById("presentacion");
+      var detalles = document.getElementById("detalles");
+
+      if (nombre.value == "" || presentacion.value == "" || detalles.value == "") {
+        toast.fire({
+          type: 'error',
+          title: 'Llene todos los campos del formulario'
+        });
+      } else {
+        axios.post('api/registrarMedicamento', {
+          nombre: nombre.value,
+          presentacion: presentacion.value,
+          detalles: detalles.value
+        }).then(function (response) {
+          //Si la respuesta responde todo bien
+          //Se ejecuta la animacion de la barrita
+          _this2.cargarMedicamentos(); //Una pequeña alerta en la esquina
+
+
+          toast.fire({
+            type: 'success',
+            title: 'Medicamento creado correctamente'
+          });
+
+          _this2.$Progress.finish(); //El modal que contiene el formulario desaparece
+
+
+          $('#modalMedicamento').modal('hide');
+          nombre.value = "";
+          presentacion.value = "";
+          detalles.value = "";
+        })["catch"](function (error) {
+          // Maneja el error si la peticion no se llevo a cabo correctamente
+          this.$Progress.fail();
+          console.log(error);
+        });
+      }
+    },
+    modalEditarMedicamento: function modalEditarMedicamento(id) {
+      this.modoedicion = true;
+      var nombre = document.getElementById("nombre");
+      var presentacion = document.getElementById("presentacion");
+      var detalles = document.getElementById("detalles"); //Obitene los datos del usuario a eliminar
+
+      for (var i = 0; i < this.medicamentos.length; i++) {
+        if (this.medicamentos[i].id == id) {
+          this.medicamento_editar = this.medicamentos[i];
+        }
+      }
+
+      nombre.value = this.medicamento_editar.nombre;
+      presentacion.value = this.medicamento_editar.presentacion;
+      detalles.value = this.medicamento_editar.detalles;
+      $('#modalMedicamento').modal('show');
+    },
+    actualizarMedicamento: function actualizarMedicamento() {
+      var _this3 = this;
+
+      var nombre = document.getElementById("nombre");
+      var presentacion = document.getElementById("presentacion");
+      var detalles = document.getElementById("detalles");
+      this.medicamento_editar.nombre = nombre.value;
+      this.medicamento_editar.presentacion = presentacion.value;
+      this.medicamento_editar.detalles = detalles.value;
+      axios.post('api/actualizarMedicamento', this.medicamento_editar).then(function (response) {
+        _this3.cargarMedicamentos();
+
+        $('#modalMedicamento').modal('hide');
+        toast.fire({
+          type: 'success',
+          title: 'Medicamento actualizado correctamente'
+        });
+      })["catch"](function () {
+        toast.fire({
+          type: 'success',
+          title: 'Error al actualizar el medicamento'
+        });
+      });
+    },
+    eliminarMedicamento: function eliminarMedicamento(id) {
+      var _this4 = this;
+
+      swal.fire({
+        title: '¿Eliminar medicamento?',
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Si',
+        cancelButtonText: 'Cacelar'
+      }).then(function (result) {
+        if (result.value) {
+          axios["delete"]('api/eliminarMedicamento/' + id).then(function (response) {
+            //Pequeña alerta que confirma la eliminacion del usuario
+            swal.fire('Registro de enfermedad eliminado', 'El registro ha sido eliminado', 'success');
+
+            _this4.cargarMedicamentos();
+          })["catch"](function (error) {
+            // Maneja el error si la peticion no se llevo a cabo correctamente
+            swal.fire('Error al eliminar', 'El registro no se ha podido eliminar', 'error');
+          });
+        }
+      });
+    }
+  },
+  created: function created() {
+    this.cargarMedicamentos();
   }
 });
 
@@ -74254,8 +74976,7 @@ var render = function() {
                         events: _vm.events
                       },
                       on: { eventClick: _vm.mostrarCita }
-                    }),
-                    _vm._v("-\n                        ")
+                    })
                   ],
                   1
                 )
@@ -74318,7 +75039,7 @@ var render = function() {
                       staticClass: "modal-title",
                       attrs: { id: "exampleModalLongTitle" }
                     },
-                    [_vm._v("Actualizar paciente")]
+                    [_vm._v("Actualizar cita")]
                   ),
                   _vm._v(" "),
                   _vm._m(1)
@@ -74330,9 +75051,7 @@ var render = function() {
                     on: {
                       submit: function($event) {
                         $event.preventDefault()
-                        _vm.editMode
-                          ? _vm.actualizarUsuario()
-                          : _vm.agregarCita()
+                        _vm.editMode ? _vm.actualizarCita() : _vm.agregarCita()
                       }
                     }
                   },
@@ -74500,10 +75219,25 @@ var render = function() {
                   _c(
                     "button",
                     {
+                      staticClass: "btn btn-warning",
+                      on: { click: _vm.editarCita }
+                    },
+                    [
+                      _c("i", { staticClass: "fas fa-edit" }),
+                      _vm._v("  Editar ")
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "button",
+                    {
                       staticClass: "btn btn-danger",
                       on: { click: _vm.borrarCita }
                     },
-                    [_vm._v("  Eliminar ")]
+                    [
+                      _c("i", { staticClass: "fas fa-trash" }),
+                      _vm._v(" Eliminar ")
+                    ]
                   )
                 ])
               ])
@@ -74683,6 +75417,332 @@ render._withStripped = true
 
 /***/ }),
 
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Alergias.vue?vue&type=template&id=66773617&scoped=true&":
+/*!***********************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Alergias.vue?vue&type=template&id=66773617&scoped=true& ***!
+  \***********************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "content-wrapper" }, [
+    _vm._m(0),
+    _vm._v(" "),
+    _c("div", { staticClass: "content" }, [
+      _c("div", { staticClass: "container" }, [
+        _c("div", { staticClass: "row justify-content-center" }, [
+          _c("div", { staticClass: "col-12 " }, [
+            _c("div", { staticClass: "card" }, [
+              _c("div", { staticClass: "card-header" }, [
+                _c("h3", { staticClass: "card-title" }, [
+                  _vm._v(" Lista de alergias registrados ")
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "card-tools" }, [
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-success",
+                      on: { click: _vm.nuevaAlergiaModal }
+                    },
+                    [
+                      _c("i", { staticClass: "fas fa-bug" }),
+                      _vm._v(" Crear nueva alergia ")
+                    ]
+                  )
+                ])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "card-body table-responsive p-0" }, [
+                _c("table", { staticClass: "table table-hover" }, [
+                  _vm._m(1),
+                  _vm._v(" "),
+                  _c(
+                    "tbody",
+                    _vm._l(_vm.alergias, function(alergia) {
+                      return _c("tr", { key: alergia.id }, [
+                        _c("td", [_vm._v(_vm._s(alergia.id))]),
+                        _vm._v(" "),
+                        _c("td", [_vm._v(_vm._s(alergia.nombre))]),
+                        _vm._v(" "),
+                        _c("td", [_vm._v(_vm._s(alergia.tipo))]),
+                        _vm._v(" "),
+                        _c("td", [
+                          _c(
+                            "button",
+                            {
+                              staticClass: "btn btn-warning",
+                              on: {
+                                click: function($event) {
+                                  return _vm.modalEditarAlergia(alergia.id)
+                                }
+                              }
+                            },
+                            [_c("i", { staticClass: "fas fa-pen" })]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "button",
+                            {
+                              staticClass: "btn btn-danger",
+                              on: {
+                                click: function($event) {
+                                  return _vm.eliminarAlergia(alergia.id)
+                                }
+                              }
+                            },
+                            [_c("i", { staticClass: "fas fa-trash" })]
+                          )
+                        ])
+                      ])
+                    }),
+                    0
+                  )
+                ])
+              ])
+            ])
+          ])
+        ])
+      ]),
+      _vm._v(" "),
+      _c(
+        "div",
+        {
+          staticClass: "modal fade",
+          attrs: {
+            id: "modalAlergia",
+            tabindex: "-1",
+            role: "dialog",
+            "aria-labelledby": "exampleModalCenterTitle",
+            "aria-hidden": "true"
+          }
+        },
+        [
+          _c(
+            "div",
+            {
+              staticClass: "modal-dialog modal-dialog-centered",
+              attrs: { role: "document" }
+            },
+            [
+              _c("div", { staticClass: "modal-content" }, [
+                _c("div", { staticClass: "modal-header" }, [
+                  _c(
+                    "h5",
+                    {
+                      directives: [
+                        {
+                          name: "show",
+                          rawName: "v-show",
+                          value: !_vm.modoedicion,
+                          expression: "!modoedicion"
+                        }
+                      ],
+                      staticClass: "modal-title",
+                      attrs: { id: "exampleModalLongTitle" }
+                    },
+                    [_vm._v("Agregar nuevo medicamento")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "h5",
+                    {
+                      directives: [
+                        {
+                          name: "show",
+                          rawName: "v-show",
+                          value: _vm.modoedicion,
+                          expression: "modoedicion"
+                        }
+                      ],
+                      staticClass: "modal-title",
+                      attrs: { id: "exampleModalLongTitle" }
+                    },
+                    [_vm._v("Actualizar datos del medicamento")]
+                  ),
+                  _vm._v(" "),
+                  _vm._m(2)
+                ]),
+                _vm._v(" "),
+                _c(
+                  "form",
+                  {
+                    on: {
+                      submit: function($event) {
+                        $event.preventDefault()
+                        _vm.modoedicion
+                          ? _vm.actualizarAlergia()
+                          : _vm.crearAlergia()
+                      }
+                    }
+                  },
+                  [
+                    _vm._m(3),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "modal-footer" }, [
+                      _vm._m(4),
+                      _vm._v(" "),
+                      _c(
+                        "button",
+                        {
+                          directives: [
+                            {
+                              name: "show",
+                              rawName: "v-show",
+                              value: _vm.modoedicion,
+                              expression: "modoedicion"
+                            }
+                          ],
+                          staticClass: "btn btn-success",
+                          attrs: { type: "submit" }
+                        },
+                        [
+                          _c("i", { staticClass: "fas fa-pen" }),
+                          _vm._v(" Actualizar")
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "button",
+                        {
+                          directives: [
+                            {
+                              name: "show",
+                              rawName: "v-show",
+                              value: !_vm.modoedicion,
+                              expression: "!modoedicion"
+                            }
+                          ],
+                          staticClass: "btn btn-primary",
+                          attrs: { type: "submit" }
+                        },
+                        [
+                          _c("i", { staticClass: "fas fa-plus" }),
+                          _vm._v(" Registrar")
+                        ]
+                      )
+                    ])
+                  ]
+                )
+              ])
+            ]
+          )
+        ]
+      )
+    ])
+  ])
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "content-header" }, [
+      _c("div", { staticClass: "container-fluid" }, [
+        _c("div", { staticClass: "row mb-2" }, [
+          _c("div", { staticClass: "col-sm-6" }, [
+            _c("h1", { staticClass: "m-0 text-dark" }, [_vm._v("Alergias")])
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "col-sm-6" }, [
+            _c("ol", { staticClass: "breadcrumb float-sm-right" }, [
+              _c("li", { staticClass: "breadcrumb-item" }, [
+                _c("a", { attrs: { href: "#" } }, [_vm._v("Alergias")])
+              ]),
+              _vm._v(" "),
+              _c("li", { staticClass: "breadcrumb-item active" }, [
+                _vm._v(" Listado de alergias ")
+              ])
+            ])
+          ])
+        ])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", [_vm._v("ID")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Nombre")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Tipo")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Administración")])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "button",
+      {
+        staticClass: "close",
+        attrs: {
+          type: "button",
+          "data-dismiss": "modal",
+          "aria-label": "Close"
+        }
+      },
+      [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-body" }, [
+      _c("div", { staticClass: "form-group" }, [
+        _c("label", [_vm._v("Nombre:")]),
+        _vm._v(" "),
+        _c("input", {
+          staticClass: "form-control",
+          attrs: { type: "text", name: "nombre", id: "nombre", required: "" }
+        })
+      ]),
+      _vm._v(" "),
+      _c("div", { staticClass: "form-group" }, [
+        _c("label", [_vm._v("Tipo:")]),
+        _vm._v(" "),
+        _c("input", {
+          staticClass: "form-control",
+          attrs: { type: "text", id: "tipo", name: "tipo", required: "" }
+        })
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "button",
+      {
+        staticClass: "btn btn-secondary",
+        attrs: { type: "button", "data-dismiss": "modal" }
+      },
+      [_c("i", { staticClass: "fas fa-ban" }), _vm._v(" Cerrar")]
+    )
+  }
+]
+render._withStripped = true
+
+
+
+/***/ }),
+
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Citas.vue?vue&type=template&id=687e4a25&scoped=true&":
 /*!********************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Citas.vue?vue&type=template&id=687e4a25&scoped=true& ***!
@@ -74771,129 +75831,142 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
-}
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "content-wrapper" }, [
-      _c("div", { staticClass: "content-header" }, [
-        _c("div", { staticClass: "container-fluid" }, [
-          _c("div", { staticClass: "row mb-2" }, [
-            _c("div", { staticClass: "col-sm-6" }, [
-              _c("h1", { staticClass: "m-0 text-dark" }, [_vm._v("Dashboard")])
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "col-sm-6" }, [
-              _c("ol", { staticClass: "breadcrumb float-sm-right" }, [
-                _c("li", { staticClass: "breadcrumb-item" }, [
-                  _c("a", { attrs: { href: "#" } }, [_vm._v("Inicio")])
-                ]),
-                _vm._v(" "),
-                _c("li", { staticClass: "breadcrumb-item active" }, [
-                  _vm._v("Dashboard")
+  return _c("div", { staticClass: "content-wrapper" }, [
+    _vm._m(0),
+    _vm._v(" "),
+    _c("div", { staticClass: "content" }, [
+      _c("div", { staticClass: "container" }, [
+        _c("div", { staticClass: "row justify-content-center" }, [
+          _c("div", { staticClass: "col-md-12" }, [
+            _c("div", { staticClass: "row" }, [
+              _c("div", { staticClass: "col-lg-3 col-6" }, [
+                _c("div", { staticClass: "small-box bg-info" }, [
+                  _c("div", { staticClass: "inner" }, [
+                    _c("h3", [_vm._v(_vm._s(_vm.totalUsuarios))]),
+                    _vm._v(" "),
+                    _c("p", [_vm._v("Usuarios")])
+                  ]),
+                  _vm._v(" "),
+                  _vm._m(1)
                 ])
-              ])
-            ])
-          ])
-        ])
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "content" }, [
-        _c("div", { staticClass: "container" }, [
-          _c("div", { staticClass: "row justify-content-center" }, [
-            _c("div", { staticClass: "col-md-12" }, [
-              _c("div", { staticClass: "row" }, [
-                _c("div", { staticClass: "col-lg-3 col-6" }, [
-                  _c("div", { staticClass: "small-box bg-info" }, [
-                    _c("div", { staticClass: "inner" }, [
-                      _c("h3", [_vm._v("150")]),
-                      _vm._v(" "),
-                      _c("p", [_vm._v("Usuarios")])
-                    ]),
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "col-lg-3 col-6" }, [
+                _c("div", { staticClass: "small-box bg-success" }, [
+                  _c("div", { staticClass: "inner" }, [
+                    _c("h3", [_vm._v(_vm._s(_vm.totalenfermedades))]),
                     _vm._v(" "),
-                    _c("div", { staticClass: "icon" }, [
-                      _c("i", { staticClass: "ion ion-bag" }),
-                      _vm._v(" "),
-                      _c("span", {
-                        staticClass: "iconify",
-                        attrs: { "data-icon": "fa:user" }
-                      })
-                    ])
-                  ])
-                ]),
-                _vm._v(" "),
-                _c("div", { staticClass: "col-lg-3 col-6" }, [
-                  _c("div", { staticClass: "small-box bg-success" }, [
-                    _c("div", { staticClass: "inner" }, [
-                      _c("h3", [
-                        _vm._v("53"),
-                        _c("sup", { staticStyle: { "font-size": "20px" } }, [
-                          _vm._v("%")
-                        ])
-                      ]),
-                      _vm._v(" "),
-                      _c("p", [_vm._v("Enfermedades")])
-                    ]),
+                    _c("p", [_vm._v("Enfermedades")])
+                  ]),
+                  _vm._v(" "),
+                  _vm._m(2)
+                ])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "col-lg-3 col-6" }, [
+                _c("div", { staticClass: "small-box bg-warning" }, [
+                  _c("div", { staticClass: "inner" }, [
+                    _c("h3", [_vm._v(" " + _vm._s(_vm.totalpacientes) + " ")]),
                     _vm._v(" "),
-                    _c("div", { staticClass: "icon" }, [
-                      _c("span", {
-                        staticClass: "iconify",
-                        attrs: {
-                          "data-icon": "mdi:bacteria",
-                          "data-inline": "false"
-                        }
-                      })
-                    ])
-                  ])
-                ]),
-                _vm._v(" "),
-                _c("div", { staticClass: "col-lg-3 col-6" }, [
-                  _c("div", { staticClass: "small-box bg-warning" }, [
-                    _c("div", { staticClass: "inner" }, [
-                      _c("h3", [_vm._v(" 44 ")]),
-                      _vm._v(" "),
-                      _c("p", [_vm._v("Pacientes")])
-                    ]),
+                    _c("p", [_vm._v("Pacientes")])
+                  ]),
+                  _vm._v(" "),
+                  _vm._m(3)
+                ])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "col-lg-3 col-6" }, [
+                _c("div", { staticClass: "small-box bg-danger" }, [
+                  _c("div", { staticClass: "inner" }, [
+                    _c("h3", [_vm._v(" " + _vm._s(_vm.totalcitas) + " ")]),
                     _vm._v(" "),
-                    _c("div", { staticClass: "icon" }, [
-                      _c("span", {
-                        staticClass: "iconify",
-                        attrs: {
-                          "data-icon": "medical-icon:i-outpatient",
-                          "data-inline": "false"
-                        }
-                      })
-                    ])
-                  ])
-                ]),
-                _vm._v(" "),
-                _c("div", { staticClass: "col-lg-3 col-6" }, [
-                  _c("div", { staticClass: "small-box bg-danger" }, [
-                    _c("div", { staticClass: "inner" }, [
-                      _c("h3", [_vm._v("65")]),
-                      _vm._v(" "),
-                      _c("p", [_vm._v("Citas")])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "icon" }, [
-                      _c("span", {
-                        staticClass: "iconify",
-                        attrs: {
-                          "data-icon": "ant-design:calendar-filled",
-                          "data-inline": "false"
-                        }
-                      })
-                    ])
-                  ])
+                    _c("p", [_vm._v("Citas")])
+                  ]),
+                  _vm._v(" "),
+                  _vm._m(4)
                 ])
               ])
             ])
           ])
         ])
       ])
+    ])
+  ])
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "content-header" }, [
+      _c("div", { staticClass: "container-fluid" }, [
+        _c("div", { staticClass: "row mb-2" }, [
+          _c("div", { staticClass: "col-sm-6" }, [
+            _c("h1", { staticClass: "m-0 text-dark" }, [_vm._v("Dashboard")])
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "col-sm-6" }, [
+            _c("ol", { staticClass: "breadcrumb float-sm-right" }, [
+              _c("li", { staticClass: "breadcrumb-item" }, [
+                _c("a", { attrs: { href: "#" } }, [_vm._v("Inicio")])
+              ]),
+              _vm._v(" "),
+              _c("li", { staticClass: "breadcrumb-item active" }, [
+                _vm._v("Dashboard")
+              ])
+            ])
+          ])
+        ])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "icon" }, [
+      _c("i", { staticClass: "ion ion-bag" }),
+      _vm._v(" "),
+      _c("span", { staticClass: "iconify", attrs: { "data-icon": "fa:user" } })
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "icon" }, [
+      _c("span", {
+        staticClass: "iconify",
+        attrs: { "data-icon": "mdi:bacteria", "data-inline": "false" }
+      })
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "icon" }, [
+      _c("span", {
+        staticClass: "iconify",
+        attrs: {
+          "data-icon": "medical-icon:i-outpatient",
+          "data-inline": "false"
+        }
+      })
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "icon" }, [
+      _c("span", {
+        staticClass: "iconify",
+        attrs: {
+          "data-icon": "ant-design:calendar-filled",
+          "data-inline": "false"
+        }
+      })
     ])
   }
 ]
@@ -74928,7 +76001,7 @@ var render = function() {
             _c("div", { staticClass: "card" }, [
               _c("div", { staticClass: "card-header" }, [
                 _c("h3", { staticClass: "card-title" }, [
-                  _vm._v(" Lista enfermedades registradas ")
+                  _vm._v(" Lista de enfermedades registradas ")
                 ]),
                 _vm._v(" "),
                 _c("div", { staticClass: "card-tools" }, [
@@ -74939,7 +76012,7 @@ var render = function() {
                       on: { click: _vm.newModal }
                     },
                     [
-                      _c("i", { staticClass: "fas fa-user-plus" }),
+                      _c("i", { staticClass: "fas fa-bacterium" }),
                       _vm._v(" Crear nuevo registro ")
                     ]
                   )
@@ -74969,7 +76042,9 @@ var render = function() {
                               staticClass: "btn btn-warning",
                               on: {
                                 click: function($event) {
-                                  return _vm.modal_editar_usuario(enfermedad.id)
+                                  return _vm.modal_editar_enfermedad(
+                                    enfermedad.id
+                                  )
                                 }
                               }
                             },
@@ -74982,7 +76057,7 @@ var render = function() {
                               staticClass: "btn btn-danger",
                               on: {
                                 click: function($event) {
-                                  return _vm.eliminarUsuario(enfermedad.id)
+                                  return _vm.eliminarEnfermedad(enfermedad.id)
                                 }
                               }
                             },
@@ -75036,7 +76111,7 @@ var render = function() {
                       staticClass: "modal-title",
                       attrs: { id: "exampleModalLongTitle" }
                     },
-                    [_vm._v("Agregar usuario")]
+                    [_vm._v("Agregar registro enfermedad")]
                   ),
                   _vm._v(" "),
                   _c(
@@ -75053,7 +76128,7 @@ var render = function() {
                       staticClass: "modal-title",
                       attrs: { id: "exampleModalLongTitle" }
                     },
-                    [_vm._v("Actualizar usuario")]
+                    [_vm._v("Actualizar registro enfermedad")]
                   ),
                   _vm._v(" "),
                   _vm._m(2)
@@ -75066,65 +76141,16 @@ var render = function() {
                       submit: function($event) {
                         $event.preventDefault()
                         _vm.editMode
-                          ? _vm.actualizarUsuario()
-                          : _vm.crearUsuario()
+                          ? _vm.actualizarEnfermedad()
+                          : _vm.crearEnfermedad()
                       }
                     }
                   },
                   [
-                    _c("div", { staticClass: "modal-body" }, [
-                      _vm._m(3),
-                      _vm._v(" "),
-                      _vm._m(4),
-                      _vm._v(" "),
-                      _vm._m(5),
-                      _vm._v(" "),
-                      _vm._m(6),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "form-group" }, [
-                        _c(
-                          "label",
-                          {
-                            directives: [
-                              {
-                                name: "show",
-                                rawName: "v-show",
-                                value: !_vm.editMode,
-                                expression: "!editMode"
-                              }
-                            ]
-                          },
-                          [_vm._v("Contraseña: ")]
-                        ),
-                        _vm._v(" "),
-                        _c("input", {
-                          directives: [
-                            {
-                              name: "show",
-                              rawName: "v-show",
-                              value: !_vm.editMode,
-                              expression: "!editMode"
-                            }
-                          ],
-                          staticClass: "form-control",
-                          attrs: {
-                            type: "password",
-                            name: "password",
-                            id: "password"
-                          }
-                        })
-                      ])
-                    ]),
+                    _vm._m(3),
                     _vm._v(" "),
                     _c("div", { staticClass: "modal-footer" }, [
-                      _c(
-                        "button",
-                        {
-                          staticClass: "btn btn-secondary",
-                          attrs: { type: "button", "data-dismiss": "modal" }
-                        },
-                        [_vm._v("Cerrar")]
-                      ),
+                      _vm._m(4),
                       _vm._v(" "),
                       _c(
                         "button",
@@ -75140,7 +76166,10 @@ var render = function() {
                           staticClass: "btn btn-success",
                           attrs: { type: "submit" }
                         },
-                        [_vm._v("Actualizar")]
+                        [
+                          _c("i", { staticClass: "fas fa-pen" }),
+                          _vm._v(" Actualizar")
+                        ]
                       ),
                       _vm._v(" "),
                       _c(
@@ -75157,7 +76186,10 @@ var render = function() {
                           staticClass: "btn btn-primary",
                           attrs: { type: "submit" }
                         },
-                        [_vm._v("Registrar")]
+                        [
+                          _c("i", { staticClass: "fas fa-plus" }),
+                          _vm._v(" Registrar")
+                        ]
                       )
                     ])
                   ]
@@ -75236,62 +76268,47 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "form-group" }, [
-      _c("label", [_vm._v("Nombre:")]),
+    return _c("div", { staticClass: "modal-body" }, [
+      _c("div", { staticClass: "form-group" }, [
+        _c("label", [_vm._v("Nombre:")]),
+        _vm._v(" "),
+        _c("input", {
+          staticClass: "form-control",
+          attrs: { type: "text", name: "nombre", id: "nombre", required: "" }
+        })
+      ]),
       _vm._v(" "),
-      _c("input", {
-        staticClass: "form-control",
-        attrs: { type: "text", name: "name", id: "name" }
-      })
+      _c("div", { staticClass: "form-group" }, [
+        _c("label", [_vm._v("Tipo:")]),
+        _vm._v(" "),
+        _c("input", {
+          staticClass: "form-control",
+          attrs: { type: "text", id: "tipo", name: "tipo", required: "" }
+        })
+      ]),
+      _vm._v(" "),
+      _c("div", { staticClass: "form-group" }, [
+        _c("label", [_vm._v("Causa:")]),
+        _vm._v(" "),
+        _c("textarea", {
+          staticClass: "form-control",
+          attrs: { type: "text", id: "causa", name: "causa", required: "" }
+        })
+      ])
     ])
   },
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "form-group" }, [
-      _c("label", [_vm._v("Apellido:")]),
-      _vm._v(" "),
-      _c("input", {
-        staticClass: "form-control",
-        attrs: { id: "lastName", type: "text", name: "lastName" }
-      })
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "form-group" }, [
-      _c("label", [_vm._v("Correo:")]),
-      _vm._v(" "),
-      _c("input", {
-        staticClass: "form-control",
-        attrs: { type: "text", id: "email", name: "email" }
-      })
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "form-group" }, [
-      _c("label", [_vm._v("Tipo de usuario:")]),
-      _vm._v(" "),
-      _c(
-        "select",
-        { staticClass: "form-control", attrs: { name: "type", id: "type" } },
-        [
-          _c("option", { attrs: { value: "1" } }, [_vm._v("Administrador")]),
-          _vm._v(" "),
-          _c("option", { attrs: { value: "2" } }, [_vm._v("Medico")]),
-          _vm._v(" "),
-          _c("option", { attrs: { value: "3" } }, [_vm._v("Medico asociado")]),
-          _vm._v(" "),
-          _c("option", { attrs: { value: "4" } }, [_vm._v("Secretaria")])
-        ]
-      )
-    ])
+    return _c(
+      "button",
+      {
+        staticClass: "btn btn-secondary",
+        attrs: { type: "button", "data-dismiss": "modal" }
+      },
+      [_c("i", { staticClass: "fas fa-ban" }), _vm._v(" Cerrar")]
+    )
   }
 ]
 render._withStripped = true
@@ -75339,6 +76356,357 @@ var staticRenderFns = [
         ])
       ])
     ])
+  }
+]
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Medicamentos.vue?vue&type=template&id=3d728628&scoped=true&":
+/*!***************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Medicamentos.vue?vue&type=template&id=3d728628&scoped=true& ***!
+  \***************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "content-wrapper" }, [
+    _vm._m(0),
+    _vm._v(" "),
+    _c("div", { staticClass: "content" }, [
+      _c("div", { staticClass: "container" }, [
+        _c("div", { staticClass: "row justify-content-center" }, [
+          _c("div", { staticClass: "col-12 " }, [
+            _c("div", { staticClass: "card" }, [
+              _c("div", { staticClass: "card-header" }, [
+                _c("h3", { staticClass: "card-title" }, [
+                  _vm._v(" Lista de medicamentos registrados ")
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "card-tools" }, [
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-success",
+                      on: { click: _vm.nuevoMedicamentoModal }
+                    },
+                    [
+                      _c("i", { staticClass: "fas fa-tablets" }),
+                      _vm._v(" Crear nuevo registro de medicamento ")
+                    ]
+                  )
+                ])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "card-body table-responsive p-0" }, [
+                _c("table", { staticClass: "table table-hover" }, [
+                  _vm._m(1),
+                  _vm._v(" "),
+                  _c(
+                    "tbody",
+                    _vm._l(_vm.medicamentos, function(medicamento) {
+                      return _c("tr", { key: medicamento.id }, [
+                        _c("td", [_vm._v(_vm._s(medicamento.id))]),
+                        _vm._v(" "),
+                        _c("td", [_vm._v(_vm._s(medicamento.nombre))]),
+                        _vm._v(" "),
+                        _c("td", [_vm._v(_vm._s(medicamento.presentacion))]),
+                        _vm._v(" "),
+                        _c("td", [_vm._v(_vm._s(medicamento.detalles))]),
+                        _vm._v(" "),
+                        _c("td", [
+                          _c(
+                            "button",
+                            {
+                              staticClass: "btn btn-warning",
+                              on: {
+                                click: function($event) {
+                                  return _vm.modalEditarMedicamento(
+                                    medicamento.id
+                                  )
+                                }
+                              }
+                            },
+                            [_c("i", { staticClass: "fas fa-pen" })]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "button",
+                            {
+                              staticClass: "btn btn-danger",
+                              on: {
+                                click: function($event) {
+                                  return _vm.eliminarMedicamento(medicamento.id)
+                                }
+                              }
+                            },
+                            [_c("i", { staticClass: "fas fa-trash" })]
+                          )
+                        ])
+                      ])
+                    }),
+                    0
+                  )
+                ])
+              ])
+            ])
+          ])
+        ])
+      ]),
+      _vm._v(" "),
+      _c(
+        "div",
+        {
+          staticClass: "modal fade",
+          attrs: {
+            id: "modalMedicamento",
+            tabindex: "-1",
+            role: "dialog",
+            "aria-labelledby": "exampleModalCenterTitle",
+            "aria-hidden": "true"
+          }
+        },
+        [
+          _c(
+            "div",
+            {
+              staticClass: "modal-dialog modal-dialog-centered",
+              attrs: { role: "document" }
+            },
+            [
+              _c("div", { staticClass: "modal-content" }, [
+                _c("div", { staticClass: "modal-header" }, [
+                  _c(
+                    "h5",
+                    {
+                      directives: [
+                        {
+                          name: "show",
+                          rawName: "v-show",
+                          value: !_vm.modoedicion,
+                          expression: "!modoedicion"
+                        }
+                      ],
+                      staticClass: "modal-title",
+                      attrs: { id: "exampleModalLongTitle" }
+                    },
+                    [_vm._v("Agregar nuevo medicamento")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "h5",
+                    {
+                      directives: [
+                        {
+                          name: "show",
+                          rawName: "v-show",
+                          value: _vm.modoedicion,
+                          expression: "modoedicion"
+                        }
+                      ],
+                      staticClass: "modal-title",
+                      attrs: { id: "exampleModalLongTitle" }
+                    },
+                    [_vm._v("Actualizar datos del medicamento")]
+                  ),
+                  _vm._v(" "),
+                  _vm._m(2)
+                ]),
+                _vm._v(" "),
+                _c(
+                  "form",
+                  {
+                    on: {
+                      submit: function($event) {
+                        $event.preventDefault()
+                        _vm.modoedicion
+                          ? _vm.actualizarMedicamento()
+                          : _vm.crearMedicamento()
+                      }
+                    }
+                  },
+                  [
+                    _vm._m(3),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "modal-footer" }, [
+                      _vm._m(4),
+                      _vm._v(" "),
+                      _c(
+                        "button",
+                        {
+                          directives: [
+                            {
+                              name: "show",
+                              rawName: "v-show",
+                              value: _vm.modoedicion,
+                              expression: "modoedicion"
+                            }
+                          ],
+                          staticClass: "btn btn-success",
+                          attrs: { type: "submit" }
+                        },
+                        [
+                          _c("i", { staticClass: "fas fa-pen" }),
+                          _vm._v(" Actualizar")
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "button",
+                        {
+                          directives: [
+                            {
+                              name: "show",
+                              rawName: "v-show",
+                              value: !_vm.modoedicion,
+                              expression: "!modoedicion"
+                            }
+                          ],
+                          staticClass: "btn btn-primary",
+                          attrs: { type: "submit" }
+                        },
+                        [
+                          _c("i", { staticClass: "fas fa-plus" }),
+                          _vm._v(" Registrar")
+                        ]
+                      )
+                    ])
+                  ]
+                )
+              ])
+            ]
+          )
+        ]
+      )
+    ])
+  ])
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "content-header" }, [
+      _c("div", { staticClass: "container-fluid" }, [
+        _c("div", { staticClass: "row mb-2" }, [
+          _c("div", { staticClass: "col-sm-6" }, [
+            _c("h1", { staticClass: "m-0 text-dark" }, [_vm._v("Medicamentos")])
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "col-sm-6" }, [
+            _c("ol", { staticClass: "breadcrumb float-sm-right" }, [
+              _c("li", { staticClass: "breadcrumb-item" }, [
+                _c("a", { attrs: { href: "#" } }, [_vm._v("Medicamentos")])
+              ]),
+              _vm._v(" "),
+              _c("li", { staticClass: "breadcrumb-item active" }, [
+                _vm._v(" Listado de medicamentos ")
+              ])
+            ])
+          ])
+        ])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", [_vm._v("ID")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Nombre")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Presentación")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Detalles")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Administración")])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "button",
+      {
+        staticClass: "close",
+        attrs: {
+          type: "button",
+          "data-dismiss": "modal",
+          "aria-label": "Close"
+        }
+      },
+      [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-body" }, [
+      _c("div", { staticClass: "form-group" }, [
+        _c("label", [_vm._v("Nombre:")]),
+        _vm._v(" "),
+        _c("input", {
+          staticClass: "form-control",
+          attrs: { type: "text", name: "nombre", id: "nombre", required: "" }
+        })
+      ]),
+      _vm._v(" "),
+      _c("div", { staticClass: "form-group" }, [
+        _c("label", [_vm._v("Presentación:")]),
+        _vm._v(" "),
+        _c("input", {
+          staticClass: "form-control",
+          attrs: {
+            type: "text",
+            id: "presentacion",
+            name: "presentacion",
+            required: ""
+          }
+        })
+      ]),
+      _vm._v(" "),
+      _c("div", { staticClass: "form-group" }, [
+        _c("label", [_vm._v("Detalles:")]),
+        _vm._v(" "),
+        _c("textarea", {
+          staticClass: "form-control",
+          attrs: {
+            type: "text",
+            id: "detalles",
+            name: "detalles",
+            required: ""
+          }
+        })
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "button",
+      {
+        staticClass: "btn btn-secondary",
+        attrs: { type: "button", "data-dismiss": "modal" }
+      },
+      [_c("i", { staticClass: "fas fa-ban" }), _vm._v(" Cerrar")]
+    )
   }
 ]
 render._withStripped = true
@@ -91377,6 +92745,12 @@ var routes = [{
 }, {
   path: '/citas',
   component: __webpack_require__(/*! ./components/Citas */ "./resources/js/components/Citas.vue")["default"]
+}, {
+  path: '/medicamentos',
+  component: __webpack_require__(/*! ./components/Medicamentos */ "./resources/js/components/Medicamentos.vue")["default"]
+}, {
+  path: '/alergias',
+  component: __webpack_require__(/*! ./components/Alergias */ "./resources/js/components/Alergias.vue")["default"]
 }];
 Vue.component('example-component', __webpack_require__(/*! ./components/ExampleComponent.vue */ "./resources/js/components/ExampleComponent.vue")["default"]);
 var router = new vue_router__WEBPACK_IMPORTED_MODULE_0__["default"]({
@@ -91522,6 +92896,75 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AgendarCita_vue_vue_type_template_id_a71b9284___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AgendarCita_vue_vue_type_template_id_a71b9284___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/Alergias.vue":
+/*!**********************************************!*\
+  !*** ./resources/js/components/Alergias.vue ***!
+  \**********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Alergias_vue_vue_type_template_id_66773617_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Alergias.vue?vue&type=template&id=66773617&scoped=true& */ "./resources/js/components/Alergias.vue?vue&type=template&id=66773617&scoped=true&");
+/* harmony import */ var _Alergias_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Alergias.vue?vue&type=script&lang=js& */ "./resources/js/components/Alergias.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _Alergias_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _Alergias_vue_vue_type_template_id_66773617_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _Alergias_vue_vue_type_template_id_66773617_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  "66773617",
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/Alergias.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/Alergias.vue?vue&type=script&lang=js&":
+/*!***********************************************************************!*\
+  !*** ./resources/js/components/Alergias.vue?vue&type=script&lang=js& ***!
+  \***********************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Alergias_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./Alergias.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Alergias.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Alergias_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/Alergias.vue?vue&type=template&id=66773617&scoped=true&":
+/*!*****************************************************************************************!*\
+  !*** ./resources/js/components/Alergias.vue?vue&type=template&id=66773617&scoped=true& ***!
+  \*****************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Alergias_vue_vue_type_template_id_66773617_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./Alergias.vue?vue&type=template&id=66773617&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Alergias.vue?vue&type=template&id=66773617&scoped=true&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Alergias_vue_vue_type_template_id_66773617_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Alergias_vue_vue_type_template_id_66773617_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 
@@ -91798,6 +93241,75 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ExampleComponent_vue_vue_type_template_id_299e239e___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ExampleComponent_vue_vue_type_template_id_299e239e___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/Medicamentos.vue":
+/*!**************************************************!*\
+  !*** ./resources/js/components/Medicamentos.vue ***!
+  \**************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Medicamentos_vue_vue_type_template_id_3d728628_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Medicamentos.vue?vue&type=template&id=3d728628&scoped=true& */ "./resources/js/components/Medicamentos.vue?vue&type=template&id=3d728628&scoped=true&");
+/* harmony import */ var _Medicamentos_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Medicamentos.vue?vue&type=script&lang=js& */ "./resources/js/components/Medicamentos.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _Medicamentos_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _Medicamentos_vue_vue_type_template_id_3d728628_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _Medicamentos_vue_vue_type_template_id_3d728628_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  "3d728628",
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/Medicamentos.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/Medicamentos.vue?vue&type=script&lang=js&":
+/*!***************************************************************************!*\
+  !*** ./resources/js/components/Medicamentos.vue?vue&type=script&lang=js& ***!
+  \***************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Medicamentos_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./Medicamentos.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Medicamentos.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Medicamentos_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/Medicamentos.vue?vue&type=template&id=3d728628&scoped=true&":
+/*!*********************************************************************************************!*\
+  !*** ./resources/js/components/Medicamentos.vue?vue&type=template&id=3d728628&scoped=true& ***!
+  \*********************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Medicamentos_vue_vue_type_template_id_3d728628_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./Medicamentos.vue?vue&type=template&id=3d728628&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Medicamentos.vue?vue&type=template&id=3d728628&scoped=true&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Medicamentos_vue_vue_type_template_id_3d728628_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Medicamentos_vue_vue_type_template_id_3d728628_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 

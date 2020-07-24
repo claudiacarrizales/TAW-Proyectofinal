@@ -5,13 +5,13 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0 text-dark">Enfermedades</h1>
+                        <h1 class="m-0 text-dark">Medicamentos</h1>
                     </div>
                 
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="#">Enfermedades</a></li>
-                            <li class="breadcrumb-item active"> Listado de enfermedades </li>
+                            <li class="breadcrumb-item"><a href="#">Medicamentos</a></li>
+                            <li class="breadcrumb-item active"> Listado de medicamentos </li>
                         </ol>
                     </div>
                 </div>
@@ -26,10 +26,10 @@
                         <!-- Tarjeta del modal -->
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title"> Lista de enfermedades registradas </h3>
+                                <h3 class="card-title"> Lista de medicamentos registrados </h3>
 
                                 <div class="card-tools">
-                                    <button class="btn btn-success" @click="newModal"> <i class="fas fa-bacterium"></i> Crear nuevo registro </button>
+                                    <button class="btn btn-success" @click="nuevoMedicamentoModal"> <i class="fas fa-tablets"></i> Crear nuevo registro de medicamento </button>
 
                                 </div>
                             </div>
@@ -41,22 +41,22 @@
                                     <tr>
                                         <th>ID</th>
                                         <th>Nombre</th>
-                                        <th>Tipo</th>
-                                        <th>Causa</th>
+                                        <th>Presentación</th>
+                                        <th>Detalles</th>
                                         <th>Administración</th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr v-for="enfermedad in enfermedades" :key="enfermedad.id">
+                                    <tr v-for="medicamento in medicamentos" :key="medicamento.id">
                                         
-                                        <td>{{enfermedad.id}}</td>
-                                        <td>{{enfermedad.nombre}}</td>
-                                        <td>{{enfermedad.tipo}}</td>
-                                        <td>{{enfermedad.causa}}</td>
+                                        <td>{{medicamento.id}}</td>
+                                        <td>{{medicamento.nombre}}</td>
+                                        <td>{{medicamento.presentacion}}</td>
+                                        <td>{{medicamento.detalles}}</td>
                                         
                                         <td>
-                                        <button @click="modal_editar_enfermedad(enfermedad.id)" class="btn btn-warning"> <i class="fas fa-pen"></i> </button>
-                                        <button @click="eliminarEnfermedad(enfermedad.id)" class="btn btn-danger"> <i class="fas fa-trash"></i> </button>
+                                        <button @click="modalEditarMedicamento(medicamento.id)" class="btn btn-warning"> <i class="fas fa-pen"></i> </button>
+                                        <button @click="eliminarMedicamento(medicamento.id)" class="btn btn-danger"> <i class="fas fa-trash"></i> </button>
                                         </td>
                                     
                                     </tr>
@@ -71,17 +71,17 @@
             </div>
 
             <!-- Modal -->
-            <div class="modal fade" id="modalUsuario" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal fade" id="modalMedicamento" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 v-show="!editMode" class="modal-title" id="exampleModalLongTitle">Agregar registro enfermedad</h5>
-                            <h5 v-show="editMode" class="modal-title" id="exampleModalLongTitle">Actualizar registro enfermedad</h5>
+                            <h5 v-show="!modoedicion" class="modal-title" id="exampleModalLongTitle">Agregar nuevo medicamento</h5>
+                            <h5 v-show="modoedicion" class="modal-title" id="exampleModalLongTitle">Actualizar datos del medicamento</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                        <form @submit.prevent="editMode ? actualizarEnfermedad() : crearEnfermedad()" >
+                        <form @submit.prevent="modoedicion ? actualizarMedicamento() : crearMedicamento()" >
                         <div class="modal-body">
                             <div class="form-group">
                                 <label>Nombre:</label>
@@ -89,14 +89,14 @@
                             </div>
 
                             <div class="form-group">
-                                <label>Tipo:</label>
-                                <input type="text" id="tipo" name="tipo" class="form-control" required>
+                                <label>Presentación:</label>
+                                <input type="text" id="presentacion" name="presentacion" class="form-control" required>
                             </div>
 
 
                             <div class="form-group">
-                                <label>Causa:</label>
-                                <textarea type="text" id="causa" name="causa" class="form-control" required>
+                                <label>Detalles:</label>
+                                <textarea type="text" id="detalles" name="detalles" class="form-control" required>
                                 </textarea>
                             </div>
 
@@ -104,8 +104,8 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal"> <i class="fas fa-ban"></i> Cerrar</button>
-                            <button v-show="editMode" type="submit" class="btn btn-success"> <i class="fas fa-pen"></i> Actualizar</button>
-                            <button v-show="!editMode" type="submit" class="btn btn-primary"> <i class="fas fa-plus"></i> Registrar</button>
+                            <button v-show="modoedicion" type="submit" class="btn btn-success"> <i class="fas fa-pen"></i> Actualizar</button>
+                            <button v-show="!modoedicion" type="submit" class="btn btn-primary"> <i class="fas fa-plus"></i> Registrar</button>
                         </div>
                         </form>
                     </div>
@@ -118,17 +118,18 @@
 
 <script>
     export default {
-        name: "Enfermedades",
+        name: "Medicamentos",
         data(){
             return {
-                editMode: false,
-                enfermedades: {},
-                enfermedad_editar: {},
-                enfermedad_editar: {
+                modoedicion: false,
+                medicamentos: {},
+                medicamento_editar: {},
+
+                medicamento_editar: {
                     id: '',
                     nombre: '',
-                    tipo: '',
-                    causa: ''
+                    presentacion: '',
+                    detalles: ''
                 }
                 
             }
@@ -136,66 +137,68 @@
         },
         methods:{
 
-            //Metodo que permite obtener los datos de las enfermedades registradas
-            cargarEnfermedaes(){
+            //Metodo que permite obtener los datos de las medicamentos registradas
+            cargarMedicamentos(){
                 
                 // Hace una peticion a la tabla diseases en la base de datos a traves de la ruta
-                axios.get('api/obtenerEnfermedades')
+                axios.get('api/obtenermedicamentos')
                     .then(({data}) => {
-                        this.enfermedades = data;
-                        console.log(data);
+                        this.medicamentos = data;
                     });
             },
 
-            newModal(){
+            nuevoMedicamentoModal(){
 
-                this.editMode = false;
+                this.modoedicion = false;
 
                 var nombre = document.getElementById("nombre");
-                var tipo = document.getElementById("tipo");
-                var causa = document.getElementById("causa");
+                var presentacion = document.getElementById("presentacion");
+                var detalles = document.getElementById("detalles");
 
                 nombre.value = "";
-                tipo.value = "";
-                causa.value = "";
+                presentacion.value = "";
+                detalles.value = "";
 
-                $('#modalUsuario').modal('show');
+                $('#modalMedicamento').modal('show');
             },
 
-            crearEnfermedad() {
+            crearMedicamento() {
 
                 var nombre = document.getElementById("nombre");
-                var tipo = document.getElementById("tipo");
-                var causa = document.getElementById("causa");
+                var presentacion = document.getElementById("presentacion");
+                var detalles = document.getElementById("detalles");
 
-                if(nombre.value == "" || tipo.value == "" || causa.value == "" ){
+                if(nombre.value == "" || presentacion.value == "" || detalles.value == "" )
+                {
+
                     toast.fire({
                         type: 'error',
                         title: 'Llene todos los campos del formulario'
                     });
+
                 }else{
 
 
-                    axios.post('api/registrarenfermedad', {nombre: nombre.value, tipo: tipo.value, causa: causa.value})
+                    axios.post('api/registrarMedicamento', {nombre: nombre.value, presentacion: presentacion.value, detalles: detalles.value})
                     .then((response)=>{
                         
                         //Si la respuesta responde todo bien
                         //Se ejecuta la animacion de la barrita
-                        this.cargarEnfermedaes();
+                        this.cargarMedicamentos();
 
                         //Una pequeña alerta en la esquina
                         toast.fire({
                             type: 'success',
-                            title: 'Enfermedad creada correctamente'
+                            title: 'Medicamento creado correctamente'
                         });
                         this.$Progress.finish();
 
                         //El modal que contiene el formulario desaparece
-                        $('#modalUsuario').modal('hide');
+                        $('#modalMedicamento').modal('hide');
 
                         nombre.value = "";
-                        tipo.value = "";
-                        causa.value = "";
+                        presentacion.value = "";
+                        detalles.value = "";
 
                     }).catch(function (error) {
                         // Maneja el error si la peticion no se llevo a cabo correctamente
@@ -208,58 +211,58 @@
 
             },
 
-            modal_editar_enfermedad(id){
+            modalEditarMedicamento(id){
 
-                this.editMode = true;
+                this.modoedicion = true;
 
                 var nombre = document.getElementById("nombre");
-                var tipo = document.getElementById("tipo");
-                var causa = document.getElementById("causa");
+                var presentacion = document.getElementById("presentacion");
+                var detalles = document.getElementById("detalles");
 
                 //Obitene los datos del usuario a eliminar
-                for(var i=0; i < this.enfermedades.length; i++){
-                    if( this.enfermedades[i].id == id){
-                        this.enfermedad_editar = this.enfermedades[i];
+                for(var i=0; i < this.medicamentos.length; i++){
+                    if( this.medicamentos[i].id == id){
+                        this.medicamento_editar = this.medicamentos[i];
                     }
                 }
 
-                nombre.value = this.enfermedad_editar.nombre;
-                tipo.value = this.enfermedad_editar.tipo;
-                causa.value = this.enfermedad_editar.causa;
+                nombre.value = this.medicamento_editar.nombre;
+                presentacion.value = this.medicamento_editar.presentacion;
+                detalles.value = this.medicamento_editar.detalles;
 
 
-                $('#modalUsuario').modal('show');
+                $('#modalMedicamento').modal('show');
 
 
 
 
             },
 
-            actualizarEnfermedad() {
+            actualizarMedicamento() {
 
                 var nombre = document.getElementById("nombre");
-                var tipo = document.getElementById("tipo");
-                var causa = document.getElementById("causa");
+                var presentacion = document.getElementById("presentacion");
+                var detalles = document.getElementById("detalles");
 
-                this.enfermedad_editar.nombre = nombre.value;
-                this.enfermedad_editar.tipo = tipo.value;
-                this.enfermedad_editar.causa = causa.value;
+                this.medicamento_editar.nombre = nombre.value;
+                this.medicamento_editar.presentacion = presentacion.value;
+                this.medicamento_editar.detalles = detalles.value;
 
-                axios.post('api/actualizarenfermedad', this.enfermedad_editar )
+                axios.post('api/actualizarMedicamento', this.medicamento_editar )
                 .then((response)=>{
                     
-                    this.cargarEnfermedaes();
+                    this.cargarMedicamentos();
 
-                    $('#modalUsuario').modal('hide');
+                    $('#modalMedicamento').modal('hide');
                     toast.fire({
                         type: 'success',
-                        title: 'Registro actualizado correctamente'
+                        title: 'Medicamento actualizado correctamente'
                     });
                 })
                 .catch(() => {
                     toast.fire({
                         type: 'success',
-                        title: 'Error al actualizar'
+                        title: 'Error al actualizar el medicamento'
                     });
                 });
 
@@ -268,9 +271,9 @@
 
             },
 
-            eliminarEnfermedad(id)  {
+            eliminarMedicamento(id)  {
                 swal.fire({
-                    title: '¿Eliminar registro de enfermedad?',
+                    title: '¿Eliminar medicamento?',
                     type: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
@@ -280,7 +283,7 @@
                 }).then((result) => {
                     if (result.value) {
 
-                        axios.delete('api/eliminarenfermedad/'+id).then((response)=>{
+                        axios.delete('api/eliminarMedicamento/'+id).then((response)=>{
                             
                             //Pequeña alerta que confirma la eliminacion del usuario
                             swal.fire(
@@ -289,7 +292,7 @@
                                 'success'
                             )
 
-                            this.cargarEnfermedaes();
+                            this.cargarMedicamentos();
 
                         }).catch(function (error) {
                             // Maneja el error si la peticion no se llevo a cabo correctamente
@@ -306,7 +309,7 @@
 
         },
         created(){
-            this.cargarEnfermedaes();
+            this.cargarMedicamentos();
         }
     }
 </script>

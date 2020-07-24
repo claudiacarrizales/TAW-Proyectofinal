@@ -1,22 +1,34 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Enfermedad;
-use Illuminate\Http\Request;
 
-class EnfermedadesController extends Controller
+use Illuminate\Http\Request;
+use App\User;
+use App\Cita;
+use App\Enfermedad;
+use App\Paciente;
+
+class DashboardController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-        
-        //return "Prueba de enfermedades controller en el metodo index";
-        return Enfermedad::all();
+    
+    public function obtenertotalusuarios(){
+        $usuarios = User::all();
+        return count($usuarios);
+    }
+
+    public function obtenertotalcitas(){
+        $citas = Cita::all();
+        return count($citas);
+    }
+
+    public function obtenertotalenfermedades(){
+        $enfermedades = Enfermedad::all();
+        return count( $enfermedades );
+    }
+
+    public function obtenertotalpacientes(){
+        $pacientes = Paciente::all();
+        return count($pacientes);
     }
 
     /**
@@ -37,15 +49,7 @@ class EnfermedadesController extends Controller
      */
     public function store(Request $request)
     {
-        return Enfermedad::create([
-            'nombre' => $request['nombre'],
-            'tipo' => $request['tipo'],
-            'causa' => $request['causa']
-        ]);
-
-
-       return "correcto";
-
+        //
     }
 
     /**
@@ -77,13 +81,9 @@ class EnfermedadesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request)
+    public function update(Request $request, $id)
     {
         //
-
-        $enfermedad = Enfermedad::findOrFail( $request->id );
-        $enfermedad->update($request->all());
-        return ['mensaje' => 'registro actualizado correctamente'];
     }
 
     /**
@@ -95,8 +95,5 @@ class EnfermedadesController extends Controller
     public function destroy($id)
     {
         //
-        $enfermedad = Enfermedad::findOrFail($id);
-        $enfermedad->delete();
-        return ['mensjae' => 'registro de enfermedad eliminado'];
     }
 }

@@ -1,10 +1,11 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Enfermedad;
-use Illuminate\Http\Request;
 
-class EnfermedadesController extends Controller
+use Illuminate\Http\Request;
+use App\Alergia;
+
+class AlergiasController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,9 +15,7 @@ class EnfermedadesController extends Controller
     public function index()
     {
         //
-        
-        //return "Prueba de enfermedades controller en el metodo index";
-        return Enfermedad::all();
+        return Alergia::all();
     }
 
     /**
@@ -37,10 +36,10 @@ class EnfermedadesController extends Controller
      */
     public function store(Request $request)
     {
-        return Enfermedad::create([
+        //
+        return Alergia::create([
             'nombre' => $request['nombre'],
             'tipo' => $request['tipo'],
-            'causa' => $request['causa']
         ]);
 
 
@@ -80,10 +79,9 @@ class EnfermedadesController extends Controller
     public function update(Request $request)
     {
         //
-
-        $enfermedad = Enfermedad::findOrFail( $request->id );
-        $enfermedad->update($request->all());
-        return ['mensaje' => 'registro actualizado correctamente'];
+        $alergia = Alergia::findOrFail( $request->id );
+        $alergia->update($request->all());
+        return ['mensaje' => 'registro actualizado'];
     }
 
     /**
@@ -95,8 +93,8 @@ class EnfermedadesController extends Controller
     public function destroy($id)
     {
         //
-        $enfermedad = Enfermedad::findOrFail($id);
-        $enfermedad->delete();
-        return ['mensjae' => 'registro de enfermedad eliminado'];
+        $alergia = Alergia::findOrFail($id);
+        $alergia->delete();
+        return ['mensaje' => 'registro eliminado'];
     }
 }

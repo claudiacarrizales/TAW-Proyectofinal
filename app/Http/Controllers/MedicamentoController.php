@@ -1,10 +1,11 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Enfermedad;
+
+use App\Medicamento;
 use Illuminate\Http\Request;
 
-class EnfermedadesController extends Controller
+class MedicamentoController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,9 +15,7 @@ class EnfermedadesController extends Controller
     public function index()
     {
         //
-        
-        //return "Prueba de enfermedades controller en el metodo index";
-        return Enfermedad::all();
+        return Medicamento::all();;
     }
 
     /**
@@ -37,15 +36,15 @@ class EnfermedadesController extends Controller
      */
     public function store(Request $request)
     {
-        return Enfermedad::create([
+        //
+        return Medicamento::create([
             'nombre' => $request['nombre'],
-            'tipo' => $request['tipo'],
-            'causa' => $request['causa']
+            'presentacion' => $request['presentacion'],
+            'detalles' => $request['detalles'],
         ]);
 
 
        return "correcto";
-
     }
 
     /**
@@ -80,10 +79,9 @@ class EnfermedadesController extends Controller
     public function update(Request $request)
     {
         //
-
-        $enfermedad = Enfermedad::findOrFail( $request->id );
-        $enfermedad->update($request->all());
-        return ['mensaje' => 'registro actualizado correctamente'];
+        $medicamento = Medicamento::findOrFail( $request->id );
+        $medicamento->update($request->all());
+        return ['mensaje' => 'registro actualizado'];
     }
 
     /**
@@ -95,8 +93,8 @@ class EnfermedadesController extends Controller
     public function destroy($id)
     {
         //
-        $enfermedad = Enfermedad::findOrFail($id);
-        $enfermedad->delete();
-        return ['mensjae' => 'registro de enfermedad eliminado'];
+        $medicamento = Medicamento::findOrFail($id);
+        $medicamento->delete();
+        return ['mensaje' => 'registro eliminado'];
     }
 }

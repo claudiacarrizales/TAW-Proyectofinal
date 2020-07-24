@@ -25,10 +25,10 @@
                         
                             <div class="row">
                                 <div class="col-lg-3 col-6">
-                                        <!-- small box -->
+                                       
                                         <div class="small-box bg-info">
                                         <div class="inner">
-                                            <h3>150</h3>
+                                            <h3>{{totalUsuarios}}</h3>
 
                                             <p>Usuarios</p>
                                         </div>
@@ -43,7 +43,7 @@
                                         <!-- small box -->
                                         <div class="small-box bg-success">
                                         <div class="inner">
-                                            <h3>53<sup style="font-size: 20px">%</sup></h3>
+                                            <h3>{{ totalenfermedades }}</h3>
 
                                             <p>Enfermedades</p>
                                         </div>
@@ -58,7 +58,7 @@
                                         <!-- small box -->
                                         <div class="small-box bg-warning">
                                         <div class="inner">
-                                            <h3> 44 </h3>
+                                            <h3> {{ totalpacientes }} </h3>
 
                                             <p>Pacientes</p>
                                         </div>
@@ -73,7 +73,7 @@
                                         <!-- small box -->
                                         <div class="small-box bg-danger">
                                         <div class="inner">
-                                            <h3>65</h3>
+                                            <h3> {{totalcitas}} </h3>
 
                                             <p>Citas</p>
                                         </div>
@@ -94,7 +94,36 @@
 
 <script>
     export default {
-        name: "Dashboard"
+        name: "Dashboard",
+
+        data(){
+
+            return {
+                totalUsuarios : 0,
+                totalcitas : 0,
+                totalenfermedades : 0,
+                totalpacientes : 0
+            }
+            
+
+        },
+
+        created() {
+            this.obtenerDatos();
+        },
+
+        methods: {
+            obtenerDatos() {
+                
+                axios.get("/api/totalusuarios").then(resp => { this.totalUsuarios = resp.data });
+                axios.get("/api/totalcitas").then(resp => { this.totalcitas = resp.data });
+                axios.get("/api/totalenfermedades").then(resp => { this.totalenfermedades = resp.data });
+                axios.get("/api/totalpacientes").then(resp => { this.totalpacientes = resp.data });
+
+            }
+        
+        }
+    
     }
 </script>
 
