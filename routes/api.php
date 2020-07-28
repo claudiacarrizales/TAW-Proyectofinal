@@ -73,3 +73,7 @@ Route::get('/obtenerpagos', 'PagosController@index')->name('PagosController.inde
 Route::post('/registrarPagos', 'PagosController@store')->name('PagosController.store');
 Route::post('/actualizarPagos', 'PagosController@update')->name('PagosController.update');
 Route::delete('/eliminarPagos/{id}', 'PagosController@destroy')->name('PagosController.delete');
+
+//Rutas para manejar la información del módulo caja cierre apertura
+Route::get('/obtenercajas', 'CierreAperturaCajaController@index')->name('CierreAperturaCajaController.index');
+Route::post('/actualizarcajas', 'CierreAperturaCajaController@update')->name('CierreAperturaCajaController.update');

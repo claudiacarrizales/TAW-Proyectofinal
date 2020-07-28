@@ -35,18 +35,24 @@
                                     <thead>
                                     <tr>
                                         <th>ID</th>
-                                        <th>Caja</th>
-                                        <th>Pago</th>
-                                        <th>Acciones</th>
+                                        <th>Total</th>
+                                        <th>Fecha apertura</th>
+                                        <th>Fecha cierre</th>
+                                        <th>Status</th>
+                                        <th>Cerrar</th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr v-for="caja in caja_caja" :key="caja.id">
+                                    <tr v-for="caja in cajas" :key="caja.id">
                                         <td>{{caja.id}}</td>
-                                        <td>{{caja.id_caja}}</td>
-                                        <td>{{caja.caja}}</td>
+                                        <td>{{caja.total}}</td>
+                                        <td>{{caja.f_apertura}}</td>
+                                        <td>{{caja.f_cierre}}</td>
+                                        <td><span v-if="caja.f_cierre==null" class="badge badge-success">Abierta</span>
+                                            <span v-else class="badge badge-danger">Cerrada</span>                                            
+                                        </td>
                                         <td>
-                                            <button @click="modal_editar_caja(caja.id)" class="btn btn-warning"> <i class="fas fa-pen"></i> </button>
+                                            <button v-if="caja.f_cierre==null" @click="actualizarcaja(caja.id)" class="btn btn-warning"> <i class="fas fa-lock"></i> <b>¿Cerrar caja? </b></button>
                                         </td>
                                     </tr>
                                     </tbody>
@@ -77,37 +83,33 @@
         },
         methods:{
             //funcion para editar losd atos de un ususario
-            actualizarcaja(){
-                //Se obtienen los campos del formulario
-                var fecha = document.getElementById("fecha");
-                var total = document.getElementById("total");
-                var detalles = document.getElementById("detalles");
-                var tipo = document.getElementById("tipo");
-
-                this.cajas_editar.fecha = fecha.value;
-                this.cajas_editar.total = total.value;
-                this.cajas_editar.detalles = detalles.value;
-                this.cajas_editar.tipo = tipo.value;
-                
-
-                //Se hace una peticion para editar los datos, asi como se manda los datos a traves de un objeto de javascript
-                axios.post('api/actualizarcajas', this.cajas_editar )
-                .then((response)=>{
-                    //Si todo salio correctamente se despliega un peuqño mensaje
-                    Fire.$emit('despuesActualizar');
-                    $('#modalcaja').modal('hide');
-                    toast.fire({
-                        type: 'success',
-                        title: 'caja actualizado correctamente'
-                    });
-
-                    console.log(response);
+            actualizarcaja(id){
+                swal.fire({
+                    title: 'Cerrar caja',
+                    text: "¿Estás seguro que quieres Cerrar la caja?" ,
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Si',
+                    cancelButtonText: 'Cancelar',
+                }).then((result) => {
+                    if (result.value) {
+                        //Se hace una peticion para editar los datos, asi como se manda los datos a traves de un objeto de javascript
+                        axios.post('api/actualizarcajas', {id:id})
+                        .then((response)=>{
+                            //Si todo salio correctamente se despliega un peuqño mensaje
+                            Fire.$emit('despuesActualizar');
+                            toast.fire({
+                                type: 'success',
+                                title: 'caja actualizado correctamente'
+                            });
+                        })
+                        .catch(() => {
+                            this.$Progress.fail();
+                        });
+                    }
                 })
-                .catch(() => {
-                    this.$Progress.fail();
-                });
-
-
             },
             //Metodo que permite obtener los datos de los cajas registrados
             cargarcajas(){
@@ -116,11 +118,10 @@
                 axios.get('api/obtenercajas').then(({data}) => {
                     this.cajas = data
                 })
-
-                axios.get('api/obtenerDoctores').then(({data}) => {
-                    this.doctores = data
-                })
             },
+        },
+        props: {
+            tipo: String
         },
         created(){  
             if(this.$props.tipo == '2' || this.$props.tipo == '3' ){

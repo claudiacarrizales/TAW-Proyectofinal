@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Cajas;
 use Illuminate\Http\Request;
 
 class CierreAperturaCajaController extends Controller
@@ -13,7 +13,8 @@ class CierreAperturaCajaController extends Controller
      */
     public function index()
     {
-        //
+       //obtener los regitros de la tabla
+       return Cajas::all();
     }
 
     /**
@@ -66,9 +67,13 @@ class CierreAperturaCajaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+        //obtener la caja abierta actual
+        $caja=Cajas::where('id', $request->id)->first();
+        $caja->f_cierre=date('Y-m-d');
+        $caja->save();
+        Cajas::create(['total'=>0, 'f_apertura'=>date('Y-m-d')]);
     }
 
     /**

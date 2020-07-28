@@ -67,7 +67,7 @@ let routes = [
     { name: 'mostrarcita', path: '/mostrarcita', component: require('./components/MostrarCita').default, props: true },
 
     { name: 'pagos', path: '/pagos', component: require('./components/Pagos').default, props: true },
-    { name: 'caja', path: '/cajas', component: require('./components/Cajas').default, props: true }
+    { name: 'cajas', path: '/cajas', component: require('./components/CierreAperturaCaja').default, props: true }
 ];
 
 

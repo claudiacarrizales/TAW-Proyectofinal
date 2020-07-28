@@ -236,7 +236,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <router-link to="/pagos" class="nav-link ">
+                                <router-link to="/cajas" class="nav-link ">
                                 <i class="fas fa-clipboard-list nav-icon"></i>                            
                                     <p>Lista de caja</p>
                                 </router-link>

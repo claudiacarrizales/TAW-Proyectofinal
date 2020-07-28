@@ -15788,6 +15788,159 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CierreAperturaCaja.vue?vue&type=script&lang=js&":
+/*!*****************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/CierreAperturaCaja.vue?vue&type=script&lang=js& ***!
+  \*****************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: "User",
+  data: function data() {
+    return {
+      editMode: false,
+      pacientes: {},
+      cajas_editar: {},
+      doctores: {},
+      cajas: {}
+    };
+  },
+  methods: {
+    //funcion para editar losd atos de un ususario
+    actualizarcaja: function actualizarcaja(id) {
+      var _this = this;
+
+      swal.fire({
+        title: 'Cerrar caja',
+        text: "¿Estás seguro que quieres Cerrar la caja?",
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Si',
+        cancelButtonText: 'Cancelar'
+      }).then(function (result) {
+        if (result.value) {
+          //Se hace una peticion para editar los datos, asi como se manda los datos a traves de un objeto de javascript
+          axios.post('api/actualizarcajas', {
+            id: id
+          }).then(function (response) {
+            //Si todo salio correctamente se despliega un peuqño mensaje
+            Fire.$emit('despuesActualizar');
+            toast.fire({
+              type: 'success',
+              title: 'caja actualizado correctamente'
+            });
+          })["catch"](function () {
+            _this.$Progress.fail();
+          });
+        }
+      });
+    },
+    //Metodo que permite obtener los datos de los cajas registrados
+    cargarcajas: function cargarcajas() {
+      var _this2 = this;
+
+      // Hace una peticion a la tabla pacientes a traves del controllador de PacientesController
+      axios.get('api/obtenercajas').then(function (_ref) {
+        var data = _ref.data;
+        _this2.cajas = data;
+      });
+    }
+  },
+  props: {
+    tipo: String
+  },
+  created: function created() {
+    var _this3 = this;
+
+    if (this.$props.tipo == '2' || this.$props.tipo == '3') {
+      this.$router.push('noacceso');
+    }
+
+    this.cargarcajas();
+    Fire.$on('despuesActualizar', function () {
+      return _this3.cargarcajas();
+    });
+  }
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Citas.vue?vue&type=script&lang=js&":
 /*!****************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Citas.vue?vue&type=script&lang=js& ***!
@@ -17867,7 +18020,7 @@ __webpack_require__.r(__webpack_exports__);
             Fire.$emit('despuesEliminar');
           })["catch"](function (error) {
             // Maneja el error si la peticion no se llevo a cabo correctamente
-            swal.fire('Error al eliminar', 'El paciente no se ha podido eliminar', 'error');
+            swal.fire('Error al eliminar', 'El pago no se ha podido eliminar', 'error');
           });
         }
       });
@@ -76779,6 +76932,163 @@ render._withStripped = true
 
 /***/ }),
 
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CierreAperturaCaja.vue?vue&type=template&id=72584a12&scoped=true&":
+/*!*********************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/CierreAperturaCaja.vue?vue&type=template&id=72584a12&scoped=true& ***!
+  \*********************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "content-wrapper" }, [
+    _vm._m(0),
+    _vm._v(" "),
+    _c("div", { staticClass: "content" }, [
+      _c("div", { staticClass: "container" }, [
+        _c("div", { staticClass: "row justify-content-center" }, [
+          _c("div", { staticClass: "col-12 " }, [
+            _c("div", { staticClass: "card" }, [
+              _vm._m(1),
+              _vm._v(" "),
+              _c("div", { staticClass: "card-body table-responsive p-0" }, [
+                _c(
+                  "table",
+                  {
+                    staticClass: "table table-hover",
+                    attrs: { id: "datatable" }
+                  },
+                  [
+                    _vm._m(2),
+                    _vm._v(" "),
+                    _c(
+                      "tbody",
+                      _vm._l(_vm.cajas, function(caja) {
+                        return _c("tr", { key: caja.id }, [
+                          _c("td", [_vm._v(_vm._s(caja.id))]),
+                          _vm._v(" "),
+                          _c("td", [_vm._v(_vm._s(caja.total))]),
+                          _vm._v(" "),
+                          _c("td", [_vm._v(_vm._s(caja.f_apertura))]),
+                          _vm._v(" "),
+                          _c("td", [_vm._v(_vm._s(caja.f_cierre))]),
+                          _vm._v(" "),
+                          _c("td", [
+                            caja.f_cierre == null
+                              ? _c(
+                                  "span",
+                                  { staticClass: "badge badge-success" },
+                                  [_vm._v("Abierta")]
+                                )
+                              : _c(
+                                  "span",
+                                  { staticClass: "badge badge-danger" },
+                                  [_vm._v("Cerrada")]
+                                )
+                          ]),
+                          _vm._v(" "),
+                          _c("td", [
+                            caja.f_cierre == null
+                              ? _c(
+                                  "button",
+                                  {
+                                    staticClass: "btn btn-warning",
+                                    on: {
+                                      click: function($event) {
+                                        return _vm.actualizarcaja(caja.id)
+                                      }
+                                    }
+                                  },
+                                  [
+                                    _c("i", { staticClass: "fas fa-lock" }),
+                                    _vm._v(" "),
+                                    _c("b", [_vm._v("¿Cerrar caja? ")])
+                                  ]
+                                )
+                              : _vm._e()
+                          ])
+                        ])
+                      }),
+                      0
+                    )
+                  ]
+                )
+              ])
+            ])
+          ])
+        ])
+      ])
+    ])
+  ])
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "content-header" }, [
+      _c("div", { staticClass: "container-fluid" }, [
+        _c("div", { staticClass: "row mb-2" }, [
+          _c("div", { staticClass: "col-sm-6" }, [
+            _c("h1", { staticClass: "m-0 text-dark" }, [_vm._v("Caja")])
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "col-sm-6" }, [
+            _c("ol", { staticClass: "breadcrumb float-sm-right" }, [
+              _c("li", { staticClass: "breadcrumb-item" }, [
+                _c("a", { attrs: { href: "#" } }, [_vm._v("Caja")])
+              ]),
+              _vm._v(" "),
+              _c("li", { staticClass: "breadcrumb-item active" }, [
+                _vm._v("Caja de cajas")
+              ])
+            ])
+          ])
+        ])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card-header" }, [
+      _c("h3", { staticClass: "card-title" }, [_vm._v("Caja de cajas")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", [_vm._v("ID")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Total")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Fecha apertura")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Fecha cierre")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Status")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Cerrar")])
+      ])
+    ])
+  }
+]
+render._withStripped = true
+
+
+
+/***/ }),
+
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Citas.vue?vue&type=template&id=687e4a25&scoped=true&":
 /*!********************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Citas.vue?vue&type=template&id=687e4a25&scoped=true& ***!
@@ -94979,6 +95289,11 @@ var routes = [{
   path: '/pagos',
   component: __webpack_require__(/*! ./components/Pagos */ "./resources/js/components/Pagos.vue")["default"],
   props: true
+}, {
+  name: 'cajas',
+  path: '/cajas',
+  component: __webpack_require__(/*! ./components/CierreAperturaCaja */ "./resources/js/components/CierreAperturaCaja.vue")["default"],
+  props: true
 }];
 Vue.component('example-component', __webpack_require__(/*! ./components/ExampleComponent.vue */ "./resources/js/components/ExampleComponent.vue")["default"]);
 var router = new vue_router__WEBPACK_IMPORTED_MODULE_0__["default"]({
@@ -95193,6 +95508,75 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Alergias_vue_vue_type_template_id_66773617_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Alergias_vue_vue_type_template_id_66773617_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/CierreAperturaCaja.vue":
+/*!********************************************************!*\
+  !*** ./resources/js/components/CierreAperturaCaja.vue ***!
+  \********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _CierreAperturaCaja_vue_vue_type_template_id_72584a12_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./CierreAperturaCaja.vue?vue&type=template&id=72584a12&scoped=true& */ "./resources/js/components/CierreAperturaCaja.vue?vue&type=template&id=72584a12&scoped=true&");
+/* harmony import */ var _CierreAperturaCaja_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./CierreAperturaCaja.vue?vue&type=script&lang=js& */ "./resources/js/components/CierreAperturaCaja.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _CierreAperturaCaja_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _CierreAperturaCaja_vue_vue_type_template_id_72584a12_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _CierreAperturaCaja_vue_vue_type_template_id_72584a12_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  "72584a12",
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/CierreAperturaCaja.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/CierreAperturaCaja.vue?vue&type=script&lang=js&":
+/*!*********************************************************************************!*\
+  !*** ./resources/js/components/CierreAperturaCaja.vue?vue&type=script&lang=js& ***!
+  \*********************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CierreAperturaCaja_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./CierreAperturaCaja.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CierreAperturaCaja.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CierreAperturaCaja_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/CierreAperturaCaja.vue?vue&type=template&id=72584a12&scoped=true&":
+/*!***************************************************************************************************!*\
+  !*** ./resources/js/components/CierreAperturaCaja.vue?vue&type=template&id=72584a12&scoped=true& ***!
+  \***************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CierreAperturaCaja_vue_vue_type_template_id_72584a12_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./CierreAperturaCaja.vue?vue&type=template&id=72584a12&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/CierreAperturaCaja.vue?vue&type=template&id=72584a12&scoped=true&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CierreAperturaCaja_vue_vue_type_template_id_72584a12_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CierreAperturaCaja_vue_vue_type_template_id_72584a12_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 
