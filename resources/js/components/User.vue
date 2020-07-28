@@ -341,8 +341,15 @@
 
             }
         },
-
+        props: {
+            tipo: String
+        },
         created(){
+
+            if(this.$props.tipo != '1'){
+                this.$router.push('noacceso') 
+            }
+
             this.cargarUsuarios();
             Fire.$on('despuesCrear',() => this.cargarUsuarios());
             Fire.$on('despuesEliminar',() => this.cargarUsuarios());

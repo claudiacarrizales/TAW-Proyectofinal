@@ -308,7 +308,16 @@
 
 
         },
+        props: {
+            tipo: String
+        },
+
         created(){
+
+            if(this.$props.tipo == '4' || this.$props.tipo == '3' ){
+                this.$router.push('noacceso') 
+            }
+            
             this.cargarMedicamentos();
         }
     }

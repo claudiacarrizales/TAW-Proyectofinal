@@ -45,10 +45,15 @@ Route::post('/actualizarPaciente', 'PacientesController@update')->name('paciente
 Route::delete('/eliminarPaciente/{id}', 'PacientesController@destroy')->name('pacientes.delete');
 
 //Rutas que controlan la informacion de las citas
-Route::get('/cita', 'CitasController@index')->name('pacientes.index');
-Route::post('/agendarcita', 'CitasController@store')->name('pacientes.index');
-Route::delete('/eliminarcita/{id}', 'CitasController@destroy')->name('pacientes.destroy');
-Route::post('/actualizarcita', 'CitasController@update')->name('citas.update');
+Route::get('/obtnerCitas/{id}', 'CitasController@obtenerCitas')->name('Citas.obtenercitas');
+Route::get('/obtenerCitasHoy/{id}', 'CitasController@citasDeHoy')->name('Citas.citasDeHoy');
+
+Route::get('/obtenerDatosCita/{id}', 'CitasController@obtenerDatosCita');
+
+Route::get('/cita', 'CitasController@index')->name('Citas.index');
+Route::post('/agendarcita', 'CitasController@store')->name('Citas.store');
+Route::delete('/eliminarcita/{id}', 'CitasController@destroy')->name('Citas.destroy');
+Route::post('/actualizarcita', 'CitasController@update')->name('Citas.update');
 
 //Rutas que controlan la informacio de los medicamento
 Route::get('/obtenermedicamentos', 'MedicamentoController@index')->name('pacientes.index');
@@ -62,3 +67,9 @@ Route::get('/obteneralergias', 'AlergiasController@index')->name('AlergiasContro
 Route::post('/registrarAlergia', 'AlergiasController@store')->name('AlergiasController.store');
 Route::post('/actualizarAlergia', 'AlergiasController@update')->name('AlergiasController.update');
 Route::delete('/eliminarAlergia/{id}', 'AlergiasController@destroy')->name('AlergiasController.delete');
+
+//Rutas para manejar la información del módulo pagos
+Route::get('/obtenerpagos', 'PagosController@index')->name('PagosController.index');
+Route::post('/registrarPagos', 'PagosController@store')->name('PagosController.store');
+Route::post('/actualizarPagos', 'PagosController@update')->name('PagosController.update');
+Route::delete('/eliminarPagos/{id}', 'PagosController@destroy')->name('PagosController.delete');

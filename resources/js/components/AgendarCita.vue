@@ -196,8 +196,16 @@ export default {
         };
     },
 
+    props: {
+        tipo: String
+    },
     //Metodo que se ejecuta al inicializar el compoenente
     created() {
+        
+        if(this.$props.tipo == '3'){
+            this.$router.push('noacceso') 
+        }
+
         this.getEvents();
         this.cargarPacientes();
     },

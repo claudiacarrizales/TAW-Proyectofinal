@@ -5,7 +5,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0 text-dark">Dashboard </h1>
+                        <h1 class="m-0 text-dark">Dashboard Médico</h1>
                     </div>
                 
                     <div class="col-sm-6">
@@ -110,21 +110,9 @@
             
 
         },
-        props: {
-            tipo: String
-        },
 
         created() {
             this.obtenerDatos();
-            console.log(this.$props.tipo);
-
-            if(this.$props.tipo == '2'){
-                this.$router.push('dashboardmedico') 
-            }else if(this.$props.tipo == '3'){
-                this.$router.push('dashboardmedicoasociado') 
-            }else if(this.$props.tipo == '4'){
-                this.$router.push('dashboardsecretaria') 
-            }
         },
 
         methods: {

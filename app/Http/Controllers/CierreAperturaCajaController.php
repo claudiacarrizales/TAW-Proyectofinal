@@ -2,12 +2,9 @@
 
 namespace App\Http\Controllers;
 
-
-use App\Paciente;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 
-class PacientesController extends Controller
+class CierreAperturaCajaController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,7 +14,6 @@ class PacientesController extends Controller
     public function index()
     {
         //
-        return Paciente::all();
     }
 
     /**
@@ -39,18 +35,6 @@ class PacientesController extends Controller
     public function store(Request $request)
     {
         //
-        return Paciente::create([
-            'nombre' => $request['nombre'],
-            'apellido' => $request['apellido'],
-            'edad' => $request['edad'],
-            'altura' => $request['altura'],
-            'peso' => $request['peso'],
-            'sexo' => $request['sexo'],
-            'fecha_nacimiento' => $request['fecha_nacimiento']
-        ]);
-
-
-       return "correcto";
     }
 
     /**
@@ -82,12 +66,9 @@ class PacientesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request)
+    public function update(Request $request, $id)
     {
-        //SE ACTUALIZAN
-        $paciente = Paciente::findOrFail( $request->id );
-        $paciente->update($request->all());
-        return ['message' => 'updated'];
+        //
     }
 
     /**
@@ -98,9 +79,6 @@ class PacientesController extends Controller
      */
     public function destroy($id)
     {
-        //eliminar el registro
-        $paciente = Paciente::findOrFail($id);
-        $paciente->delete();
-        return ['message' => 'data deleted'];
+        //
     }
 }

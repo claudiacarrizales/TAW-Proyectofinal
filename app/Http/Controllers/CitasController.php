@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use App\Cita;
 use App\Http\Resources\CalendarResource;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Auth;
+
+use DB;
 
 class CitasController extends Controller
 {
@@ -18,6 +21,66 @@ class CitasController extends Controller
     {
         //
         return CalendarResource::collection(Cita::all());
+    }
+
+
+    public function obtenerDatosCita($id){
+        return Cita::where('id',$id)->first();
+    }
+
+    public function citasDeHoy($id)
+    {
+        $hoy = date('Y-m-d');
+        //$citasdehoy = DB::table('citas')->where(DB::raw('DATE(fecha)'), $hoy)->get();
+
+        if( $id == 0 ){
+            $citasdehoy = DB::table('citas')
+                ->join('users', 'users.id', '=', 'citas.doctor_id')
+                ->join('paciente', 'paciente.id', '=', 'citas.paciente_id')
+                ->select('citas.*', 'users.name as nombredoctor', 'users.last_name as apellidodoctor', 'paciente.nombre', 'paciente.apellido')
+                ->where(DB::raw('DATE(fecha)'),'=', $hoy)
+                ->get();
+        }else {
+            $citasdehoy = DB::table('citas')
+                ->join('users', 'users.id', '=', 'citas.doctor_id')
+                ->join('paciente', 'paciente.id', '=', 'citas.paciente_id')
+                ->select('citas.*', 'users.name as nombredoctor', 'users.last_name as apellidodoctor', 'paciente.nombre', 'paciente.apellido')
+                ->where(DB::raw('DATE(fecha)'),'=', $hoy)
+                ->where('citas.doctor_id', '=', $id )
+                ->get();
+        }
+
+        
+        return $citasdehoy;
+        //select * from test where DATE(date) = '2014-03-19';
+
+    }
+
+    public function obtenerCitas($id)
+    {
+        //$citas = DB::table('citas')->get();
+        //<>
+
+        $hoy = date('Y-m-d');
+
+        if( $id == 0 ){
+            $citas = DB::table('citas')
+                ->join('users', 'users.id', '=', 'citas.doctor_id')
+                ->join('paciente', 'paciente.id', '=', 'citas.paciente_id')
+                ->select('citas.*', 'users.name as nombredoctor', 'users.last_name as apellidodoctor', 'paciente.nombre', 'paciente.apellido')
+                ->where(DB::raw('DATE(fecha)'),'<>', $hoy)
+                ->get();
+        }else {
+            $citas = DB::table('citas')
+                ->join('users', 'users.id', '=', 'citas.doctor_id')
+                ->join('paciente', 'paciente.id', '=', 'citas.paciente_id')
+                ->select('citas.*', 'users.name as nombredoctor', 'users.last_name as apellidodoctor', 'paciente.nombre', 'paciente.apellido')
+                ->where(DB::raw('DATE(fecha)'),'<>', $hoy)
+                ->where('citas.doctor_id', '=', $id )
+                ->get();
+        }
+
+        return $citas;
     }
 
     /**

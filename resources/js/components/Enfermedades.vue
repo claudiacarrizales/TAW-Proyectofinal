@@ -305,7 +305,15 @@
 
 
         },
+        props: {
+            tipo: String
+        },
+        //ESTO SE EJECUTA VUANDO SE TERMINA DE CARGAR LA VISTA 
         created(){
+            if(this.$props.tipo == '4' || this.$props.tipo == '3' ){
+                this.$router.push('noacceso') 
+            }
+
             this.cargarEnfermedaes();
         }
     }

@@ -89,6 +89,7 @@
                         </div>
                         <form @submit.prevent="editMode ? actualizarUsuario() : crearUsuario()" >
                         <div class="modal-body">
+
                             <div class="form-group">
                                 <label>Nombre:</label>
                                 <input type="text" id="nombre" name="nombre"  class="form-control" >
@@ -153,6 +154,7 @@
                 editMode : false,
                 pacientes : {},
                 pacientes_editar: {},
+                doctores: {}
 
             }
         },
@@ -314,8 +316,11 @@
                 // Hace una peticion a la tabla pacientes a traves del controllador de PacientesController
                 axios.get('api/obtenerPacientes').then(({data}) => {
                     this.pacientes = data
-                    console.log(data);
-                    })
+                })
+
+                axios.get('api/obtenerDoctores').then(({data}) => {
+                    this.doctores = data
+                })
 
             },
 
@@ -380,8 +385,15 @@
 
             }
         },
-
+        props: {
+            tipo: String
+        },
         created(){
+            
+            if(this.$props.tipo == '4' || this.$props.tipo == '3' ){
+                this.$router.push('noacceso') 
+            }
+
             this.cargarPacientes();
             Fire.$on('despuesCrear',() => this.cargarPacientes());
             Fire.$on('despuesEliminar',() => this.cargarPacientes());
