@@ -103,4 +103,8 @@ class PacientesController extends Controller
         $paciente->delete();
         return ['message' => 'data deleted'];
     }
+    //recibir info del paciente
+    Public function info($id){
+        return Paciente::where('id',$id)->first();
+    }
 }

@@ -25,7 +25,12 @@ class CitasController extends Controller
 
 
     public function obtenerDatosCita($id){
-        return Cita::where('id',$id)->first();
+        //union de tablas
+        return $citasdehoy = DB::table('citas')
+            ->join('paciente', 'paciente.id', '=', 'citas.paciente_id')
+            ->select('citas.*', 'paciente.*')
+            ->where('citas.id','=', $id)
+            ->get();
     }
 
     public function citasDeHoy($id)
@@ -160,5 +165,24 @@ class CitasController extends Controller
         $cita = Cita::findOrFail($id);
         $cita->delete();
         return ['message' => 'data deleted'];
+    }
+    //metodo para guardar la alergia elegida
+    public function alergia(Request $request){
+        //eliminar las alergias del paciente
+        DB::table('paciente_alergias')->where('id_paciente', '=', $request->id)->delete();
+        for ($i=0; $i < sizeof($request->ids); $i++) { 
+            DB::table('paciente_alergias')->insert(
+                ['id_paciente' => $request->id, 'id_alergia' => $request->ids[$i]]
+            );
+        }
+    }
+    //para no eliminar las alergias que ya se habias elccionad en la cita, no perder el registro
+    public function alergiaPaciente($id){
+        $users = DB::table('paciente_alergias')
+            ->join('alergias', 'alergias.id', '=', 'paciente_alergias.id_alergia')
+            ->select('alergias.*')
+            ->where('paciente_alergias.id_paciente', '=', $id)
+            ->get();
+        return $users;
     }
 }

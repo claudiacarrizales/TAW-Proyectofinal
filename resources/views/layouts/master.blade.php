@@ -24,6 +24,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- Google Font: Source Sans Pro -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
 
+    <link rel="stylesheet" href="https://unpkg.com/vue-select@3.0.0/dist/vue-select.css">
+
 
 </head>
 <body class="hold-transition sidebar-mini">
@@ -64,7 +66,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         <router-link to="/dashboard" class="nav-link">
                             <i class="nav-icon fas fa-tachometer-alt"></i>
                             <p>
-                                Panel de control
+                                <b>Panel de control  </b>
                             </p>
                         </router-link>
                     </li>
@@ -74,7 +76,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         <a href="#" class="nav-link ">
                             <i class="nav-icon fas fa-users"></i>
                             <p>
-                                Usuarios
+                                <b>Usuarios</b>
                                 <i class="right fas fa-angle-left"></i>
                             </p>
                         </a>
@@ -82,7 +84,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                             <li class="nav-item">
                                 <router-link to="/users" class="nav-link ">
                                     <i class="fas fa-clipboard-list nav-icon"></i>
-                                    <p>Lista de usuarios</p>
+                                    <b><p>Lista de usuarios</p></b>
                                 </router-link>
                             </li>
                         </ul>
@@ -94,7 +96,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         <a href="#" class="nav-link ">
                             <i class="fas fa-bacterium nav-icon"></i>
                             <p>
-                                Enfermedades
+                                <b>Enfermedades</b>
                                 <i class="right fas fa-angle-left"></i>
                             </p>
                         </a>
@@ -102,7 +104,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                             <li class="nav-item">
                                 <router-link to="/enfermedades" class="nav-link ">
                                     <i class="fas fa-bacterium nav-icon"></i>                                 
-                                    <p>Lista de enfermedades</p>
+                                    <b><p>Lista de enfermedades</p></b>
                                 </router-link>
                             </li>
                         </ul>
@@ -114,7 +116,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         <a href="#" class="nav-link ">
                         <i class="fas fa-hospital-user nav-icon"></i>
                             <p>
-                                Pacientes
+                                <b>Pacientes</b>
                                 <i class="right fas fa-angle-left"></i>
                             </p>
                         </a>
@@ -122,7 +124,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                             <li class="nav-item">
                                 <router-link to="/pacientes" class="nav-link ">
                                     <i class="fas fa-clipboard-list nav-icon"></i>                                 
-                                    <p>Lista de pacientes</p>
+                                    <b><p>Lista de pacientes</p></b>
                                 </router-link>
                             </li>
                         </ul>
@@ -134,7 +136,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         <a href="#" class="nav-link ">
                             <i class="fas fa-calendar-alt nav-icon"></i>
                             <p>
-                                Citas
+                                <b>Citas</b>
                                 <i class="right fas fa-angle-left"></i>
                             </p>
                         </a>
@@ -144,7 +146,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                             <li class="nav-item">
                                 <router-link to="/agendarcita" class="nav-link ">
                                     <i class="fas fa-calendar-plus nav-icon"></i>
-                                    <p>Agendar cita</p>
+                                    <b><p>Agendar cita</p></b>
                                 </router-link>
                             </li>
                         </ul>
@@ -154,7 +156,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                             <li class="nav-item">
                                 <router-link to="/citas" class="nav-link ">
                                     <i class="fas fa-clipboard-list nav-icon"></i>                                 
-                                    <p>Listado de citas</p>
+                                    <b><p>Listado de citas</p></b>
                                 </router-link>
                             </li>
                         </ul>
@@ -168,7 +170,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         <a href="#" class="nav-link ">
                             <i class="fas fa-pills nav-icon"></i>
                             <p>
-                                Medicamentos
+                                <b>Medicamentos</b>
                                 <i class="right fas fa-angle-left"></i>
                             </p>
                         </a>
@@ -176,7 +178,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                             <li class="nav-item">
                                 <router-link to="/medicamentos" class="nav-link ">
                                     <i class="fas fa-clipboard-list nav-icon"></i>                                 
-                                    <p>Lista de medicamentos</p>
+                                    <b><p>Lista de medicamentos</p></b>
                                 </router-link>
                             </li>
                         </ul>
@@ -188,7 +190,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         <a href="#" class="nav-link ">
                             <i class="fas fa-allergies nav-icon"></i>
                             <p>
-                                Alergias
+                                <b>Alergias</b>
                                 <i class="right fas fa-angle-left"></i>
                             </p>
                         </a>
@@ -196,7 +198,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                             <li class="nav-item">
                                 <router-link to="/alergias" class="nav-link ">
                                     <i class="fas fa-clipboard-list nav-icon"></i>                                 
-                                    <p>Lista de alergias</p>
+                                    <b><p>Lista de alergias</p></b>
                                 </router-link>
                             </li>
                         </ul>
@@ -209,7 +211,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         <a href="#" class="nav-link ">
                             <i class="fas fa-money-bill-wave nav-icon"></i>
                             <p>
-                                Pagos
+                                <b>Pagos</b>
                                 <i class="right fas fa-angle-left"></i>
                             </p>
                         </a>
@@ -217,7 +219,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                             <li class="nav-item">
                                 <router-link to="/pagos" class="nav-link ">
                                 <i class="fas fa-clipboard-list nav-icon"></i>                            
-                                    <p>Lista de pagos</p>
+                                    <b><p>Lista de pagos</p></b>
                                 </router-link>
                             </li>
                         </ul>
@@ -230,7 +232,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         <a href="#" class="nav-link ">
                             <i class="fas fa-cash-register nav-icon"></i>
                             <p>
-                                Caja
+                                <b>Caja</b>
                                 <i class="right fas fa-angle-left"></i>
                             </p>
                         </a>
@@ -238,7 +240,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                             <li class="nav-item">
                                 <router-link to="/cajas" class="nav-link ">
                                 <i class="fas fa-clipboard-list nav-icon"></i>                            
-                                    <p>Lista de caja</p>
+                                    <b><p>Lista de caja</p></b>
                                 </router-link>
                             </li>
                         </ul>
@@ -263,7 +265,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                                      document.getElementById('logout-form').submit();">
                             <i class="nav-icon fas fa-sign-out-alt"></i>
                             <p>
-                                Cerrar Sesión
+                                <b>Cerrar Sesión</b>
                             </p>
                         </a>
                         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
@@ -291,5 +293,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
 <!-- jQuery -->
 <script src="{{asset('js/app.js')}}"></script>
+
+
+
 </body>
 </html>

@@ -16,6 +16,10 @@ Vue.component(AlertError.name, AlertError);
 //moment js
 import moment from "moment";
 
+import vSelect from 'vue-select'
+
+Vue.component('v-select', vSelect)
+
 import VueFilterDateFormat from '@vuejs-community/vue-filter-date-format';
 
 Vue.use(VueFilterDateFormat);

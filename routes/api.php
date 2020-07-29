@@ -77,3 +77,11 @@ Route::delete('/eliminarPagos/{id}', 'PagosController@destroy')->name('PagosCont
 //Rutas para manejar la información del módulo caja cierre apertura
 Route::get('/obtenercajas', 'CierreAperturaCajaController@index')->name('CierreAperturaCajaController.index');
 Route::post('/actualizarcajas', 'CierreAperturaCajaController@update')->name('CierreAperturaCajaController.update');
+
+//ruta para guardar los datos del analisis clinica (cita)
+Route::post('/guardarAlergia', 'CitasController@alergia')->name('Citas.alergia');
+Route::post('/guardarPadecimiento', 'EnfermedadesController@index')->name('enfermedades.index');
+Route::post('/guardarMedicamento', 'MedicamentoController@index')->name('pacientes.index');
+
+//alergias cita
+Route::get('/obteneralergiasPaciente/{id}', 'CitasController@alergiaPaciente')->name('Cias.alergiaPaciente');
