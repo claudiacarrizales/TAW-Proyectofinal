@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 use App\Paciente;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use DB;
 
 class PacientesController extends Controller
 {
@@ -18,6 +19,17 @@ class PacientesController extends Controller
     {
         //
         return Paciente::all();
+    }
+
+
+    //Obtiene los registros de pacientes que fueron compartidos definiendolo por el id
+    public function obtenerPacientesExpediente($id)
+    {
+        return DB::table('paciente')
+            ->join('paciente_usuarios', 'paciente_usuarios.id_paciente', '=', 'paciente.id')
+            ->select('paciente_usuarios.*', 'paciente.*')
+            ->where('paciente_usuarios.medico_asociado', '=', $id)
+            ->get();
     }
 
     /**

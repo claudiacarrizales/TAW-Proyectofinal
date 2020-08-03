@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Pagos;
 use App\Cajas;
+use App\Cita;
 use DB;
 use Illuminate\Http\Request;
 
@@ -52,6 +53,12 @@ class PagosController extends Controller
         DB::table('caja_pago')->insert(
             ['id_caja' => $caja->id, 'id_pago' => $pagoTotal->id]
         );
+
+        //Relacionar el pago con la cita
+        $cita = Cita::findOrFail( $request->cita );
+        $cita->pago = $pagoTotal->id;
+        $cita->save();
+
        return "correcto";
     }
 
@@ -99,6 +106,13 @@ class PagosController extends Controller
         //SE ACTUALIZAN LOS DATOS A LOS NUEVO
         $pago = Pagos::findOrFail( $request->id );
         $pago->update($request->all());
+
+
+        //Actualiza la relacion con la cita
+        $cita = Cita::findOrFail( $request->id_cita );
+        $cita->pago = $pago->id;
+        $cita->save();
+
         return ['message' => 'updated'];
     }
 

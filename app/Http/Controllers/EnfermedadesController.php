@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Enfermedad;
 use Illuminate\Http\Request;
+use DB;
 
 class EnfermedadesController extends Controller
 {
@@ -98,5 +99,18 @@ class EnfermedadesController extends Controller
         $enfermedad = Enfermedad::findOrFail($id);
         $enfermedad->delete();
         return ['mensjae' => 'registro de enfermedad eliminado'];
+    }
+
+    //Se encarga del guardado de un padecimiento en la cita
+    public function padecimiento(Request $request)
+    {
+
+        $affected = DB::table('citas')
+              ->where('id', $request->id)
+              ->update(['id_enfermedad' => $request->idpadecimiento, 'observaciones' => $request->observaciones]);
+
+
+        return $request;
+
     }
 }

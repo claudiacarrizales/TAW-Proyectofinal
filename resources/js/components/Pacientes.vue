@@ -62,8 +62,12 @@
                                         <td>{{paciente.fecha_nacimiento}}</td>
 
                                         <td>
+
                                         <button @click="modal_editar_usuario(paciente.id)" class="btn btn-warning"> <i class="fas fa-pen"></i> </button>
                                         <button @click="eliminarUsuario(paciente.id)" class="btn btn-danger"> <i class="fas fa-trash"></i> </button>
+                                        <button @click="verExpediente(paciente.id, paciente.nombre, paciente.apellido)" class="btn btn-primary"> <i class="fas fa-eye"></i></button>
+                                        <button @click="comprartirPaciente(paciente.id, paciente.nombre, paciente.apellido)" class="btn btn-success"> <i class="fas fa-share-square"></i></button>
+
                                         </td>
                                     </tr>
                                     </tbody>
@@ -75,6 +79,350 @@
                     </div>
                 </div>
             </div>
+
+
+            <!-- MODAL PARA LA COMPARTICACION DEL EXPEDIENTE DEL PACIENTE -->
+            <div class="modal fade" id="compartirPacienteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Compartir expediente del paciente <b> {{ pacienteACompartirNombre + " "  + pacienteACompartirApellido }} </b> con medico asociado </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="modal fade" id="registroModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog " role="document">
+                                <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel"> Seleccione el medico asociado y lo que puede ver </b> </h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <!-- Tabla que despliega la informaci+on de los usuarios registrados -->
+                                    
+                                    <!-- Formulario para compartir el expediente a un medico asociado -->
+                                    <form @submit.prevent="guardarComparticion()" >
+                                    
+                                        <div class="form-group">
+                                            <label>Medico asociado: </label>
+                                            <select class="form-control" name="doctorasoc" id="doctorasoc" required>
+                                                <option v-for="asociado in asociados" :key="asociado.id" v-bind:value="asociado.id">
+                                                {{asociado.name}}
+                                                </option>
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Informacion del paciente: </label>
+                                            <select class="form-control" name="info_paciente" id="info_paciente" required>
+                                                <option value="1">Si</option>
+                                                <option value="0">No</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Alergias: </label>
+                                            <select class="form-control" name="alergias_paciente" id="alergias_paciente" required>
+                                                <option value="1">Si</option>
+                                                <option value="0">No</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Enfermedades: </label>
+                                            <select class="form-control" name="enfermedades_paciente" id="enfermedades_paciente" required>
+                                                <option value="1">Si</option>
+                                                <option value="0">No</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Medicamentos: </label>
+                                            <select class="form-control" name="medicamentos_paciente" id="medicamentos_paciente" required>
+                                                <option value="1">Si</option>
+                                                <option value="0">No</option>
+                                            </select>
+                                        </div>
+
+                                        <button type="submit" class="btn btn-primary"> <i class="fas fa-user-plus"></i> Guardar </button>
+                                    </form>
+
+                                </div>
+                                
+                                </div>
+                            </div>
+                        </div>
+                        
+
+                        
+
+                        <!-- Button trigger modal -->
+                        <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#registroModal">
+                            <i class="fas fa-share"></i> Compartir a medico asociado
+                        </button>
+
+                        
+
+                        <!-- Tabla que despliega la informaci+on de los usuarios registrados -->
+                        <table class="table table-hover" id="datatable">
+                            <thead>
+                            <tr>
+                                <th> Medico que compartio</th>
+                                <th> Medico asociado </th>
+                                <th> Fecha </th>
+                                <th> Puede ver </th>
+                                <th>Acciones</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr v-for="expediente in expedientesPaciente" :key="expediente.id">
+                                <td>{{expediente.nombreMedico + " " + expediente.apellidoMedico}}</td>
+                                <td>{{expediente.nombreAsociado + " " + expediente.apellidoAsociado }}</td>
+                                <td>{{expediente.fecha}}</td>
+                                <td> 
+                                    <span v-show="expediente.info==1">Información <br> </span>
+                                    <span v-show="expediente.alergias==1"> Alergias <br>  </span>
+                                    <span v-show="expediente.enfermedades==1">Enfermedades <br>  </span>
+                                    <span v-show="expediente.medicinas==1">Medicinas <br>  </span>
+                                </td>
+                                <td>
+                                <button @click="eliminarComparticion(expediente.id)" class="btn btn-danger"> <i class="fas fa-trash"></i> </button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- MODAL PARA VER EL EXPEDIENTE DEL PACIETE  -->
+            <div class="modal fade" id="expedienteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Expediente de paciente </b> </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Tabla que despliega la informaci+on de los usuarios registrados -->
+                        
+                        <h1> {{ pacienteACompartirNombre + " "  + pacienteACompartirApellido }} </h1>
+                        Código: {{ pacienteACompartir }}
+
+                        <hr>
+
+                        <div class="card bg-light mb-3" style="max-width: 100%;">
+                            <div class="card-header">Información</div>
+                            <div class="card-body">
+
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-6"> 
+                                            <label for="exampleInputEmail1">Nombre: </label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h5> {{ this.pacientes_editar.nombre }} </h5>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--permitira mostrar el apellido del paciente en la vista-->
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-6"> 
+                                            <label for="exampleInputEmail1">Apellido: </label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h5> {{ this.pacientes_editar.apellido }} </h5>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--permitira mostrar la edad del paciente en la vista-->
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-6"> 
+                                            <label for="exampleInputEmail1">Edad: </label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h5> {{ this.pacientes_editar.edad }}  </h5>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--permitira mostrar la altura del paciente en la vista-->
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-6"> 
+                                            <label for="exampleInputEmail1">Altura: </label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h5> {{ this.pacientes_editar.altura }}  </h5>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--permitira mostrar el peso del paciente en la vista-->
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-6"> 
+                                            <label for="exampleInputEmail1">Peso: </label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h5> {{ this.pacientes_editar.peso }}  </h5>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--permitira mostrar el sexo del paciente en la vista-->
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-6"> 
+                                            <label for="exampleInputEmail1">Sexo: </label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h5> {{ this.pacientes_editar.sexo }} </h5>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-6"> 
+                                            <label for="exampleInputEmail1">IMC: </label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h5> {{ (this.pacientes_editar.peso / (this.pacientes_editar.altura * this.pacientes_editar.altura)).toFixed(2) }} </h5>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-6"> 
+                                            <label for="exampleInputEmail1">Condición: </label>
+                                        </div>
+                                        <div class="col-md-6">
+
+                                            <span v-if="this.pacientes_editar.peso / (this.pacientes_editar.altura * this.pacientes_editar.altura) < 18.5" class="tag tag-success">
+                                                <h5> Peso inferior </h5>
+                                            </span>
+                                            <span v-else-if="this.pacientes_editar.peso / (this.pacientes_editar.altura * this.pacientes_editar.altura) > 18.5 && this.pacientes_editar.peso / (this.pacientes_editar.altura * this.pacientes_editar.altura) < 24.9 " class="tag tag-success"> 
+                                                <h5> Normal </h5>
+                                            </span>
+                                            <span v-else-if="this.pacientes_editar.peso / (this.pacientes_editar.altura * this.pacientes_editar.altura) > 25.0 && this.pacientes_editar.peso / (this.pacientes_editar.altura * this.pacientes_editar.altura) <  29.9" class="tag tag-success"> 
+                                               <h5> Sobrepeso </h5>
+                                            </span>
+                                            <span v-else-if="this.pacientes_editar.peso / (this.pacientes_editar.altura * this.pacientes_editar.altura) > 30.0" class="tag tag-success"> 
+                                                <h5> Obesidad </h5>
+                                            </span>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="card bg-light mb-3" style="max-width: 100%;">
+                            <div class="card-header">Información sobre alergias</div>
+                            <div class="card-body">
+                                <table class="table table-hover" id="datatable">
+                                    <thead>
+                                    <tr>
+                                        <th> Algergia </th>
+                                        <th> Tipo </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr v-for="alergia in alergias_paciente" >
+                                        <td> {{ alergia.nombreAlergia }} </td>
+                                        <td>{{ alergia.tipoAlergia }}</td>
+                                        
+                                    </tr>
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+
+                        <div class="card bg-light mb-3" style="max-width: 100%;">
+                            <div class="card-header">Información sobre enfermedades</div>
+                            <div class="card-body">
+                                
+                                <table class="table table-hover" id="datatable">
+                                    <thead>
+                                    <tr>
+                                        <th> cita </th>
+                                        <th> Fecha de cita </th>
+                                        <th> Enfermedad </th>
+                                        <th> Observaciones </th>
+                                        <th> Tipo </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr v-for="enfermedad in enfermedades_paciente" >
+                                        <td>{{ enfermedad.id}}  </th>
+                                        <td>{{ enfermedad.fecha }}</td>
+                                        <td>{{ enfermedad.nombre}}</td>
+                                        <td>{{ enfermedad.observaciones }}</td>
+                                        <td>{{ enfermedad.tipo }}</td>
+                                        
+                                    </tr>
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+
+                        <div class="card bg-light mb-3" style="max-width: 100%;">
+                            <div class="card-header">Información sobre medicinas</div>
+                            <div class="card-body">
+                                
+                                <table class="table table-hover" id="datatable">
+                                    <thead>
+                                    <tr>
+                                        <th> Cita</th>
+                                        <th> Fecha de cita </th>
+                                        <th> Medicamento </th>
+                                        
+                                        <th> Presentación </th>
+                                        <th> Cantidad </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr v-for="medicamento in medicamentos_paciente" >
+                                        <td> {{ medicamento.id_cita }} </td>
+                                        <td>{{ medicamento.fecha }}</td>
+                                        <td>{{medicamento.nombre}}</td>
+                                        
+                                        <td>{{ medicamento.presentacion }}</td>
+                                        <td>{{ medicamento.observaciones }}</td>
+                                        
+                                    </tr>
+                                    </tbody>
+                                </table>
+
+
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-danger"> <i class="fas fa-file-pdf"></i> Descargar </button>
+                    </div>
+
+                    </div>
+                </div>
+            </div>
+
+
 
             <!-- Modal -->
             <div class="modal fade" id="modalPaciente" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -154,12 +502,129 @@
                 editMode : false,
                 pacientes : {},
                 pacientes_editar: {},
-                doctores: {}
+                doctores: {},
+                pacienteACompartir: {},
+                pacienteACompartirNombre: "",
+                pacienteACompartirApellido: "",
+                asociados: {},
+                expdientesCompartidos: {},
+                expedientesPaciente: [],
+
+                alergias_paciente: [],
+                enfermedades_paciente: [],
+                medicamentos_paciente: []
 
             }
         },
         methods:{
+            guardarComparticion(){
 
+                var doctor_id = document.getElementById("doctorasoc");
+                var info_paciente = document.getElementById("info_paciente");
+                var alergias_paciente = document.getElementById("alergias_paciente");
+                var enfermedades_paciente = document.getElementById("enfermedades_paciente");
+                var medicamentos_paciente = document.getElementById("medicamentos_paciente");
+
+                //Se hace una peticion para editar los datos, asi como se manda los datos a traves de un objeto de javascript
+                axios.post('api/registrarComparticion', {id_paciente: this.pacienteACompartir, doctor_id : this.$props.id ,doctor_asociado: doctor_id.value, info: info_paciente.value, alergias: alergias_paciente.value, enfermedades: enfermedades_paciente.value, medicamentos: medicamentos_paciente.value } )
+                .then((response)=>{
+                    //Si todo salio correctamente se despliega un peuqño mensaje
+                    Fire.$emit('despuesActualizar');
+                    $('#compartirPacienteModal').modal('hide');
+                    $('#registroModal').modal('hide');
+                    toast.fire({
+                        type: 'success',
+                        title: 'Compartición realizada correctamente'
+                    });
+                    this.comprartirPaciente();
+                })
+                .catch(() => {
+                    this.$Progress.fail();
+                });
+
+
+            },
+            eliminarComparticion(id){
+
+                axios.delete('api/eliminarComparticion/'+id).then((response)=>{            
+                    //Pequeña alerta que confirma la eliminacion de la comparticion del expediente
+                    swal.fire(
+                        'Comparticion del expediente eliminada',
+                        'Comparticion del expediente eliminada',
+                        'success'
+                    )
+
+                    Fire.$emit('despuesEliminar');
+                    $('#compartirPacienteModal').modal('hide');
+                    $('#registroModal').modal('hide');
+
+                }).catch(function (error) {
+                    // Maneja el error si la peticion no se llevo a cabo correctamente
+                    swal.fire(
+                        'Error al eliminar',
+                        'La comparticion no pudo ser eliminada',
+                        'error'
+                    )
+                })
+
+            },
+            comprartirPaciente(id, nombre, apellido){
+
+                this.pacienteACompartir = id;
+                this.pacienteACompartirNombre = nombre;
+                this.pacienteACompartirApellido = apellido;
+
+                this.expedientesPaciente = [];
+
+                for(var i = 0; i < this.expdientesCompartidos.length; i ++){
+                    if(this.expdientesCompartidos[i].pacienteId == id){
+                        this.expedientesPaciente.push( this.expdientesCompartidos[i] );
+                        console.log("Paciente");
+                        console.log( this.expdientesCompartidos[i] );
+                    }
+                }
+
+                console.log( this.expedientesPaciente );
+
+                $('#compartirPacienteModal').modal('show');
+
+                
+
+            },
+
+            verExpediente(id, nombre, apellido){
+
+                //expedienteModal
+                this.pacienteACompartir = id;
+                this.pacienteACompartirNombre = nombre;
+                this.pacienteACompartirApellido = apellido;
+                
+                for( var i = 0; i < this.pacientes.length; i ++ ){
+                    if(this.pacientes[i].id == id)
+                    {
+                        this.pacientes_editar = this.pacientes[i];
+                    }
+                }
+
+                axios.get('api/obtenerAlergiasPaciente/'+id).then(({data}) => {
+                    this.alergias_paciente = data;
+                })
+
+                axios.get('api/obtenerEnfermedadesPaciente/'+id).then(({data}) => {
+                    this.enfermedades_paciente = data;
+
+                })
+
+                axios.get('api/obtenerMedicamentosPaciente/'+id).then(({data}) => {
+                    this.medicamentos_paciente = data;
+                })
+                
+
+                $('#expedienteModal').modal('show');
+
+
+
+            },
             //funcion para editar losd atos de un ususario
             actualizarUsuario(){
                 //Se obtienen los campos del formulario
@@ -322,6 +787,14 @@
                     this.doctores = data
                 })
 
+                axios.get('api/obtenerMedicosAsociados').then(({data}) => {
+                    this.asociados = data
+                })
+
+                axios.get('api/obtenerComparticiones').then(({data}) => {
+                    this.expdientesCompartidos  = data;
+                })
+
             },
 
             crearUsuario(){
@@ -386,7 +859,8 @@
             }
         },
         props: {
-            tipo: String
+            tipo: String,
+            id : String
         },
         created(){
             

@@ -31,6 +31,14 @@ Route::post('/registrarUsuario', 'UserController@store')->name('usuarios.store')
 Route::delete('/eliminarUsuario/{id}', 'UserController@destroy')->name('usuarios.destroy');
 Route::post('/actualizarUsuario', 'UserController@update')->name('usuarios.update');
 Route::get('/obtenerDoctores', 'UserController@doctores')->name('usuarios.doctores');
+Route::get('/obtenerMedicosAsociados', 'UserController@medicosAsociadoas')->name('usuarios.medicosasociados');
+Route::get('/obtenerComparticiones', 'UserController@obtenerComparticiones')->name('usuarios.comparticiones');
+Route::post('/registrarComparticion', 'UserController@guardarComparticion')->name('usuarios.guardarComparticion');
+Route::delete('/eliminarComparticion/{id}', 'UserController@eliminarComparticion')->name('usuarios.eliminarComparticion');
+
+Route::get('/obtenerAlergiasPaciente/{id}', 'UserController@obtenerAlergiasPaciente')->name('usuarios.obtenerAlergiasPaciente');
+Route::get('/obtenerEnfermedadesPaciente/{id}', 'UserController@obtenerEnfermedadesPaciente')->name('usuarios.obtenerEnfermedadesPaciente');
+Route::get('/obtenerMedicamentosPaciente/{id}', 'UserController@obtenerMedicamentosPaciente')->name('usuarios.obtenerMedicamentosPaciente');
 
 //Rutas qeu controlan las enfermedades
 Route::get('/obtenerEnfermedades', 'EnfermedadesController@index')->name('enfermedades.index');
@@ -40,6 +48,7 @@ Route::delete('/eliminarenfermedad/{id}', 'EnfermedadesController@destroy')->nam
 
 //Rutas que controlan la informacion de los pacientes
 Route::get('/obtenerPacientes', 'PacientesController@index')->name('pacientes.index');
+Route::get('/obtenerPacientesExpediente/{id}', 'PacientesController@obtenerPacientesExpediente')->name('pacientes.obtenerPacientesExpediente');
 Route::post('/registrarPaciente', 'PacientesController@store')->name('pacientes.store');
 Route::post('/actualizarPaciente', 'PacientesController@update')->name('pacientes.update');
 Route::delete('/eliminarPaciente/{id}', 'PacientesController@destroy')->name('pacientes.delete');
@@ -47,9 +56,7 @@ Route::delete('/eliminarPaciente/{id}', 'PacientesController@destroy')->name('pa
 //Rutas que controlan la informacion de las citas
 Route::get('/obtnerCitas/{id}', 'CitasController@obtenerCitas')->name('Citas.obtenercitas');
 Route::get('/obtenerCitasHoy/{id}', 'CitasController@citasDeHoy')->name('Citas.citasDeHoy');
-
 Route::get('/obtenerDatosCita/{id}', 'CitasController@obtenerDatosCita');
-
 Route::get('/cita', 'CitasController@index')->name('Citas.index');
 Route::post('/agendarcita', 'CitasController@store')->name('Citas.store');
 Route::delete('/eliminarcita/{id}', 'CitasController@destroy')->name('Citas.destroy');
@@ -66,7 +73,9 @@ Route::delete('/eliminarMedicamento/{id}', 'MedicamentoController@destroy')->nam
 Route::get('/obteneralergias', 'AlergiasController@index')->name('AlergiasController.index');
 Route::post('/registrarAlergia', 'AlergiasController@store')->name('AlergiasController.store');
 Route::post('/actualizarAlergia', 'AlergiasController@update')->name('AlergiasController.update');
+
 Route::delete('/eliminarAlergia/{id}', 'AlergiasController@destroy')->name('AlergiasController.delete');
+
 
 //Rutas para manejar la información del módulo pagos
 Route::get('/obtenerpagos', 'PagosController@index')->name('PagosController.index');
@@ -80,8 +89,8 @@ Route::post('/actualizarcajas', 'CierreAperturaCajaController@update')->name('Ci
 
 //ruta para guardar los datos del analisis clinica (cita)
 Route::post('/guardarAlergia', 'CitasController@alergia')->name('Citas.alergia');
-Route::post('/guardarPadecimiento', 'EnfermedadesController@index')->name('enfermedades.index');
-Route::post('/guardarMedicamento', 'MedicamentoController@index')->name('pacientes.index');
-
-//alergias cita
 Route::get('/obteneralergiasPaciente/{id}', 'CitasController@alergiaPaciente')->name('Cias.alergiaPaciente');
+Route::post('/guardarPadecimiento', 'EnfermedadesController@padecimiento')->name('EnfermedadesController.padecimiento');
+Route::get('/obtenerenfermedadesCita/{id}', 'EnfermedadesController@enfermedadesCita')->name('EnfermedadesController.enfermedadesCita');
+Route::post('/guardarMedicamento', 'MedicamentoController@medicamento')->name('MedicamentoController.medicamento');
+Route::get('/obtenermedicamentosCita/{id}', 'MedicamentoController@medicamentosCita')->name('MedicamentoController.medicamentosCita');

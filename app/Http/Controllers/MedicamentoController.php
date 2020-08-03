@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Medicamento;
 use Illuminate\Http\Request;
+use DB;
 
 class MedicamentoController extends Controller
 {
@@ -96,5 +97,32 @@ class MedicamentoController extends Controller
         $medicamento = Medicamento::findOrFail($id);
         $medicamento->delete();
         return ['mensaje' => 'registro eliminado'];
+    }
+
+
+    //Almacena un medicamento a una cita en especifico dada por el objeto request
+    public function medicamento(Request $request)
+    {
+        DB::table('cita_medicina')->where('id_cita', '=', $request->id_cita)->delete();
+        
+        for ($i=0; $i < sizeof($request->medicamentos); $i++) { 
+            DB::table('cita_medicina')->insert(
+                ['id_cita' => $request->id_cita, 
+                 'id_medicina' => $request->medicamentos[$i]['id'],
+                 'observaciones' => $request->medicamentos[$i]['observaciones'] ]
+            );
+        }
+
+        return $request;
+    }
+
+    //Guarda los medicamentos en una cita en especifido dada por el id pasado como parametro
+    public function medicamentosCita($id){
+        $medicamentos = DB::table('cita_medicina')
+            ->join('medicina', 'medicina.id', '=', 'cita_medicina.id_medicina')
+            ->select('medicina.*', 'cita_medicina.*')
+            ->where('cita_medicina.id_cita', '=', $id)
+            ->get();
+        return $medicamentos;
     }
 }

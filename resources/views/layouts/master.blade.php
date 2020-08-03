@@ -247,6 +247,27 @@ scratch. This page gets rid of all links and provides the needed markup only.
                     </li>
                     @endif
 
+                    <!-- SECCION DE COMPARTICION DE EXPEDIENTES -->
+                    @if( Auth::user()->tipo == '3' || Auth::user()->tipo == '1')
+                    <li class="nav-item has-treeview ">
+                        <a href="#" class="nav-link ">
+                            <i class="fas fa-file-prescription nav-icon"></i>
+                            <p>
+                                <b> Expedientes </b>
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <router-link to="/expedientes" class="nav-link ">
+                                <i class="fas fa-share-square nav-icon"></i>                            
+                                    <b><p> Expedientes compartidos </p></b>
+                                </router-link>
+                            </li>
+                        </ul>
+                    </li>
+                    @endif
+
                     <!-- <li class="nav-item">
                         <router-link to="/profile" class="nav-link">
                         <i class="nav-icon fas fa-user-cog"></i>

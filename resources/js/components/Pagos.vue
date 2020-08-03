@@ -44,7 +44,7 @@
                                         <th>Total</th>
                                         <th>Detalles</th>
                                         <th>Tipo</th>
-                                        <!--<th>Estado</th>-->
+                                        <th>Cita</th>
                                         <th>Acciones</th>
                                     </tr>
                                     </thead>
@@ -55,7 +55,10 @@
                                         <td>{{pago.total}}</td>
                                         <td>{{pago.detalles}}</td>
                                         <td>{{pago.tipo}}</td>
-                                        <!--<td>{{pago.estado}}</td>-->
+                                        <td  >
+                                            <span  v-for="cita in citas" v-show="pago.id==cita.pago" >{{cita.id}}</span>
+                                        </td>
+
                                         <td>
                                             <button @click="modal_editar_pago(pago.id)" class="btn btn-warning"> <i class="fas fa-pen"></i> </button>
                                             <button @click="eliminarPago(pago.id)" class="btn btn-danger"> <i class="fas fa-trash"></i> </button>
@@ -111,6 +114,16 @@
                                 </select>
                             </div>
 
+
+                            <div class="form-group">
+                                <label>Cita:</label>
+                                <select class="form-control" name="cita" id="cita" required>
+                                    <option v-for="cita in citas" :key="cita.id" v-bind:value="cita.id" >
+                                    {{cita.id}}
+                                    </option>
+                                </select>
+                            </div>
+
                             <!--<div class="form-group">
                                 <label>Estado:</label>
                                 <input type="text" id="estado" name="estado" class="form-control">
@@ -140,7 +153,8 @@
                 pacientes : {},
                 pagos_editar: {},
                 doctores: {},
-                pagos: {}
+                pagos: {},
+                citas: []
             }
         },
         methods:{
@@ -152,11 +166,16 @@
                 var total = document.getElementById("total");
                 var detalles = document.getElementById("detalles");
                 var tipo = document.getElementById("tipo");
+                var cita = document.getElementById("cita");
 
                 this.pagos_editar.fecha = fecha.value;
                 this.pagos_editar.total = total.value;
                 this.pagos_editar.detalles = detalles.value;
                 this.pagos_editar.tipo = tipo.value;
+
+                this.pagos_editar.id_cita = cita.value;
+
+                
                 
 
                 //Se hace una peticion para editar los datos, asi como se manda los datos a traves de un objeto de javascript
@@ -182,10 +201,18 @@
             modal_editar_pago(id){
                 this.editMode = true;
 
+                var id_cita = 0;
                 //Obitene los datos del usuario a eliminar
                 for(var i=0; i < this.pagos.length; i++){
                     if( this.pagos[i].id == id){
                         this.pagos_editar = this.pagos[i];
+                    }
+                }
+
+
+                for(var i=0; i < this.citas.length; i++){
+                    if( id == this.citas[i].pago ){
+                        id_cita = this.citas[i].id;
                     }
                 }
                 
@@ -194,12 +221,15 @@
                 var total = document.getElementById("total");
                 var detalles = document.getElementById("detalles");
                 var tipo = document.getElementById("tipo");
+                var cita = document.getElementById("cita");
 
                 //Limpia los campos del formulario
                 fecha.value = "";
                 total.value = "";
                 detalles.value = "";
                 tipo.value = "";
+
+                cita.value = "";
 
                 
                 //Abre el modal para esta vez para editar los datos
@@ -211,6 +241,7 @@
                 total.value = this.pagos_editar.total;
                 detalles.value = this.pagos_editar.detalles;
                 tipo.value = this.pagos_editar.tipo;    
+                cita.value = id_cita;
             },
 
             modalNuevoPago(){
@@ -220,11 +251,13 @@
                 var total = document.getElementById("total");
                 var detalles = document.getElementById("detalles");
                 var tipo = document.getElementById("tipo");
+                var cita = document.getElementById("cita");
 
                 fecha.value = "";
                 total.value = "";
                 detalles.value = "";
                 tipo.value = "";
+                cita.value = "";
 
                 $('#modalPago').modal('show');
             },
@@ -239,6 +272,7 @@
                 }
 
                 swal.fire({
+
                     title: 'Eliminar pago',
                     text: "¿Estás seguro que quieres eliminar el pago?" ,
                     type: 'warning',
@@ -247,6 +281,7 @@
                     cancelButtonColor: '#d33',
                     confirmButtonText: 'Si',
                     cancelButtonText: 'Cancelar',
+
                 }).then((result) => {
                     if (result.value) {
 
@@ -284,6 +319,13 @@
                 axios.get('api/obtenerDoctores').then(({data}) => {
                     this.doctores = data
                 })
+
+                axios.get('api/cita').then(({data}) => {
+                    this.citas = data.data;
+                    console.log("datos de citas");
+                    console.log(data);
+                })
+
             },
 
             crearPago(){
@@ -296,10 +338,11 @@
                 var total = document.getElementById("total");
                 var detalles = document.getElementById("detalles");
                 var tipo = document.getElementById("tipo");
+                var cita = document.getElementById("cita");
                 
 
                 //Valida que el formulario tenga todos los datos
-                if( fecha.value == "" || total.value == "" || detalles.value == "" || tipo.value == ""){
+                if( fecha.value == "" || total.value == "" || detalles.value == "" || tipo.value == "" || cita.value == ""){
                     //Si no es asi aparece un pequeño mensaje de error
                     toast.fire({
                             type: 'error',
@@ -308,7 +351,7 @@
                 }else{
                     this.$Progress.start();
                     axios.post('api/registrarPagos', {fecha: fecha.value, total: total.value, 
-                        detalles: detalles.value , tipo: tipo.value})
+                        detalles: detalles.value , tipo: tipo.value, cita: cita.value})
                     .then((response)=>{
                         
                         //Si la respuesta responde todo bien

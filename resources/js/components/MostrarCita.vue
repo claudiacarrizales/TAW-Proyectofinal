@@ -6,6 +6,8 @@
                 <div class="row mb-2">
                     <div class="col-sm-6">
                         <h1 class="m-0 text-dark">Cita {{ this.$props.id }} </h1>
+
+                        <button class="btn btn-primary" @click="regresar"> <i class="fas fa-arrow-left"></i> Regresar </button>
                     </div>
                 
                     <div class="col-sm-6">
@@ -21,7 +23,7 @@
         <div class="content">
             <div class="container">
                 <div class="row">
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <!-- general form elements -->
                         <div class="card card-secondary">
                             <div class="card-header card bg-secondary">
@@ -142,7 +144,7 @@
                     </div>
 
 
-                    <div class="col-md-9">
+                    <div class="col-md-8">
                         <!-- general form elements -->
                         <div class="card card-secondary">
                             <div class="card-header card bg-secondary">
@@ -161,25 +163,51 @@
                                 <!--SELECCION DE PADECIMIENTO DE LA CITA-->
                                 <div class="form-group">
                                     <label>Padecimiento</label>
-                                    <v-select multiple @input="agregarPadecimiento" :value="selectedPadecimiento" :options="opcionesPadecimiento" />
+                                    <v-select  @input="agregarPadecimiento" :value="selectedPadecimiento" :options="opcionesPadecimiento" />
+                                </div>
+
+                                <!--OBSERVACIONES APARTADO-->
+                                <div class="form-group">
+                                    <label>Observaciones</label>
+                                   <textarea :value="observaciones" id="observaciones_ta" class="form-control" rows='3'> </textarea>
+                                </div>
+
+                                <div class="form-group">
+                                   <a @click="guardarDetalles" class="btn btn-success" > Guardar </a>
                                 </div>
 
                                 <!--SELECCION DE MEDICAMENTO DE LA CITA-->
                                 <div class="form-group">
                                     <label>Medicamento</label>
                                     <v-select multiple @input="agregarMedicamento" :value="selectedMedicamento" :options="opcionesMedicamento" />
+
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">#</th>
+                                                <th scope="col">Medicamento</th>
+                                                <th scope="col">Detalles</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="selectedM in medicamentosCita" >
+                                                <td>{{ selectedM.id }}</td>
+                                                <td>{{ selectedM.nombre}} </td>
+                                                <td>{{ selectedM.observaciones}} </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
-                                <!--OBSERVACIONES APARTADO-->
-                                <div class="form-group">
-                                    <label>Observaciones</label>
-                                   <textarea class="form-control" rows='3'> </textarea>
-                                </div>
+
+
+                                
                             </div>
                             <!-- /.card-body -->
                             </form>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
@@ -195,20 +223,27 @@
                 //propiedades del componente
                 selected: [],
                 opciones: [],
-                selectedPadecimiento: [],
+                selectedPadecimiento: "",
                 opcionesPadecimiento: [],
                 selectedMedicamento: [],
                 opcionesMedicamento: [],
+                medicamentosCita : [],
                 cita: {},
                 citashoy: {},
                 paciente:{},
-                alergias:{}
+                alergias:{},
+                enfermedades: {},
+                medicamentos: {},
+                observaciones : ''
             }
         },
         methods:{
+            regresar(){
+                window.history.back();
+            },
             hola(args){
                 //selección de una alergia de la lista
-                console.log( args );
+
                 //guardado de la seleccion
                 this.selected = args;
                 //inserta la alergia seleccionada a la bd
@@ -231,7 +266,6 @@
                         type: 'success',
                         title: 'Alergia guardada'
                     });
-                    console.log(response);
                 })
                 .catch(() => {
                     toast.fire({
@@ -240,41 +274,179 @@
                     });
                 });
             },
+
+            guardarDetalles(){
+                var observaciones = document.getElementById("observaciones_ta");
+                var padecimientoid;
+
+
+                //comparando el nombre con el id de la enfermedad 
+                for(var j=0;j<this.enfermedades.length;j++){
+                    if(this.selectedPadecimiento == this.enfermedades[j].nombre){
+                        padecimientoid = this.enfermedades[j].id;
+                        break;
+                    }
+                }
+                
+
+                //pasar el id
+                var enfermedadInsert={id: this.$props.id, idpadecimiento:padecimientoid, observaciones: observaciones.value };
+
+                axios.post('api/guardarPadecimiento', enfermedadInsert)
+                .then((response)=>{ 
+                    toast.fire({
+                        type: 'success',
+                        title: 'Padecimiento guardado'
+                    });
+                    console.log(response);
+                })
+                .catch(() => {
+                    toast.fire({
+                        type: 'success',
+                        title: 'Error al guardar el padecimiento'
+                    });
+                });
+
+            },
+
             agregarPadecimiento(args){
                 this.selectedPadecimiento = args;
             },
-            agregarMedicamento(args){
-                this.selectedMedicamento = args;
-            },
-            guardarAlergia(){
-                console.log("DATOS DE LAS ALERGIAS");
-                console.log(this.cita.paciente_id);
-                //para no eliminar las alergias que ya estaan seleccionadas en las citas
+
+            async agregarMedicamento(args){
+
+
+                if( (this.medicamentosCita.length-1) == args.length){
+                    var elmts = this.selectedMedicamento.filter( 
+                        function(i) { 
+                            return this.indexOf(i) < 0; 
+                        }, 
+                        args 
+                    );
+                    this.selectedMedicamento = args;
+
+                    var ultimo_medicamento = elmts[0];
+                    
+                    for(var i=0; i < this.medicamentosCita.length; i++){
+                        if( this.medicamentosCita[i].nombre ==  ultimo_medicamento ){
+                            this.medicamentosCita.splice(i, 1);
+                        }
+                    }
+
+                    axios.post('api/guardarMedicamento', {id_cita: this.$props.id , medicamentos: this.medicamentosCita } )
+                    .then((response)=>{ 
+                        toast.fire({
+                            type: 'success',
+                            title: 'Medicamento guardado con exito'
+                        });
+                        console.log(response);
+                    })
+                    .catch(() => {
+                        toast.fire({
+                            type: 'success',
+                            title: 'Error al guardar el medicamento'
+                        });
+                    });
+                }else{
+
+                    var salida = false;
+                    var ultimo_medicamento = args.slice(-1).pop();
+                    var medicamento_id;
+                    var observaciones = "";
+                    
+                    for(var j=0;j<this.medicamentos.length;j++){
+                        if( ultimo_medicamento == this.medicamentos[j].nombre){
+                            medicamento_id = this.medicamentos[j].id;                            
+                            break;
+                        }
+                    }
+
+                    await swal.fire({
+                        title: 'Detalles:',
+                        html: '<input id="swal-input2" class="swal2-input">',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        cancelButtonText: 'Cacelar',
+                    }).then(function (result) {
+                        if(result.value){
+                            salida = true;
+                        }
+                    })
+
+                    if( salida ){
+                        this.selectedMedicamento = args;
+                        observaciones = $('#swal-input2').val();
+                        this.medicamentosCita.push({id: medicamento_id, nombre: ultimo_medicamento, observaciones: observaciones });
+
+
+                        axios.post('api/guardarMedicamento', {id_cita: this.$props.id , medicamentos: this.medicamentosCita } )
+                        .then((response)=>{ 
+                            toast.fire({
+                                type: 'success',
+                                title: 'Medicamento guardado con exito'
+                            });
+                            console.log(response);
+                        })
+                        .catch(() => {
+                            toast.fire({
+                                type: 'success',
+                                title: 'Error al guardar el medicamento'
+                            });
+                        });
+
+                    }
+
+
+                    
+
+                }
+
                 
+
             },
+
+
             obtenerDatosCita(){
+                
+
+                //Obtener los medicamentos asociados a la cita
+                axios.get('api/obtenermedicamentosCita/'+this.$props.id)
+                .then(({data}) => {
+
+                    for(var i = 0; i < data.length; i++)
+                    {
+                        this.medicamentosCita.push({id: data[i].id_medicina, nombre: data[i].nombre, observaciones: data[i].observaciones });
+                        this.selectedMedicamento.push( data[i].nombre );
+                    }
+
+                    //this.cita = data[0];
+                    //this.observaciones = data[0].observaciones;
+                    console.log("MEDICAMENTOS EN ESTA CITA");
+                    console.log(data);
+                    //this.medicamentosCita;
+                });
 
                 axios.get('api/obtenerDatosCita/'+this.$props.id)
                 .then(({data}) => {
                     this.cita = data[0];
-                    console.log("datos de la cita");
-                    console.log(this.cita);
+                    
+                    //observaciones.value = data[0].observaciones;
+
+                    this.observaciones = data[0].observaciones;
 
                     axios.get('api/obteneralergiasPaciente/'+this.cita.paciente_id)
-                    .then(({data}) => {
-                        console.log(data);  
+                    .then(({data}) => { 
                         for(var i=0; i < data.length; i++){
                             this.selected.push(data[i].nombre);
                         }
                     });
 
-
                 });
-                //obtener los datos de la tabla en este caso el nmbre de alergias
+                //obtener los datos de la tabla en este caso el nombre de alergias
                 axios.get('api/obteneralergias')
                 .then(({data}) => {
-                    //this.opciones = data;
-                    this.alergias=data;
+                    this.alergias = data;
                     for(var i=0; i < data.length; i++){
                         this.opciones.push(data[i].nombre);
                     }
@@ -283,15 +455,22 @@
                 //obtener los datos de la tabla en este caso el nmbre del padecimiento
                 axios.get('api/obtenerEnfermedades')
                 .then(({data}) => {
-                    //this.opciones = data;
+                    this.enfermedades = data;
                     for(var i=0; i < data.length; i++){
                         this.opcionesPadecimiento.push(data[i].nombre);
+
+                        if(this.cita.id_enfermedad == data[i].id){
+                            this.selectedPadecimiento =  data[i].nombre
+                        }
                     }
+
+                    
                 });
+
                 //obtener los datos de la tabla en este caso el nmbre del medicamento
                 axios.get('api/obtenermedicamentos')
                 .then(({data}) => {
-                    //this.opciones = data;
+                    this.medicamentos = data;
                     for(var i=0; i < data.length; i++){
                         this.opcionesMedicamento.push(data[i].nombre);
                     }
@@ -303,9 +482,10 @@
             id: Number
         },
         created(){
-            console.log("ID de la cita " + this.$props.id);
             this.obtenerDatosCita();
-            this.guardarAlergia();
+
+            
+
         }
     }
 </script>

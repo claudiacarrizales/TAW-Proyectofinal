@@ -25,7 +25,7 @@ class CitasController extends Controller
 
 
     public function obtenerDatosCita($id){
-        //union de tablas
+        //Union de tablas
         return $citasdehoy = DB::table('citas')
             ->join('paciente', 'paciente.id', '=', 'citas.paciente_id')
             ->select('citas.*', 'paciente.*')
@@ -170,6 +170,7 @@ class CitasController extends Controller
     public function alergia(Request $request){
         //eliminar las alergias del paciente
         DB::table('paciente_alergias')->where('id_paciente', '=', $request->id)->delete();
+        
         for ($i=0; $i < sizeof($request->ids); $i++) { 
             DB::table('paciente_alergias')->insert(
                 ['id_paciente' => $request->id, 'id_alergia' => $request->ids[$i]]
