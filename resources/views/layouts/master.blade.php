@@ -268,6 +268,49 @@ scratch. This page gets rid of all links and provides the needed markup only.
                     </li>
                     @endif
 
+
+                    @if( Auth::user()->tipo == '2' || Auth::user()->tipo == '1')
+                    <li class="nav-item has-treeview ">
+                        <a href="#" class="nav-link ">
+                            <i class="fas fa-bone nav-icon"></i>
+                            <p>
+                                <b> Radiografias </b>
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <router-link to="/radiografias" class="nav-link ">
+                                    <i class="fas fa-image nav-icon"></i>                          
+                                    <b><p> Radiografias </p></b>
+                                </router-link>
+                            </li>
+                        </ul>
+                    </li>
+                    @endif
+
+
+                    @if( Auth::user()->tipo == '3' || Auth::user()->tipo == '1' )
+                    <li class="nav-item has-treeview ">
+                        <a href="#" class="nav-link ">
+                            <!-- <i class="fas fa-bone nav-icon"></i> -->
+                            <i class="fas fa-share-square nav-icon"></i>
+                            <p>
+                                <b> Radiografias compartidas </b>
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <router-link to="/radiografiascompartidas" class="nav-link ">
+                                    <i class="fas fa-image nav-icon"></i>                          
+                                    <b><p> Radiografias compartidas </p></b>
+                                </router-link>
+                            </li>
+                        </ul>
+                    </li>
+                    @endif
+
                     <!-- <li class="nav-item">
                         <router-link to="/profile" class="nav-link">
                         <i class="nav-icon fas fa-user-cog"></i>
@@ -277,8 +320,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
                             </p>
                         </router-link>
                     </li> -->
-
-
 
                     <li class="nav-item">
                         <a  class="nav-link" href="{{ route('logout') }}"

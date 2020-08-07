@@ -60,8 +60,10 @@
                                         </td>
 
                                         <td>
-                                            <button @click="modal_editar_pago(pago.id)" class="btn btn-warning"> <i class="fas fa-pen"></i> </button>
-                                            <button @click="eliminarPago(pago.id)" class="btn btn-danger"> <i class="fas fa-trash"></i> </button>
+                                            <button @click="modal_editar_pago(pago.id)" class="btn btn-primary"> <i class="fas fa-pen"></i> </button>
+                                            <button @click="eliminarPago(pago.id)" class="btn btn-warning"> <i class="fas fa-trash"></i> </button>
+
+                                            <a :href="'api/generarReportePago/'+pago.id" class="btn btn-danger"> <i class="fas fa-file-pdf"></i>  </a> 
                                         </td>
                                     </tr>
                                     </tbody>

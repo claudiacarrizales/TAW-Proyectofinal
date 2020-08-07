@@ -41,42 +41,25 @@ class UserController extends Controller
     public function store(Request $request)
     {
  
-         return User::create([
+        return User::create([
              'name' => $request['name'],
              'last_name' => $request['lastName'],
              'email' => $request['email'],
              'tipo' => $request['type'],
              'password' => Hash::make($request['password']),
-         ]);
-
-
+        ]);
         return "correcto";
-
-
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
         //
     }
-
 
     public function update(Request $request)
     {
@@ -87,12 +70,6 @@ class UserController extends Controller
         //return $request;
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
         $user = User::findOrFail($id);

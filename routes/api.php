@@ -94,3 +94,19 @@ Route::post('/guardarPadecimiento', 'EnfermedadesController@padecimiento')->name
 Route::get('/obtenerenfermedadesCita/{id}', 'EnfermedadesController@enfermedadesCita')->name('EnfermedadesController.enfermedadesCita');
 Route::post('/guardarMedicamento', 'MedicamentoController@medicamento')->name('MedicamentoController.medicamento');
 Route::get('/obtenermedicamentosCita/{id}', 'MedicamentoController@medicamentosCita')->name('MedicamentoController.medicamentosCita');
+
+//Rutas que controlan las radiografias
+Route::get('/obtenerRadiografias', 'RadiografiasController@index')->name('RadiografiasController.index');
+Route::post('/guardarRadiografia', 'RadiografiasController@store')->name('RadiografiasController.store');
+Route::delete('/eliminarRadiografia/{id}', 'RadiografiasController@destroy')->name('RadiografiasController.destroy');
+
+//Rutas que controlan la vista para que el medico asociado comente la radiografia
+Route::get('/obtenerRadiografiasCompartidas/{id}', 'RadiografiasController@obtenerRadiografiasCompartidas')->name('RadiografiasController.obtenerRadiografiasCompartidas');
+
+Route::post('/guardarComentarioRadiografia', 'RadiografiasController@guardarComentarioRadiografia')->name('RadiografiasController.guardarComentarioRadiografia');
+
+//Rutas que controlan los reportes
+
+Route::get('/generarReporteCitas/{id}', 'ReportesController@generarReporteCitas');
+Route::get('/generarReporteExpediente/{id}', 'ReportesController@generarReporteExpediente');
+Route::get('/generarReportePago/{id}', 'ReportesController@generarReportePago');

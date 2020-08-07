@@ -16063,6 +16063,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "lista_citas",
   data: function data() {
@@ -18738,6 +18740,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "User",
   data: function data() {
@@ -19227,6 +19231,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "User",
   data: function data() {
@@ -19496,6 +19502,212 @@ __webpack_require__.r(__webpack_exports__);
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "Profile"
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Radiografias.vue?vue&type=script&lang=js&":
+/*!***********************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Radiografias.vue?vue&type=script&lang=js& ***!
+  \***********************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: "Radiografias",
+  data: function data() {
+    return {
+      image: '',
+      radiografias: {},
+      asociados: []
+    };
+  },
+  methods: {
+    onImageChange: function onImageChange(e) {
+      var files = e.target.files || e.dataTransfer.files;
+      if (!files.length) return;
+      this.createImage(files[0]);
+    },
+    createImage: function createImage(file) {
+      var reader = new FileReader();
+      var vm = this;
+
+      reader.onload = function (e) {
+        vm.image = e.target.result;
+      };
+
+      reader.readAsDataURL(file);
+    },
+    uploadImage: function uploadImage() {
+      var _this = this;
+
+      var asociado = document.getElementById("doctorasoc");
+      axios.post('api/guardarRadiografia', {
+        image: this.image,
+        asociado: asociado.value,
+        medico: this.$props.id
+      }).then(function (response) {
+        console.log(response);
+
+        _this.cargarRadiografias();
+      });
+    },
+    //Metodo que permite obtener los datos de las medicamentos registradas
+    cargarRadiografias: function cargarRadiografias() {
+      var _this2 = this;
+
+      axios.get('api/obtenerRadiografias').then(function (_ref) {
+        var data = _ref.data;
+        _this2.radiografias = data;
+      });
+      axios.get('api/obtenerMedicosAsociados').then(function (_ref2) {
+        var data = _ref2.data;
+        _this2.asociados = data;
+      });
+    },
+    eliminarRadiografia: function eliminarRadiografia(id) {
+      var _this3 = this;
+
+      console.log("id " + id);
+      swal.fire({
+        title: '¿Deseas eliminar la radiografia? ',
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Si',
+        cancelButtonText: 'Cacelar'
+      }).then(function (result) {
+        if (result.value) {
+          axios["delete"]('api/eliminarRadiografia/' + id).then(function (response) {
+            //Pequeña alerta que confirma la eliminacion del usuario
+            swal.fire('Radiografia eliminada', 'El registro ha sido eliminado', 'success');
+            console.log(response);
+
+            _this3.cargarRadiografias();
+          })["catch"](function (error) {
+            // Maneja el error si la peticion no se llevo a cabo correctamente
+            swal.fire('Error al eliminar', 'El registro no se ha podido eliminar', 'error');
+          });
+        }
+      });
+    }
+  },
+  props: {
+    tipo: String,
+    id: String
+  },
+  created: function created() {
+    if (this.$props.tipo == '4' || this.$props.tipo == '3') {
+      this.$router.push('noacceso');
+    }
+
+    this.cargarRadiografias();
+  }
 });
 
 /***/ }),
@@ -19845,6 +20057,192 @@ __webpack_require__.r(__webpack_exports__);
       value = value.toString();
       return value.charAt(0).toUpperCase() + value.slice(1);
     }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/comentarRadiografia.vue?vue&type=script&lang=js&":
+/*!******************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/comentarRadiografia.vue?vue&type=script&lang=js& ***!
+  \******************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: "Radiografias",
+  data: function data() {
+    return {
+      image: '',
+      radiografias: {},
+      asociados: [],
+      radiografia: {}
+    };
+  },
+  methods: {
+    //Metodo que permite obtener los datos de las medicamentos registradas
+    cargarRadiografias: function cargarRadiografias() {
+      var _this = this;
+
+      axios.get('api/obtenerRadiografiasCompartidas/' + this.$props.id).then(function (_ref) {
+        var data = _ref.data;
+        _this.radiografias = data;
+      });
+      axios.get('api/obtenerMedicosAsociados').then(function (_ref2) {
+        var data = _ref2.data;
+        _this.asociados = data;
+      });
+    },
+    abrirModalComentario: function abrirModalComentario(id) {
+      console.log("Id de la radiografia abierta " + id);
+      $('#comentarioModal').modal('show');
+      var comentario_actual = document.getElementById("observaciones_ta");
+
+      for (var i = 0; i < this.radiografias.length; i++) {
+        if (this.radiografias[i].id_usuario_archivo == id) {
+          this.radiografia = this.radiografias[i];
+          comentario_actual.value = this.radiografias[i].comentario;
+          break;
+        }
+      }
+
+      console.log(this.radiografia);
+    },
+    guardarComentario: function guardarComentario() {
+      var _this2 = this;
+
+      var comentario_actual = document.getElementById("observaciones_ta");
+      axios.post('api/guardarComentarioRadiografia', {
+        id: this.radiografia.id_usuario_archivo,
+        comentario: comentario_actual.value
+      }).then(function (response) {
+        console.log(response); //Una pequeña alerta en la esquina
+
+        toast.fire({
+          type: 'success',
+          title: 'Comentario guardado'
+        }); //El modal que contiene el formulario desaparece
+
+        $('#comentarioModal').modal('hide');
+
+        _this2.cargarRadiografias();
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    }
+  },
+  props: {
+    tipo: String,
+    id: String
+  },
+  created: function created() {
+    if (this.$props.tipo == '2' || this.$props.tipo == '4') {
+      this.$router.push('noacceso');
+    }
+
+    this.cargarRadiografias();
   }
 });
 
@@ -79227,7 +79625,16 @@ var render = function() {
                             [_c("i", { staticClass: "fas fa-eye" })]
                           ),
                           _vm._v(" "),
-                          _vm._m(3, true)
+                          _c(
+                            "a",
+                            {
+                              staticClass: "btn btn-danger",
+                              attrs: {
+                                href: "api/generarReporteCitas/" + cita.id
+                              }
+                            },
+                            [_c("i", { staticClass: "fas fa-file-pdf" })]
+                          )
                         ])
                       ])
                     }),
@@ -79242,11 +79649,11 @@ var render = function() {
         _c("div", { staticClass: "row justify-content-center" }, [
           _c("div", { staticClass: "col-12 " }, [
             _c("div", { staticClass: "card" }, [
-              _vm._m(4),
+              _vm._m(3),
               _vm._v(" "),
               _c("div", { staticClass: "card-body table-responsive p-0" }, [
                 _c("table", { staticClass: "table table-hover" }, [
-                  _vm._m(5),
+                  _vm._m(4),
                   _vm._v(" "),
                   _c(
                     "tbody",
@@ -79286,7 +79693,16 @@ var render = function() {
                             [_c("i", { staticClass: "fas fa-eye" })]
                           ),
                           _vm._v(" "),
-                          _vm._m(6, true)
+                          _c(
+                            "a",
+                            {
+                              staticClass: "btn btn-danger",
+                              attrs: {
+                                href: "api/generarReporteCitas/" + cita.id
+                              }
+                            },
+                            [_c("i", { staticClass: "fas fa-file-pdf" })]
+                          )
                         ])
                       ])
                     }),
@@ -79364,14 +79780,6 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("button", { staticClass: "btn btn-danger" }, [
-      _c("i", { staticClass: "fas fa-file-pdf" })
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
     return _c("div", { staticClass: "card-header" }, [
       _c("h3", { staticClass: "card-title" }, [
         _c("b", [_vm._v(" Otras citas ")])
@@ -79398,14 +79806,6 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", [_vm._v("Acciones")])
       ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("button", { staticClass: "btn btn-danger" }, [
-      _c("i", { staticClass: "fas fa-file-pdf" })
     ])
   }
 ]
@@ -82762,7 +83162,32 @@ var render = function() {
                   )
                 ]),
                 _vm._v(" "),
-                _vm._m(23)
+                _c("div", { staticClass: "modal-footer" }, [
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-secondary",
+                      attrs: { type: "button", "data-dismiss": "modal" }
+                    },
+                    [_vm._v("Cerrar")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "a",
+                    {
+                      staticClass: "btn btn-danger",
+                      attrs: {
+                        href:
+                          "api/generarReporteExpediente/" +
+                          _vm.pacienteACompartir
+                      }
+                    },
+                    [
+                      _c("i", { staticClass: "fas fa-file-pdf" }),
+                      _vm._v("  Descargar ")
+                    ]
+                  )
+                ])
               ])
             ]
           )
@@ -82825,7 +83250,7 @@ var render = function() {
                     [_vm._v("Actualizar paciente")]
                   ),
                   _vm._v(" "),
-                  _vm._m(24)
+                  _vm._m(23)
                 ]),
                 _vm._v(" "),
                 _c(
@@ -82841,10 +83266,10 @@ var render = function() {
                     }
                   },
                   [
-                    _vm._m(25),
+                    _vm._m(24),
                     _vm._v(" "),
                     _c("div", { staticClass: "modal-footer" }, [
-                      _vm._m(26),
+                      _vm._m(25),
                       _vm._v(" "),
                       _c(
                         "button",
@@ -83284,27 +83709,6 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "modal-footer" }, [
-      _c(
-        "button",
-        {
-          staticClass: "btn btn-secondary",
-          attrs: { type: "button", "data-dismiss": "modal" }
-        },
-        [_vm._v("Cerrar")]
-      ),
-      _vm._v(" "),
-      _c(
-        "button",
-        { staticClass: "btn btn-danger", attrs: { type: "button" } },
-        [_c("i", { staticClass: "fas fa-file-pdf" }), _vm._v(" Descargar ")]
-      )
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
     return _c(
       "button",
       {
@@ -83510,7 +83914,7 @@ var render = function() {
                             _c(
                               "button",
                               {
-                                staticClass: "btn btn-warning",
+                                staticClass: "btn btn-primary",
                                 on: {
                                   click: function($event) {
                                     return _vm.modal_editar_pago(pago.id)
@@ -83523,7 +83927,7 @@ var render = function() {
                             _c(
                               "button",
                               {
-                                staticClass: "btn btn-danger",
+                                staticClass: "btn btn-warning",
                                 on: {
                                   click: function($event) {
                                     return _vm.eliminarPago(pago.id)
@@ -83531,6 +83935,17 @@ var render = function() {
                                 }
                               },
                               [_c("i", { staticClass: "fas fa-trash" })]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "a",
+                              {
+                                staticClass: "btn btn-danger",
+                                attrs: {
+                                  href: "api/generarReportePago/" + pago.id
+                                }
+                              },
+                              [_c("i", { staticClass: "fas fa-file-pdf" })]
                             )
                           ])
                         ])
@@ -83916,6 +84331,249 @@ var staticRenderFns = [
             ])
           ])
         ])
+      ])
+    ])
+  }
+]
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Radiografias.vue?vue&type=template&id=21cc5cca&scoped=true&":
+/*!***************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Radiografias.vue?vue&type=template&id=21cc5cca&scoped=true& ***!
+  \***************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "content-wrapper" }, [
+    _vm._m(0),
+    _vm._v(" "),
+    _c("div", { staticClass: "content" }, [
+      _c("div", { staticClass: "container" }, [
+        _c("div", { staticClass: "row justify-content-center" }, [
+          _c("div", { staticClass: "col-md-3" }, [
+            _c("div", { staticClass: "card card-default" }, [
+              _c("div", { staticClass: "card-header" }, [
+                _vm._v("Compartir radiografia")
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "card-body" }, [
+                _c("div", { staticClass: "row" }, [
+                  _c("div", { staticClass: "form-group" }, [
+                    _c("label", [_vm._v("Medico asociado: ")]),
+                    _vm._v(" "),
+                    _c(
+                      "select",
+                      {
+                        staticClass: "form-control",
+                        attrs: {
+                          name: "doctorasoc",
+                          id: "doctorasoc",
+                          required: ""
+                        }
+                      },
+                      _vm._l(_vm.asociados, function(asociado) {
+                        return _c(
+                          "option",
+                          {
+                            key: asociado.id,
+                            domProps: { value: asociado.id }
+                          },
+                          [
+                            _vm._v(
+                              "\n                                    " +
+                                _vm._s(asociado.name) +
+                                "\n                                    "
+                            )
+                          ]
+                        )
+                      }),
+                      0
+                    )
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "form-group" }, [
+                    _c("label", [_vm._v(" Archivo: ")]),
+                    _vm._v(" "),
+                    _c("input", {
+                      staticClass: "form-control",
+                      attrs: { type: "file" },
+                      on: { change: _vm.onImageChange }
+                    })
+                  ])
+                ])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "card-footer" }, [
+                _c("div", { staticClass: "form-group" }, [
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-success btn-block",
+                      on: { click: _vm.uploadImage }
+                    },
+                    [
+                      _c("i", { staticClass: "fas fa-image" }),
+                      _vm._v(" Compartir ")
+                    ]
+                  )
+                ])
+              ])
+            ])
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "col-9" }, [
+            _c("div", { staticClass: "card" }, [
+              _vm._m(1),
+              _vm._v(" "),
+              _c("div", { staticClass: "card-body table-responsive p-0" }, [
+                _c("table", { staticClass: "table table-hover" }, [
+                  _vm._m(2),
+                  _vm._v(" "),
+                  _c(
+                    "tbody",
+                    _vm._l(_vm.radiografias, function(radiografia) {
+                      return _c("tr", { key: radiografia.id }, [
+                        _c("td", [
+                          _c(
+                            "a",
+                            {
+                              attrs: {
+                                href:
+                                  "http://142.93.49.246/images/" +
+                                  radiografia.ruta,
+                                target: "_blank"
+                              }
+                            },
+                            [
+                              _c("img", {
+                                staticStyle: { width: "100px" },
+                                attrs: { src: "/images/" + radiografia.ruta }
+                              })
+                            ]
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("td", [
+                          _vm._v(
+                            "\n                                        " +
+                              _vm._s(
+                                radiografia.nombreMedico +
+                                  " " +
+                                  radiografia.apellidoMedico
+                              ) +
+                              "\n                                    "
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("td", [
+                          _vm._v(
+                            "\n                                        " +
+                              _vm._s(
+                                radiografia.nombreAsociado +
+                                  " " +
+                                  radiografia.apellidoAsociado
+                              ) +
+                              "\n                                    "
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("td", [
+                          _c("b", [
+                            _vm._v(" " + _vm._s(radiografia.comentario) + " ")
+                          ])
+                        ]),
+                        _vm._v(" "),
+                        _c("td", [
+                          _c(
+                            "button",
+                            {
+                              staticClass: "btn btn-danger btn-block",
+                              on: {
+                                click: function($event) {
+                                  return _vm.eliminarRadiografia(radiografia.id)
+                                }
+                              }
+                            },
+                            [_c("i", { staticClass: "fas fa-trash" })]
+                          )
+                        ])
+                      ])
+                    }),
+                    0
+                  )
+                ])
+              ])
+            ])
+          ])
+        ])
+      ])
+    ])
+  ])
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "content-header" }, [
+      _c("div", { staticClass: "container-fluid" }, [
+        _c("div", { staticClass: "row mb-2" }, [
+          _c("div", { staticClass: "col-sm-6" }, [
+            _c("h1", { staticClass: "m-0 text-dark" }, [_vm._v("Radiografias")])
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "col-sm-6" }, [
+            _c("ol", { staticClass: "breadcrumb float-sm-right" }, [
+              _c("li", { staticClass: "breadcrumb-item" }, [
+                _c("a", { attrs: { href: "#" } }, [_vm._v("Radiografias")])
+              ]),
+              _vm._v(" "),
+              _c("li", { staticClass: "breadcrumb-item active" }, [
+                _vm._v(" Listado de radiografias ")
+              ])
+            ])
+          ])
+        ])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card-header" }, [
+      _c("h3", { staticClass: "card-title" }, [
+        _vm._v(" Lista de radiografias compartidas ")
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", [_vm._v("Imagen")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Medico")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Medico Asociado")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Comentario")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Administracion")])
       ])
     ])
   }
@@ -84343,6 +85001,274 @@ var staticRenderFns = [
           _vm._v(" "),
           _c("option", { attrs: { value: "4" } }, [_vm._v("Secretaria")])
         ]
+      )
+    ])
+  }
+]
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/comentarRadiografia.vue?vue&type=template&id=e2b05ea6&scoped=true&":
+/*!**********************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/comentarRadiografia.vue?vue&type=template&id=e2b05ea6&scoped=true& ***!
+  \**********************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "content-wrapper" }, [
+    _vm._m(0),
+    _vm._v(" "),
+    _c("div", { staticClass: "content" }, [
+      _c("div", { staticClass: "container" }, [
+        _c("div", { staticClass: "row justify-content-center" }, [
+          _c("div", { staticClass: "col-12" }, [
+            _c("div", { staticClass: "card" }, [
+              _vm._m(1),
+              _vm._v(" "),
+              _c("div", { staticClass: "card-body table-responsive p-0" }, [
+                _c("table", { staticClass: "table table-hover" }, [
+                  _vm._m(2),
+                  _vm._v(" "),
+                  _c(
+                    "tbody",
+                    _vm._l(_vm.radiografias, function(radiografia) {
+                      return _c("tr", { key: radiografia.id }, [
+                        _c("td", [
+                          _c(
+                            "a",
+                            {
+                              attrs: {
+                                href:
+                                  "http://142.93.49.246/images/" +
+                                  radiografia.ruta,
+                                target: "_blank"
+                              }
+                            },
+                            [
+                              _c("img", {
+                                staticStyle: { width: "100px" },
+                                attrs: { src: "/images/" + radiografia.ruta }
+                              })
+                            ]
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("td", [
+                          _vm._v(
+                            "\n                                        " +
+                              _vm._s(
+                                radiografia.nombreMedico +
+                                  " " +
+                                  radiografia.apellidoMedico
+                              ) +
+                              "\n                                    "
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("td", [_vm._v(_vm._s(radiografia.comentario))]),
+                        _vm._v(" "),
+                        _c("td", [
+                          _c(
+                            "button",
+                            {
+                              staticClass: "btn btn-primary btn-block",
+                              on: {
+                                click: function($event) {
+                                  return _vm.abrirModalComentario(
+                                    radiografia.id_usuario_archivo
+                                  )
+                                }
+                              }
+                            },
+                            [
+                              _c("i", { staticClass: "fas fa-comment" }),
+                              _vm._v(" Dejar comentario")
+                            ]
+                          )
+                        ])
+                      ])
+                    }),
+                    0
+                  )
+                ])
+              ])
+            ])
+          ]),
+          _vm._v(" "),
+          _c(
+            "div",
+            {
+              staticClass: "modal fade",
+              attrs: {
+                id: "comentarioModal",
+                tabindex: "-1",
+                role: "dialog",
+                "aria-labelledby": "exampleModalLabel",
+                "aria-hidden": "true"
+              }
+            },
+            [
+              _c(
+                "div",
+                { staticClass: "modal-dialog", attrs: { role: "document" } },
+                [
+                  _c("div", { staticClass: "modal-content" }, [
+                    _vm._m(3),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "modal-body" }, [
+                      _c(
+                        "form",
+                        {
+                          on: {
+                            submit: function($event) {
+                              $event.preventDefault()
+                              return _vm.guardarComentario()
+                            }
+                          }
+                        },
+                        [_vm._m(4), _vm._v(" "), _vm._m(5)]
+                      )
+                    ]),
+                    _vm._v(" "),
+                    _vm._m(6)
+                  ])
+                ]
+              )
+            ]
+          )
+        ])
+      ])
+    ])
+  ])
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "content-header" }, [
+      _c("div", { staticClass: "container-fluid" }, [
+        _c("div", { staticClass: "row mb-2" }, [
+          _c("div", { staticClass: "col-sm-6" }, [
+            _c("h1", { staticClass: "m-0 text-dark" }, [
+              _vm._v("Radiografias compartidas")
+            ])
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "col-sm-6" }, [
+            _c("ol", { staticClass: "breadcrumb float-sm-right" }, [
+              _c("li", { staticClass: "breadcrumb-item" }, [
+                _c("a", { attrs: { href: "#" } }, [
+                  _vm._v("Radiografias compartidas")
+                ])
+              ]),
+              _vm._v(" "),
+              _c("li", { staticClass: "breadcrumb-item active" }, [
+                _vm._v(" Lista de radiografias compartidas ")
+              ])
+            ])
+          ])
+        ])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card-header" }, [
+      _c("h3", { staticClass: "card-title" }, [
+        _vm._v(" Lista de radiografias compartidas ")
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", [_vm._v("Imagen")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Medico que comparte")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Comentario")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Administracion")])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-header" }, [
+      _c(
+        "h5",
+        { staticClass: "modal-title", attrs: { id: "exampleModalLabel" } },
+        [_vm._v(" Registrar/Editar comentario ")]
+      ),
+      _vm._v(" "),
+      _c(
+        "button",
+        {
+          staticClass: "close",
+          attrs: {
+            type: "button",
+            "data-dismiss": "modal",
+            "aria-label": "Close"
+          }
+        },
+        [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "form-group" }, [
+      _c("label", [_vm._v("Comentario: ")]),
+      _vm._v(" "),
+      _c("textarea", {
+        staticClass: "form-control",
+        attrs: { id: "observaciones_ta", rows: "3" }
+      })
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "button",
+      { staticClass: "btn btn-primary", attrs: { type: "submit" } },
+      [_c("i", { staticClass: "fas fa-comment-medical" }), _vm._v(" Guardar ")]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-footer" }, [
+      _c(
+        "button",
+        {
+          staticClass: "btn btn-secondary",
+          attrs: { type: "button", "data-dismiss": "modal" }
+        },
+        [_vm._v("Cerrar")]
       )
     ])
   }
@@ -99542,6 +100468,16 @@ var routes = [{
   path: '/expedientes',
   component: __webpack_require__(/*! ./components/Expedientes */ "./resources/js/components/Expedientes.vue")["default"],
   props: true
+}, {
+  name: 'radiografias',
+  path: '/radiografias',
+  component: __webpack_require__(/*! ./components/Radiografias */ "./resources/js/components/Radiografias.vue")["default"],
+  props: true
+}, {
+  name: 'radiografiascompartidas',
+  path: '/radiografiascompartidas',
+  component: __webpack_require__(/*! ./components/comentarRadiografia */ "./resources/js/components/comentarRadiografia.vue")["default"],
+  props: true
 }];
 Vue.component('example-component', __webpack_require__(/*! ./components/ExampleComponent.vue */ "./resources/js/components/ExampleComponent.vue")["default"]);
 var router = new vue_router__WEBPACK_IMPORTED_MODULE_0__["default"]({
@@ -100796,6 +101732,75 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/Radiografias.vue":
+/*!**************************************************!*\
+  !*** ./resources/js/components/Radiografias.vue ***!
+  \**************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Radiografias_vue_vue_type_template_id_21cc5cca_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Radiografias.vue?vue&type=template&id=21cc5cca&scoped=true& */ "./resources/js/components/Radiografias.vue?vue&type=template&id=21cc5cca&scoped=true&");
+/* harmony import */ var _Radiografias_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Radiografias.vue?vue&type=script&lang=js& */ "./resources/js/components/Radiografias.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _Radiografias_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _Radiografias_vue_vue_type_template_id_21cc5cca_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _Radiografias_vue_vue_type_template_id_21cc5cca_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  "21cc5cca",
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/Radiografias.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/Radiografias.vue?vue&type=script&lang=js&":
+/*!***************************************************************************!*\
+  !*** ./resources/js/components/Radiografias.vue?vue&type=script&lang=js& ***!
+  \***************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Radiografias_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./Radiografias.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Radiografias.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Radiografias_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/Radiografias.vue?vue&type=template&id=21cc5cca&scoped=true&":
+/*!*********************************************************************************************!*\
+  !*** ./resources/js/components/Radiografias.vue?vue&type=template&id=21cc5cca&scoped=true& ***!
+  \*********************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Radiografias_vue_vue_type_template_id_21cc5cca_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./Radiografias.vue?vue&type=template&id=21cc5cca&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Radiografias.vue?vue&type=template&id=21cc5cca&scoped=true&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Radiografias_vue_vue_type_template_id_21cc5cca_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Radiografias_vue_vue_type_template_id_21cc5cca_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
 /***/ "./resources/js/components/User.vue":
 /*!******************************************!*\
   !*** ./resources/js/components/User.vue ***!
@@ -100860,6 +101865,75 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_User_vue_vue_type_template_id_d884f594_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_User_vue_vue_type_template_id_d884f594_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/comentarRadiografia.vue":
+/*!*********************************************************!*\
+  !*** ./resources/js/components/comentarRadiografia.vue ***!
+  \*********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _comentarRadiografia_vue_vue_type_template_id_e2b05ea6_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./comentarRadiografia.vue?vue&type=template&id=e2b05ea6&scoped=true& */ "./resources/js/components/comentarRadiografia.vue?vue&type=template&id=e2b05ea6&scoped=true&");
+/* harmony import */ var _comentarRadiografia_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./comentarRadiografia.vue?vue&type=script&lang=js& */ "./resources/js/components/comentarRadiografia.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _comentarRadiografia_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _comentarRadiografia_vue_vue_type_template_id_e2b05ea6_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _comentarRadiografia_vue_vue_type_template_id_e2b05ea6_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  "e2b05ea6",
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/comentarRadiografia.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/comentarRadiografia.vue?vue&type=script&lang=js&":
+/*!**********************************************************************************!*\
+  !*** ./resources/js/components/comentarRadiografia.vue?vue&type=script&lang=js& ***!
+  \**********************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_comentarRadiografia_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./comentarRadiografia.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/comentarRadiografia.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_comentarRadiografia_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/comentarRadiografia.vue?vue&type=template&id=e2b05ea6&scoped=true&":
+/*!****************************************************************************************************!*\
+  !*** ./resources/js/components/comentarRadiografia.vue?vue&type=template&id=e2b05ea6&scoped=true& ***!
+  \****************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_comentarRadiografia_vue_vue_type_template_id_e2b05ea6_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./comentarRadiografia.vue?vue&type=template&id=e2b05ea6&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/comentarRadiografia.vue?vue&type=template&id=e2b05ea6&scoped=true&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_comentarRadiografia_vue_vue_type_template_id_e2b05ea6_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_comentarRadiografia_vue_vue_type_template_id_e2b05ea6_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 

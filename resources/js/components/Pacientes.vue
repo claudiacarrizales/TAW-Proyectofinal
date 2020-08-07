@@ -57,7 +57,7 @@
                                         <td>{{paciente.apellido}}</td>
                                         <td>{{paciente.edad}}</td>
                                         <td>{{paciente.altura}}</td>
-                                        <td>{{ paciente.peso }}</td>
+                                        <td>{{paciente.peso }}</td>
                                         <td>{{paciente.sexo}}</td>
                                         <td>{{paciente.fecha_nacimiento}}</td>
 
@@ -415,7 +415,9 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                        <button type="button" class="btn btn-danger"> <i class="fas fa-file-pdf"></i> Descargar </button>
+
+                        <a :href="'api/generarReporteExpediente/'+pacienteACompartir" class="btn btn-danger"> <i class="fas fa-file-pdf"></i>  Descargar </a> 
+
                     </div>
 
                     </div>

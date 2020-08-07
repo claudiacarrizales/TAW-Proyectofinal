@@ -46,7 +46,8 @@
                                             <td>{{cita.nombredoctor + " " + cita.apellidodoctor}}</td>
                                             <td>
                                                 <button @click="abrirMostrarPagina(cita.id)" class="btn btn-success"> <i class="fas fa-eye"></i> </button>
-                                                <button class="btn btn-danger"> <i class="fas fa-file-pdf"></i> </button>
+
+                                                <a :href="'api/generarReporteCitas/'+cita.id" class="btn btn-danger"> <i class="fas fa-file-pdf"></i>  </a> 
                                             </td>
                                         </tr>
                                     </tbody>
@@ -85,7 +86,8 @@
                                             <td>{{cita.nombredoctor + " " + cita.apellidodoctor}}</td>
                                             <td>
                                                 <button @click="abrirMostrarPagina(cita.id)" class="btn btn-success"> <i class="fas fa-eye"></i> </button>
-                                                <button class="btn btn-danger"> <i class="fas fa-file-pdf"></i> </button>
+                                                
+                                                <a :href="'api/generarReporteCitas/'+cita.id" class="btn btn-danger"> <i class="fas fa-file-pdf"></i>  </a> 
                                             </td>
                                         </tr>
                                     </tbody>
