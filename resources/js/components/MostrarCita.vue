@@ -1,12 +1,18 @@
 <template>
-
+    <!-- Componente que muestra un formulario para llenar los datos de la cita
+    LA ENFERMEDAD QUE PRESENTA EL PACIENTE, LAS ALERGIAS Y LOS MEDICAMENTOS QUE SE LE RESETARON
+    esta informacion es llenada unicamente por el medico principal -->
     <div class="content-wrapper">
         <div class="content-header">
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
+
+                        <!-- Muestra los propiedades que son pasadas al componente cuando este es creado-->
+                        <!-- Muestra el id de la cita seleccionada -->
                         <h1 class="m-0 text-dark">Cita {{ this.$props.id }} </h1>
 
+                        <!--Boton que regresa al listado de las citas, para tener la habilidad de seleccionar otra cita para llenar sus datos  -->
                         <button class="btn btn-primary" @click="regresar"> <i class="fas fa-arrow-left"></i> Regresar </button>
                     </div>
                 
@@ -298,7 +304,6 @@
                         type: 'success',
                         title: 'Padecimiento guardado'
                     });
-                    console.log(response);
                 })
                 .catch(() => {
                     toast.fire({
@@ -313,6 +318,7 @@
                 this.selectedPadecimiento = args;
             },
 
+            //Metodo para guardar un medicamento muestra una alerta para colocar la cantidad de medicamento que se esta recetaando
             async agregarMedicamento(args){
 
 
@@ -339,7 +345,6 @@
                             type: 'success',
                             title: 'Medicamento guardado con exito'
                         });
-                        console.log(response);
                     })
                     .catch(() => {
                         toast.fire({
@@ -386,7 +391,6 @@
                                 type: 'success',
                                 title: 'Medicamento guardado con exito'
                             });
-                            console.log(response);
                         })
                         .catch(() => {
                             toast.fire({
@@ -419,12 +423,6 @@
                         this.medicamentosCita.push({id: data[i].id_medicina, nombre: data[i].nombre, observaciones: data[i].observaciones });
                         this.selectedMedicamento.push( data[i].nombre );
                     }
-
-                    //this.cita = data[0];
-                    //this.observaciones = data[0].observaciones;
-                    console.log("MEDICAMENTOS EN ESTA CITA");
-                    console.log(data);
-                    //this.medicamentosCita;
                 });
 
                 axios.get('api/obtenerDatosCita/'+this.$props.id)
@@ -478,14 +476,13 @@
 
             }
         },
+        //Propiedades que son pasadas al componente cuando es creado
         props: {
             id: Number
         },
+        //Muestra los datos de la cia
         created(){
             this.obtenerDatosCita();
-
-            
-
         }
     }
 </script>

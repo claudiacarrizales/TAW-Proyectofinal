@@ -10,7 +10,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
 
-    <title> Clinica </title>
+    <title> Opción medica </title>
 
     <link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet">
     <!-- Font Awesome Icons -->
@@ -33,7 +33,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
     
 
-    <nav class="main-header navbar navbar-light nav-flat" style="background: linear-gradient(to right, #6190e8, #a7bfe8);">
+    <nav class="main-header navbar navbar-light nav-flat" style="background: linear-gradient(to right, #6190e8, #a7bfe8); height: 80px;">
         <ul class="navbar-nav">
             <li class="nav-item">
                 <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
@@ -48,8 +48,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
         <!-- Brand Logo -->
         <a href="/" class="brand-link">
-            <img src="{{asset('photos/logo.png')}}" alt="Opcion medica" class="brand-image ">
-            <span class="brand-text font-weight-light" id="branlogo" >Opción médica</span>
+            <img src="{{asset('photos/logo.png')}}" alt="Opcion medica" class="brand-image-xl logo-xs" style="width:60px;"/>
+            <img src="{{asset('photos/logo2.png')}}" alt="Opcion medica" class="brand-image-xs logo-xl ml-2" style="left: 32px; width:150px;" />
+            
+            <!--<span class="brand-text font-weight-light" id="branlogo" >Opción médica</span>-->
         </a>
 
         <!-- Sidebar -->
@@ -111,7 +113,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                     </li>
                     @endif
 
-                    @if( Auth::user()->tipo == '4' ||  Auth::user()->tipo == '2' || Auth::user()->tipo == '1')
+                    @if(Auth::user()->tipo == '2' || Auth::user()->tipo == '1')
                     <li class="nav-item has-treeview ">
                         <a href="#" class="nav-link ">
                         <i class="fas fa-hospital-user nav-icon"></i>

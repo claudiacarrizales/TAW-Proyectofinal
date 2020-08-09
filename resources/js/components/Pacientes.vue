@@ -1,5 +1,6 @@
 <template>
-
+    <!-- Componente que es usado para registrar a los pacientes de la clinete
+    asi mismo en esta pagina son mostrados el expediente, y la vista para controlar la comparticion del paciente con un medico asociado-->
     <div class="content-wrapper">
         <div class="content-header">
             <div class="container-fluid">
@@ -35,7 +36,7 @@
                             </div>
                             <!-- /.Cuerpo de la tarjeta -->
                             <div class="card-body table-responsive p-0">
-                                <!-- Tabla que despliega la informaci+on de los usuarios registrados -->
+                                <!-- Tabla que despliega la informaci+on de los pacientes registrados -->
                                 <table class="table table-hover" id="datatable">
                                     <thead>
                                     <tr>
@@ -168,7 +169,7 @@
 
                         
 
-                        <!-- Tabla que despliega la informaci+on de los usuarios registrados -->
+                        <!-- Tabla que despliega la informaci+on de la comparticion de los pacientes -->
                         <table class="table table-hover" id="datatable">
                             <thead>
                             <tr>
@@ -185,6 +186,7 @@
                                 <td>{{expediente.nombreAsociado + " " + expediente.apellidoAsociado }}</td>
                                 <td>{{expediente.fecha}}</td>
                                 <td> 
+                                    <!-- Despliega las secciones del expediente que puede ver un medico asocaido-->
                                     <span v-show="expediente.info==1">Información <br> </span>
                                     <span v-show="expediente.alergias==1"> Alergias <br>  </span>
                                     <span v-show="expediente.enfermedades==1">Enfermedades <br>  </span>
@@ -213,8 +215,8 @@
                         <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div class="modal-body">
-                        <!-- Tabla que despliega la informaci+on de los usuarios registrados -->
+                    <div class="modal-body" id="imprimirExp">
+                        <!-- Despleiga toda la informacion del paciente, en un expediente -->
                         
                         <h1> {{ pacienteACompartirNombre + " "  + pacienteACompartirApellido }} </h1>
                         Código: {{ pacienteACompartir }}
@@ -415,8 +417,10 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-
-                        <a :href="'api/generarReporteExpediente/'+pacienteACompartir" class="btn btn-danger"> <i class="fas fa-file-pdf"></i>  Descargar </a> 
+                        
+                        <!-- Boton que imprime el expediente del paciente dependiento de lo que el usuario loggrado pueda ver, los medicos y el admin pueden ver todo
+                        mientras que los medicos asociados pueden ver unicamente las partes en donde se le dieron permiso -->
+                        <a @click="imprimirExpediente('imprimirExp')" class="btn btn-danger"> <i class="fas fa-file-pdf"></i>  Descargar </a> 
 
                     </div>
 
@@ -426,7 +430,7 @@
 
 
 
-            <!-- Modal -->
+            <!-- Modal para realizar el registro de un nuevo paciente -->
             <div class="modal fade" id="modalPaciente" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content">
@@ -498,7 +502,9 @@
 
 <script>
     export default {
-        name: "User",
+        //Nombre del componente
+        name: "Pacientes",
+        //Propiedades del componente, puede ser accedidas a traves de todo el documento
         data(){
             return{
                 editMode : false,
@@ -519,6 +525,24 @@
             }
         },
         methods:{
+            //FUNCION QUE SE ENCARGA DE IMPRIMIR EL EXPEDIENTE DEL USUARIO CON EL USO DE JAVASCRIPT
+            imprimirExpediente(elem){
+                var mywindow = window.open('', 'PRINT', 'height=400,width=600');
+
+                mywindow.document.write('<html><head><title>' + document.title  + '</title>');
+                mywindow.document.write('</head><body >');
+                mywindow.document.write('<h1>' + document.title  + '</h1>');
+                mywindow.document.write(document.getElementById(elem).innerHTML);
+                mywindow.document.write('</body></html>');
+                mywindow.document.close(); // necessary for IE >= 10
+                mywindow.focus(); // necessary for IE >= 10*/
+                mywindow.print();
+                mywindow.close();
+
+                return true;
+            },
+
+            //Guarda un registro en la tabla usuario_paciente, en lacual se puede saber que medico ascodiado puede ver que expediente de que paciente
             guardarComparticion(){
 
                 var doctor_id = document.getElementById("doctorasoc");
@@ -546,6 +570,8 @@
 
 
             },
+
+            //Eliminar una comparticion de una expediente
             eliminarComparticion(id){
 
                 axios.delete('api/eliminarComparticion/'+id).then((response)=>{            
@@ -570,6 +596,9 @@
                 })
 
             },
+
+
+            //Registra una nueva comparticion de un paciente
             comprartirPaciente(id, nombre, apellido){
 
                 this.pacienteACompartir = id;
@@ -581,17 +610,9 @@
                 for(var i = 0; i < this.expdientesCompartidos.length; i ++){
                     if(this.expdientesCompartidos[i].pacienteId == id){
                         this.expedientesPaciente.push( this.expdientesCompartidos[i] );
-                        console.log("Paciente");
-                        console.log( this.expdientesCompartidos[i] );
                     }
                 }
-
-                console.log( this.expedientesPaciente );
-
                 $('#compartirPacienteModal').modal('show');
-
-                
-
             },
 
             verExpediente(id, nombre, apellido){
@@ -657,8 +678,6 @@
                         type: 'success',
                         title: 'Paciente actualizado correctamente'
                     });
-
-                    console.log(response);
                 })
                 .catch(() => {
                     this.$Progress.fail();
@@ -813,8 +832,6 @@
                 var sexo = document.getElementById("sexo");
                 var fecha_nacimiento = document.getElementById("fecha_nacimiento");
 
-                console.log(nombre.value);
-
                 //Valida que el formulario tenga todos los datos
                 if( nombre.value == "" || apellido.value == "" || edad.value == "" || altura.value == "" || peso.value == ""
                     || sexo.value == "" || fecha_nacimiento.value == "" ){
@@ -853,19 +870,20 @@
                     }).catch(function (error) {
                         // Maneja el error si la peticion no se llevo a cabo correctamente
                         this.$Progress.fail();
-                        console.log(error);
+
                     })
 
                 }
 
             }
         },
+        //Datos que son pasados al comopnente al momento en el cual este es accedido
         props: {
             tipo: String,
             id : String
         },
         created(){
-            
+            //Verifica si el usuario loggrado puede ver el componente, sino es el caso lo manda a una vista con un mensaje correspondiente
             if(this.$props.tipo == '4' || this.$props.tipo == '3' ){
                 this.$router.push('noacceso') 
             }

@@ -1,5 +1,5 @@
 <template>
-
+    <!-- Componente que se encarga de la gestion del catalogo de medicamentos -->
     <div class="content-wrapper">
         <div class="content-header">
             <div class="container-fluid">
@@ -35,7 +35,7 @@
                             </div>
                             <!-- /.Cuerpo de la tarjeta -->
                             <div class="card-body table-responsive p-0">
-                                <!-- Tabla que despliega la informaci+on de los usuarios registrados -->
+                                <!-- Tabla que despliega la informaci+on de los medicamentos registrados -->
                                 <table class="table table-hover">
                                     <thead>
                                     <tr>
@@ -70,7 +70,7 @@
                 </div>
             </div>
 
-            <!-- Modal -->
+            <!-- Modal que despliega el fomrulario para registrar un nuevo medicamento -->
             <div class="modal fade" id="modalMedicamento" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content">
@@ -118,67 +118,58 @@
 
 <script>
     export default {
+        //Nombre del medicamento
         name: "Medicamentos",
+        //DAtos del componete estos pueden ser accedidos en todos los metodos del componente o en la plantilla
         data(){
             return {
                 modoedicion: false,
                 medicamentos: {},
                 medicamento_editar: {},
-
                 medicamento_editar: {
                     id: '',
                     nombre: '',
                     presentacion: '',
                     detalles: ''
-                }
-                
+                }                
             }
-            
         },
+        //Logica del componente
         methods:{
 
             //Metodo que permite obtener los datos de las medicamentos registradas
             cargarMedicamentos(){
-                
                 // Hace una peticion a la tabla diseases en la base de datos a traves de la ruta
                 axios.get('api/obtenermedicamentos')
-                    .then(({data}) => {
-                        this.medicamentos = data;
-                    });
+                .then(({data}) => {
+                    this.medicamentos = data;
+                });
             },
 
             nuevoMedicamentoModal(){
-
                 this.modoedicion = false;
-
                 var nombre = document.getElementById("nombre");
                 var presentacion = document.getElementById("presentacion");
                 var detalles = document.getElementById("detalles");
-
                 nombre.value = "";
                 presentacion.value = "";
                 detalles.value = "";
-
                 $('#modalMedicamento').modal('show');
             },
 
             crearMedicamento() {
-
                 var nombre = document.getElementById("nombre");
                 var presentacion = document.getElementById("presentacion");
                 var detalles = document.getElementById("detalles");
-
                 if(nombre.value == "" || presentacion.value == "" || detalles.value == "" )
                 {
-
                     toast.fire({
                         type: 'error',
                         title: 'Llene todos los campos del formulario'
                     });
 
                 }else{
-
-
+                    //Peticion post al controlador para guardar los datos de un nuevo medicamento
                     axios.post('api/registrarMedicamento', {nombre: nombre.value, presentacion: presentacion.value, detalles: detalles.value})
                     .then((response)=>{
                         
@@ -211,48 +202,34 @@
 
             },
 
+            //Abre el modal con el formulario, solo que en esta ocasion coloca los datos en el formulario del medicamento seleccionado
             modalEditarMedicamento(id){
-
                 this.modoedicion = true;
-
                 var nombre = document.getElementById("nombre");
                 var presentacion = document.getElementById("presentacion");
                 var detalles = document.getElementById("detalles");
-
-                //Obitene los datos del usuario a eliminar
+                //Obitene los datos del medicamento a editar
                 for(var i=0; i < this.medicamentos.length; i++){
                     if( this.medicamentos[i].id == id){
                         this.medicamento_editar = this.medicamentos[i];
                     }
                 }
-
                 nombre.value = this.medicamento_editar.nombre;
                 presentacion.value = this.medicamento_editar.presentacion;
                 detalles.value = this.medicamento_editar.detalles;
-
-
                 $('#modalMedicamento').modal('show');
-
-
-
-
             },
-
+            //Metodo que manda la peticion al controlador para que edite los datos de un medicamento
             actualizarMedicamento() {
-
                 var nombre = document.getElementById("nombre");
                 var presentacion = document.getElementById("presentacion");
                 var detalles = document.getElementById("detalles");
-
                 this.medicamento_editar.nombre = nombre.value;
                 this.medicamento_editar.presentacion = presentacion.value;
                 this.medicamento_editar.detalles = detalles.value;
-
                 axios.post('api/actualizarMedicamento', this.medicamento_editar )
                 .then((response)=>{
-                    
                     this.cargarMedicamentos();
-
                     $('#modalMedicamento').modal('hide');
                     toast.fire({
                         type: 'success',
@@ -265,12 +242,9 @@
                         title: 'Error al actualizar el medicamento'
                     });
                 });
-
-
-
-
             },
 
+            //Metodo que elimina los datos de un medicamento reistrado, realiza una eliminacion fisica de la base de datos
             eliminarMedicamento(id)  {
                 swal.fire({
                     title: '¿Eliminar medicamento?',
@@ -308,21 +282,19 @@
 
 
         },
+        //Propiedades que son pasadas al componente cuando es accedido, estas propiedades vienen desde el archivo master.blade.php
         props: {
             tipo: String
         },
 
         created(){
-
+            //Hace la comparacion si el usuario loggeado puede ver la vista, sino lo redirecciona a un componete de alerta
             if(this.$props.tipo == '4' || this.$props.tipo == '3' ){
                 this.$router.push('noacceso') 
             }
             
+            //Carga los medicamentos que son mostrados en la tabla
             this.cargarMedicamentos();
         }
     }
 </script>
-
-<style scoped>
-
-</style>

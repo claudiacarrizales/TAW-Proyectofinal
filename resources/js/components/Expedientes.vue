@@ -77,7 +77,7 @@
                         <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div class="modal-body">
+                    <div class="modal-body" id="imprimirExp">
                         <!-- Tabla que despliega la informaci+on de los usuarios registrados -->
                         
                         <h1> {{ pacienteACompartirNombre + " "  + pacienteACompartirApellido }} </h1>
@@ -279,7 +279,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                        <button type="button" class="btn btn-danger"> <i class="fas fa-file-pdf"></i> Descargar </button>
+                        <a @click="imprimirExpediente('imprimirExp')" class="btn btn-danger"> <i class="fas fa-file-pdf"></i>  Descargar </a> 
                     </div>
 
                     </div>
@@ -320,7 +320,21 @@
         methods:{
             
             
-            
+            imprimirExpediente(elem){
+                var mywindow = window.open('', 'PRINT', 'height=400,width=600');
+
+                mywindow.document.write('<html><head><title>' + document.title  + '</title>');
+                mywindow.document.write('</head><body >');
+                mywindow.document.write('<h1>' + document.title  + '</h1>');
+                mywindow.document.write(document.getElementById(elem).innerHTML);
+                mywindow.document.write('</body></html>');
+                mywindow.document.close(); // necessary for IE >= 10
+                mywindow.focus(); // necessary for IE >= 10*/
+                mywindow.print();
+                mywindow.close();
+
+                return true;
+            },
             verExpediente(id, nombre, apellido){
 
                 //expedienteModal

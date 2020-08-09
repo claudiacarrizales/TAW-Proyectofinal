@@ -1,5 +1,6 @@
 <template>
-
+    <!--Componente para registrar nuevos uusarios que pueden acceder al sistema.
+        Esta vista solo puede ser vista por el administrador del sistema -->
     <div class="content-wrapper">
         <div class="content-header">
             <div class="container-fluid">
@@ -142,7 +143,9 @@
 
 <script>
     export default {
+        //Nombre del componente
         name: "User",
+        //Propiedades del componente, pueden ser accedidas por todo el componente, incluyendo los metodos y plantilla
         data(){
             return{
                 editMode : false,
@@ -228,6 +231,7 @@
                 //this.form.fill(user);
             },
 
+            //Abre el modal para registrar un nuevo usuario pero antes de eso lo limpia
             newModal(){
                 this.editMode = false;
                 var nombre = document.getElementById("name");
@@ -245,6 +249,8 @@
                 $('#modalUsuario').modal('show');
             },
 
+
+            //Metodo para realzar la eliminacion de un usuario, la eliminacion se realiza de manera fisica de la base de datos
             eliminarUsuario(id){
                 swal.fire({
                     title: 'Eliminar usuario',
@@ -287,6 +293,8 @@
 
             },
 
+
+            //Guarda a un nuevo usuario
             crearUsuario(){
                 
 
@@ -341,11 +349,12 @@
 
             }
         },
+        //Prpiedades que son accedidas cuando el componente es accedido
         props: {
             tipo: String
         },
         created(){
-
+            //Solo el administrador puede ver esta vista
             if(this.$props.tipo != '1'){
                 this.$router.push('noacceso') 
             }
@@ -356,18 +365,6 @@
             Fire.$on('despuesActualizar',() => this.cargarUsuarios());
 
             
-        },
-
-        filters: {
-            capitalize: function (value) {
-                if (!value) return ''
-                value = value.toString()
-                return value.charAt(0).toUpperCase() + value.slice(1)
-            },
         }
     }
 </script>
-
-<style scoped>
-
-</style>

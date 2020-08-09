@@ -3,13 +3,18 @@
 @section('content')
 
 <div class="login-logo">
-    <h2>Clinica</h2>
-    <h4> Iniciar Sesion </h4>
+    <img src="{{asset('photos/logo.png')}}" alt="Opcion medica" class="brand-image-xl logo-xs" style="width:100px;"/>
+    <img src="{{asset('photos/logo2.png')}}" alt="Opcion medica" class="brand-image-xs logo-xl ml-2" style="left: 32px; width:200px;" />
+           
+    
+
+
 </div>
 
 <div class="card">
                 
     <div class="card-body login-card-body">
+                <center> <h1> Iniciar sesión </h1> </center>
                 <div class="card-body">
                     <form method="POST" action="{{ route('login') }}">
                         @csrf
@@ -48,9 +53,9 @@
                             
                             <div class="col-md-12 mt-2">
                                 <center>
-                                <button type="submit" class="btn btn-primary btn-lg">
-                                    Iniciar Sesion
-                                </button>
+                                    <button type="submit"  class="btn btn-outline-primary btn-lg btn-block">
+                                        Iniciar sesión
+                                    </button>
                                 </center>
                                 
                             </div>

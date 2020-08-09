@@ -13,9 +13,6 @@ Vue.component(HasError.name, HasError);
 Vue.component(AlertError.name, AlertError);
 
 
-//moment js
-import moment from "moment";
-
 import vSelect from 'vue-select'
 
 Vue.component('v-select', vSelect)
@@ -53,12 +50,6 @@ window.Fire = new Vue();
 let routes = [
     { name: 'dashboard', path: '/', component: require('./components/Dashboard').default },
     { name: 'dashboard2', path: '/dashboard', component: require('./components/Dashboard').default },
-
-    { name: 'dashboardmedico', path: '/dashboardmedico', component: require('./components/Dashboardmedico').default },
-    { name: 'dashboardsecretaria', path: '/dashboardsecretaria', component: require('./components/Dashboardsecretaria').default },
-    { name: 'dashboardmedicoasociado', path: '/dashboardmedicoasociado', component: require('./components/Dashboardmedicoasociado').default },
-
-    { name: 'perfil', path: '/profile', component: require('./components/Profile').default },
     { name: 'users', path: '/users', component: require('./components/User').default },
     { name: 'enfermedades', path: '/enfermedades', component: require('./components/Enfermedades').default },
     { name: 'pacientes', path: '/pacientes', component: require('./components/Pacientes').default},
@@ -67,36 +58,18 @@ let routes = [
     { name: 'medicamentos', path: '/medicamentos', component: require('./components/Medicamentos').default },
     { name: 'alergias', path: '/alergias', component: require('./components/Alergias').default },
     { name: 'noacceso', path: '/noacceso', component: require('./components/Noacceso').default },
-
     { name: 'mostrarcita', path: '/mostrarcita', component: require('./components/MostrarCita').default, props: true },
-
     { name: 'pagos', path: '/pagos', component: require('./components/Pagos').default, props: true },
     { name: 'cajas', path: '/cajas', component: require('./components/CierreAperturaCaja').default, props: true },
-
     { name: 'expedientes', path: '/expedientes', component: require('./components/Expedientes').default, props: true },
-
     { name: 'radiografias', path: '/radiografias', component: require('./components/Radiografias').default, props: true },
-
     { name: 'radiografiascompartidas', path: '/radiografiascompartidas', component: require('./components/comentarRadiografia').default, props: true }
-
 ];
-
-
-
-Vue.component('example-component', require('./components/ExampleComponent.vue').default);
-
 
 const router = new VueRouter({
     mode :'history',
     routes 
 });
-
-
-Vue.filter('fecha_espaniol',function (created) {
-   return moment(created).format('MMM Do YY');
-});
-
-
 
 const app = new Vue({
     el: '#app',

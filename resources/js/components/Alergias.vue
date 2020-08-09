@@ -1,5 +1,5 @@
 <template>
-
+    <!-- Componente que se encarga del catalogo de alergias, este modulo es solo visto por los medicos y este mismo es compartido la informacion entre ellos mismo para que actualicen la informacion con su conocimiento -->
     <div class="content-wrapper">
         <div class="content-header">
             <div class="container-fluid">
@@ -34,6 +34,7 @@
                                 </div>
                             </div>
                             <!-- /.Cuerpo de la tarjeta -->
+                            <!-- Tabla generada dinamicante con la informacion de las alegrias previamente registradas y obtenidas de la base de datos-->
                             <div class="card-body table-responsive p-0">
                                 <!-- Tabla que despliega la informaci+on de los usuarios registrados -->
                                 <table class="table table-hover">
@@ -53,6 +54,7 @@
                                         <td>{{alergia.tipo}}</td>
                                         
                                         <td>
+                                            <!-- Estos botones sirven para la gestion de los registros ya sea editar o eliminar los datos que ya se tienen-->
                                         <button @click="modalEditarAlergia(alergia.id)" class="btn btn-warning"> <i class="fas fa-pen"></i> </button>
                                         <button @click="eliminarAlergia(alergia.id)" class="btn btn-danger"> <i class="fas fa-trash"></i> </button>
                                         </td>
@@ -68,7 +70,7 @@
                 </div>
             </div>
 
-            <!-- Modal -->
+            <!-- Modal que muestra el formulario para registrar una nueva cita, o en su defecto editar una que ya se tiene almacenada -->
             <div class="modal fade" id="modalAlergia" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content">
@@ -108,13 +110,14 @@
 
 <script>
     export default {
-        name: "alergias",
+        //Propiedades del componente son accedidas en todos los metodos del componente y en la plantilla
+        name: "alergias", //Nombre del componente
         data(){
             return {
                 modoedicion: false,
                 alergias: {},
                 alergias_editar: {},
-
+                //Objeto que almacena los datos de la alergia a editar, (temporalmente)
                 alergias_editar: {
                     id: '',
                     nombre: '',
@@ -136,6 +139,7 @@
                     });
             },
 
+            //Abre el modal para registrar una nueva alergia, pero primero limpia las campos antes de ingresar nuevos datos en ellos.
             nuevaAlergiaModal(){
 
                 this.modoedicion = false;
@@ -149,6 +153,7 @@
                 $('#modalAlergia').modal('show');
             },
 
+            //Compara que los campos no esten vacios y manda la peticion para guardar la alergia
             crearAlergia() {
 
                 var nombre = document.getElementById("nombre");
@@ -164,7 +169,7 @@
 
                 }else{
 
-
+                    //Realiza la peticion de guardado a traves de la ruta hacia el controlador AlergiasController
                     axios.post('api/registrarAlergia', {nombre: nombre.value, tipo: tipo.value})
                     .then((response)=>{
                         
@@ -196,6 +201,7 @@
 
             },
 
+            //Abre el modal para crear una alergia sin embargo coloca los datos de la alergia seleccionada para editarlos 
             modalEditarAlergia(id){
                 this.modoedicion = true;
                 var nombre = document.getElementById("nombre");
@@ -211,6 +217,7 @@
                 $('#modalAlergia').modal('show');
             },
 
+            //Manda la peticion para el actualizado de los datos a traves de la ruta de axios
             actualizarAlergia() {
 
                 var nombre = document.getElementById("nombre");
@@ -242,6 +249,7 @@
 
             },
 
+            //Se encarga del eliminado del registro de una alergia, antes de esto pregunta una mensaje de confirmacion
             eliminarAlergia(id)  {
                 swal.fire({
                     title: '¿Eliminar alergia?',
@@ -279,14 +287,17 @@
 
 
         },
+        //Propiedades que son ingresadas al componente ants de ser creado, en este caos el tipo de usuario que esta accediento para de esta forma validar el acceso
         props: {
             tipo: String
         },
         created(){
+            //Valida el acceso del usario si no es correcto le muestra una vista con un mensaje alucivo
             if(this.$props.tipo == '4' || this.$props.tipo == '3' ){
                 this.$router.push('noacceso') 
             }
 
+            //Al momento que el componente es cargado son desplegados los registros que ya existen
             this.cargaralergias();
         }
     }

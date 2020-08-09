@@ -37,7 +37,7 @@
 
     <header>
         <img src="{{asset('photos/logo.png')}}" alt="Opcion medica" class="brand-image mt-2 ml-5" style="width:80px;">
-        <span style="font-size: 35px;" > Opcion Medica </span>
+        <img src="{{asset('photos/logo2.png')}}" alt="Opcion medica" class="brand-image mt-2 " style="width:200px;">
     </header>
     
     <h1 class="text-center"> Expediente No. {{ $id }} </h1>

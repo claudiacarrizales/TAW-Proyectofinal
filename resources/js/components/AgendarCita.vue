@@ -1,5 +1,5 @@
 <template>
-
+    <!-- Componente el cual contiene el calendario para la reservacion de una cita -->
     <div class="content-wrapper">
         <div class="content-header">
             <div class="container-fluid">
@@ -57,16 +57,21 @@
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
+
+                        <!-- Se hace el llamado a una funcion o a otra dependiendo si se quiere crear una nueva cita o actualizar una ya existente -->
                         <form @submit.prevent="editMode ? actualizarCita() : agregarCita()" >
                         <div class="modal-body">
 
                             <div class="form-group">
                                 <label>Fecha:</label>
+                                <!-- Campo de tipo fecha, el cual muestra una calendario para poder seleccionar un dia en especifico -->
                                 <input type="date" id="fecha" name="fecha"  class="form-control" required>
                             </div>
 
                             <div class="form-group">
                                 <label>Hora:</label>
+
+                                <!-- Campo de tipo hora para ser tratado de difernete forma en el navegador, muestra un campo de tipo reloj para seleccionar la hora-->
                                 <input type="time" min="09:00" max="18:00" id="hora" name="hora" class="form-control" required>
                             </div>
 
@@ -308,6 +313,7 @@ export default {
             
         },
 
+        //Metodo que se utiliza para actualizar la informacion de una cita ya creada, pone la informacion ya guardada en los campos del formulario
         actualizarCita(){
 
             var fecha = document.getElementById("fecha");
@@ -335,7 +341,7 @@ export default {
                 }
             }
 
-            
+            //Compara si existe un error para mostrar una pqueña alerta proporcionada por la bilbioteca sweet alert.
             if(error){
                 swal.fire(
                     'Error al crear cita',
@@ -428,6 +434,8 @@ export default {
             this.idCitaEliminar = arg.event.id;
         },
 
+
+        //Realiza el mostrado del modal para ver la informacion de la cita
         editarCita(){
             this.editMode = true;
             $('#modalCitaChecar').modal('hide');
@@ -509,9 +517,11 @@ export default {
 </script>
 
 <style lang="css">
-
+    /* Se importan estilos de css para ver correctamente el calendario*/
     @import "~@fullcalendar/core/main.css";
     @import "~@fullcalendar/daygrid/main.css";
+
+    /*Estas propiedades son destinadas a las fechas ya reservadas en la cita (Las pequeñas tarjetitas azules con el tema de la cita)*/
     .fc-title {
         color: #fff;
     }

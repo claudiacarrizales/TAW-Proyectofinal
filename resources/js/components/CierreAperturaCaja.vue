@@ -1,5 +1,6 @@
 <template>
-
+    <!-- Componente que lleva un control de las cajas de la clinica, se mostrará el listado de las cajas cerradas y la abierta actual,
+    Solo es posible realizar una accion y es cerrar la caja actual, que a continuacion abre otra caja con 0 pesos -->
     <div class="content-wrapper">
         <div class="content-header">
             <div class="container-fluid">
@@ -30,7 +31,7 @@
                             </div>
                             <!-- /.Cuerpo de la tarjeta -->
                             <div class="card-body table-responsive p-0">
-                                <!-- Tabla que despliega la informaci+on de los usuarios registrados -->
+                                <!-- Tabla que despliega la informaci+on de los cajas registrados tanto abiertas como cerradas-->
                                 <table class="table table-hover" id="datatable">
                                     <thead>
                                     <tr>
@@ -48,10 +49,12 @@
                                         <td>{{caja.total}}</td>
                                         <td>{{caja.f_apertura}}</td>
                                         <td>{{caja.f_cierre}}</td>
+                                        <!-- Musestra un mensaje (span de bootstrap) sobre el status de la caja -->
                                         <td><span v-if="caja.f_cierre==null" class="badge badge-success">Abierta</span>
                                             <span v-else class="badge badge-danger">Cerrada</span>                                            
                                         </td>
                                         <td>
+                                            <!-- Compara si la caja no esta cerrada, si es asi muestra el respecitvo boton que la cierra, cuando esto pasa crea un nuevo registro para la apertuda de una nueva caja -->
                                             <button v-if="caja.f_cierre==null" @click="actualizarcaja(caja.id)" class="btn btn-warning"> <i class="fas fa-lock"></i> <b>¿Cerrar caja? </b></button>
                                         </td>
                                     </tr>
@@ -71,7 +74,8 @@
 
 <script>
     export default {
-        name: "User",
+        name: "Cajas",
+        //Propiedades del componente cajas
         data(){
             return{
                 editMode : false,
@@ -82,7 +86,7 @@
             }
         },
         methods:{
-            //funcion para editar losd atos de un ususario
+            //funcion para editar losd atos de una caja, que es lo mismo que cerrar una caja, solo se actuailiza un campo del registro
             actualizarcaja(id){
                 swal.fire({
                     title: 'Cerrar caja',
@@ -114,16 +118,22 @@
             //Metodo que permite obtener los datos de los cajas registrados
             cargarcajas(){
 
-                // Hace una peticion a la tabla pacientes a traves del controllador de PacientesController
+                // Hace una peticion a la tabla cajas a traves del controllador de CierreAperturaCajaController
                 axios.get('api/obtenercajas').then(({data}) => {
                     this.cajas = data
                 })
             },
         },
+        
+        //Propiedades que son pasadas al componente cuando éste es creado
         props: {
             tipo: String
         },
-        created(){  
+
+        //Carga los registros que son mostrados en la tabla de las cajas
+        created(){
+
+            //Compara si el usuario loggeado puede ver la pagina, sino lo saca y lo manda a un componente de aviso que no peude estar ahi 
             if(this.$props.tipo == '2' || this.$props.tipo == '3' ){
                 this.$router.push('noacceso') 
             }
@@ -132,8 +142,3 @@
         }
     }
 </script>
-
-<style scoped>
-
-</style>
-

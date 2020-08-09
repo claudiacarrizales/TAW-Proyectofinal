@@ -1,5 +1,5 @@
 <template>
-
+    <!-- DASHBOARD DEL SISTEMA. muestra los numeros de los datos registrados en labase de datos-->
     <div class="content-wrapper">
         <div class="content-header">
             <div class="container-fluid">
@@ -22,6 +22,7 @@
             <div class="container">
                 <div class="row justify-content-center">
                     <div class="col-md-12">
+                        <!-- Son tarjetas coloridas con los numeros globales del sistema -->
                         
                             <div class="row">
                                 <div class="col-lg-3 col-6">
@@ -95,48 +96,30 @@
 <script>
 
     export default {
+        //Nombre del componente
         name: "Dashboard",
-        
-            
-        
+        //Propiedades del componente
         data(){
-            
             return {
                 totalUsuarios : 0,
                 totalcitas : 0,
                 totalenfermedades : 0,
                 totalpacientes : 0
             }
-            
-
         },
-        props: {
-            tipo: String
-        },
-
+        //Estado del componente
         created() {
             this.obtenerDatos();
-            console.log(this.$props.tipo);
-
-            if(this.$props.tipo == '2'){
-                this.$router.push('dashboardmedico') 
-            }else if(this.$props.tipo == '3'){
-                this.$router.push('dashboardmedicoasociado') 
-            }else if(this.$props.tipo == '4'){
-                this.$router.push('dashboardsecretaria') 
-            }
         },
-
+        //Metodos del componente
         methods: {
+            //Obtiene todos los datos de las tablas realizando un conteo, es decir es un numero el que retorna cada consulta
             obtenerDatos() {
-                
                 axios.get("/api/totalusuarios").then(resp => { this.totalUsuarios = resp.data });
                 axios.get("/api/totalcitas").then(resp => { this.totalcitas = resp.data });
                 axios.get("/api/totalenfermedades").then(resp => { this.totalenfermedades = resp.data });
                 axios.get("/api/totalpacientes").then(resp => { this.totalpacientes = resp.data });
-
             }
-        
         }
     
     }

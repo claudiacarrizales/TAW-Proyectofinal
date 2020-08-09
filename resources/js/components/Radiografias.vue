@@ -1,5 +1,6 @@
 <template>
-
+    <!-- Componente que despliega las ragiografias compartidas con los medicos asociados, esta vista es solo accedida por el admin y los medicos,
+    Se puede subir una nueva imagen y compartirla con un medico asociado en el formulario de esta vista -->
     <div class="content-wrapper">
         <div class="content-header">
             <div class="container-fluid">
@@ -22,7 +23,7 @@
 
             <div class="container">
                 <div class="row justify-content-center">
-
+                    <!-- Formulario con el que selecciona el medico asociado a compartir la iamgen, asi como subir la imagen seleccionandola de un archivo local de tu computadora -->
                     <div class="col-md-3">
                         <div class="card card-default">
                             <div class="card-header">Compartir radiografia</div>
@@ -39,6 +40,7 @@
                                 </div>
 
                                 <div class="form-group">
+                                    <!-- Para seleccionar una imagen de nuestra computadora y subirla al servidor -->
                                     <label> Archivo: </label>
                                     <input type="file" v-on:change="onImageChange" class="form-control">
                                 </div>
@@ -59,6 +61,9 @@
                                 <h3 class="card-title"> Lista de radiografias compartidas </h3>
                             </div>
                             <div class="card-body table-responsive p-0">
+
+                                <!-- Listado de las imagenes compartidas con los medicos asociados,
+                                Puede verse tambien la imagen que se compartio y si se da clic en ella se abre ene grande en otra pestaña del navegador-->
                                 <table class="table table-hover">
                                     <thead>
                                     <tr>
@@ -102,16 +107,21 @@
 
 <script>
     export default {
+        //Nombre del componente
         name: "Radiografias",
+        //Datos del componente, entre ellas esta la imagen que va a subirse
         data(){
             return {
                 image:'',
                 radiografias: {},
-                asociados : [],
+                asociados : [], //Almacena los medicos asociados, para seleccionar a cual sera compartida la radiografia
             }
         },
-        methods:{
 
+        //Logica del componente
+        methods:{
+            
+            //Obtiene la imagen que se ha seleccionado para subirla al server
             onImageChange(e) {
                 let files = e.target.files || e.dataTransfer.files;
                 if (!files.length)
@@ -119,6 +129,7 @@
                 this.createImage(files[0]);
             },
 
+            //Obtiene la imagen subida y la guarda en una variable
             createImage(file) {
                 let reader = new FileReader();
                 let vm = this;
@@ -128,6 +139,7 @@
                 reader.readAsDataURL(file);
             },
 
+            //Metodo que permite subir una foto al server, las imagenes subidas son guardadas en la carpeta images en la carpeta publica
             uploadImage(){
                 var asociado = document.getElementById("doctorasoc");
                 axios.post('api/guardarRadiografia', {image: this.image, asociado: asociado.value, medico: this.$props.id }).then(response => {
@@ -137,7 +149,7 @@
                 });
             },
 
-            //Metodo que permite obtener los datos de las medicamentos registradas
+            //Metodo que permite obtener los datos de las radiografias compartidas
             cargarRadiografias(){
                 
                 axios.get('api/obtenerRadiografias')
@@ -151,6 +163,7 @@
 
             },
 
+            //Funcion que se encarga de eliminar lso datos de una radiografia compartida, esto no elimina el archivo previamente subido al servidor
             eliminarRadiografia(id)  {
                 console.log("id " + id);
                 swal.fire({
@@ -189,11 +202,13 @@
                 })
             }
         },
+        //Propiedades que son pasadas al componete cuando este es acceido
         props: {
             tipo: String,
             id: String
         },
         created(){
+            //Verifica si el usuario loggeado puede ver la vista
             if(this.$props.tipo == '4' || this.$props.tipo == '3' ){
                 this.$router.push('noacceso') 
             }

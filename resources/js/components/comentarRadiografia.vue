@@ -1,5 +1,6 @@
 <template>
-
+    <!-- Componente que esta destinado al medico asociado, este componente sirve para que el medico asociado escriba una comentario 
+    de la radiografica (imagen) que le ha compartido un medico principal o un administrador -->
     <div class="content-wrapper">
         <div class="content-header">
             <div class="container-fluid">
@@ -30,6 +31,8 @@
                                 <h3 class="card-title"> Lista de radiografias compartidas </h3>
                             </div>
                             <div class="card-body table-responsive p-0">
+                                <!-- Se muestran las radiografias compartidas con el medico asociado, realiza un filtrado unicamente en las que esta asociado
+                                es decir no puede ver las de otro medico asociado-->
                                 <table class="table table-hover">
                                     <thead>
                                     <tr>
@@ -42,6 +45,7 @@
                                     <tbody>
                                     <tr v-for="radiografia in radiografias" :key="radiografia.id">
                                         <td>
+                                            <!-- Esta celda muestra la imagen pero ademas la hace cliqueable para que la imagen se muestra completa en otra pestaña-->
                                             <a :href="'http://142.93.49.246/images/'+radiografia.ruta" target="_blank">
                                                 <img :src="'/images/'+radiografia.ruta" style="width:100px;">
                                             </a>
@@ -51,6 +55,7 @@
                                         </td>
                                         <td>{{radiografia.comentario}}</td>
                                         <td>
+                                            <!-- Abre un modal para que el medico asociado escriba un comentario sobre la radiografia -->
                                             <button @click="abrirModalComentario(radiografia.id_usuario_archivo)" class="btn btn-primary btn-block"> <i class="fas fa-comment"></i> Dejar comentario</button>
                                         </td>
 
@@ -61,6 +66,8 @@
                         </div>
                     </div>
 
+
+                    <!-- Modal para escribir el comentario, contiene un boton para guardar los cambios -->
                     <div class="modal fade" id="comentarioModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
@@ -100,7 +107,9 @@
 
 <script>
     export default {
-        name: "Radiografias",
+        //Nombre del compoenente
+        name: "Comentar radiografias",
+        //Propiedades del componente
         data(){
             return {
                 image:'',
@@ -109,9 +118,10 @@
                 radiografia: {}
             }
         },
+        //Logica del componente
         methods:{
 
-            //Metodo que permite obtener los datos de las medicamentos registradas
+            //Metodo que permite obtener los datos de las radiograficas compartidas registradas
             cargarRadiografias(){
                 
                 axios.get('api/obtenerRadiografiasCompartidas/'+this.$props.id)
@@ -125,13 +135,13 @@
 
             },
 
+            //Abre el modal y ademas muestra el texto si ya se ha guardado uno antes (Para realizar una edicion)
             abrirModalComentario(id)  {
-
-                console.log("Id de la radiografia abierta " + id);
                 $('#comentarioModal').modal('show');
 
                 var comentario_actual = document.getElementById("observaciones_ta");
 
+                //Busqueda del comentario seleccionado
                 for(var i = 0; i < this.radiografias.length; i++ ){
                     if(this.radiografias[i].id_usuario_archivo == id){
                         this.radiografia = this.radiografias[i];
@@ -141,10 +151,9 @@
                     }
                 }
                 
-                console.log(this.radiografia);
-                
             },
 
+            //Guarda el comentario en la base de datos a traves de una peticion post con axios
             guardarComentario(){
                 var comentario_actual = document.getElementById("observaciones_ta");
 
@@ -169,11 +178,14 @@
                     })
             }
         },
+        //Propiedades que son obtenidas cuando el componente es creado
         props: {
             tipo: String,
             id: String
         },
+        //Metdo que carga las radiografias en cuanto es accedido
         created(){
+            //Comparacion si el usuario loggeado puede ver la pagina
             if(this.$props.tipo == '2' || this.$props.tipo == '4'){
                 this.$router.push('noacceso') 
             }
